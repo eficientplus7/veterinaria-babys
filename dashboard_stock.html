@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veterinaria Babys — Control de Stock</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary:     #2D6A4F;
+  --primary-mid: #40916C;
+  --primary-light:#74C69D;
+  --primary-pale: #D8F3DC;
+  --accent:      #F77F00;
+  --accent-light:#FFF0DC;
+  --red:         #E63946;
+  --red-light:   #FDECEA;
+  --amber:       #F4A261;
+  --amber-light: #FFF3E0;
+  --green:       #2D6A4F;
+  --green-light: #D8F3DC;
+  --bg:          #F0F7F4;
+  --card:        #FFFFFF;
+  --dark:        #1B3A2D;
+  --gray:        #6B8F71;
+  --gray-light:  #EAF4EE;
+  --border:      #C8E6C9;
+  --text:        #1B3A2D;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-mid) 100%);
+  padding: 0 28px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(45,106,79,0.25);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  width: 42px;
+  height: 42px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.logo-text {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 20px;
+  color: white;
+  line-height: 1.1;
+}
+
+.logo-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.last-update {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-form {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  font-family: 'Nunito', sans-serif;
+  box-shadow: 0 4px 12px rgba(247,127,0,0.35);
+}
+
+.btn-form:hover {
+  background: #e67300;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(247,127,0,0.4);
+}
+
+/* ── HERO BANNER ── */
+.hero {
+  background: linear-gradient(135deg, var(--primary-mid) 0%, var(--primary-light) 100%);
+  padding: 28px 28px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.hero-text h1 {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.hero-text p {
+  color: rgba(255,255,255,0.8);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.hero-animals {
+  font-size: 64px;
+  line-height: 1;
+  opacity: 0.9;
+  padding-bottom: 4px;
+  letter-spacing: 4px;
+}
+
+/* ── LAYOUT ── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 20px;
+}
+
+/* ── LOADING ── */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 16px;
+  color: var(--gray);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top-color: var(--primary-mid);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── KPI CARDS ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+@media(max-width:700px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } }
+
+.kpi-card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 22px 20px;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.45s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 2px 12px rgba(45,106,79,0.08);
+}
+
+.kpi-card.visible { opacity: 1; transform: translateY(0); }
+.kpi-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(45,106,79,0.15); }
+
+.kpi-card.ok     { border-color: var(--green-light); }
+.kpi-card.warn   { border-color: var(--amber-light); }
+.kpi-card.danger { border-color: var(--red-light); }
+.kpi-card.value  { border-color: var(--primary-pale); }
+
+.kpi-emoji {
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.kpi-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--gray);
+  margin-bottom: 6px;
+}
+
+.kpi-number {
+  font-family: 'Nunito', sans-serif;
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.kpi-card.ok     .kpi-number { color: var(--green); }
+.kpi-card.warn   .kpi-number { color: var(--amber); }
+.kpi-card.danger .kpi-number { color: var(--red); }
+.kpi-card.value  .kpi-number { color: var(--primary-mid); font-size: 28px; }
+
+.kpi-sub { font-size: 13px; color: var(--gray); font-weight: 600; }
+
+/* ── ALERT BANNER ── */
+.alert-banner {
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.4s ease 0.2s;
+  font-weight: 700;
+}
+
+.alert-banner.visible { opacity:1; transform:translateY(0); }
+.alert-banner.hidden  { display:none; }
+
+.alert-banner.danger {
+  background: var(--red-light);
+  border: 2px solid #f5c6be;
+}
+
+.alert-banner.warn {
+  background: var(--amber-light);
+  border: 2px solid #f5d99e;
+}
+
+.alert-icon { font-size: 28px; }
+.alert-title { font-size: 15px; font-weight: 800; color: var(--dark); }
+.alert-sub   { font-size: 13px; color: var(--gray); font-weight: 600; margin-top: 2px; }
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── TABLE CARD ── */
+.table-card {
+  background: var(--card);
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 28px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: all 0.45s ease 0.3s;
+  box-shadow: 0 2px 12px rgba(45,106,79,0.07);
+}
+
+.table-card.visible { opacity:1; transform:translateY(0); }
+
+.table-header {
+  padding: 18px 22px;
+  border-bottom: 2px solid var(--gray-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: var(--gray-light);
+}
+
+.table-title {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-count {
+  font-size: 12px;
+  color: var(--gray);
+  background: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  border: 2px solid var(--border);
+}
+
+.filter-tabs { display:flex; gap:6px; }
+
+.filter-tab {
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  background: white;
+  color: var(--gray);
+  transition: all 0.15s;
+  font-family: 'Nunito', sans-serif;
+}
+
+.filter-tab.active  { background: var(--primary); color: white; border-color: var(--primary); }
+.filter-tab:hover:not(.active) { background: var(--primary-pale); border-color: var(--primary-light); }
+
+table { width:100%; border-collapse:collapse; font-size:14px; }
+
+thead th {
+  padding: 12px 18px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--gray);
+  background: white;
+  border-bottom: 2px solid var(--gray-light);
+}
+
+thead th:not(:first-child) { text-align:center; }
+
+tbody tr {
+  border-bottom: 2px solid var(--gray-light);
+  transition: background 0.15s;
+}
+
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--primary-pale); }
+
+td { padding: 15px 18px; vertical-align: middle; }
+td:not(:first-child) { text-align: center; }
+
+.product-name { font-weight: 800; font-size: 14px; font-family:'Nunito',sans-serif; }
+.product-cat  { font-size: 12px; color: var(--gray); margin-top: 3px; font-weight: 600; }
+
+.stock-num { font-family:'Nunito',sans-serif; font-weight: 900; font-size: 18px; }
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+}
+
+.status-pill.ok     { background: var(--green-light); color: var(--green); }
+.status-pill.warn   { background: var(--amber-light); color: #c25e00; }
+.status-pill.danger { background: var(--red-light);   color: var(--red); }
+
+.progress-wrap { display:flex; align-items:center; gap:8px; justify-content:center; }
+.progress-bar  { width:70px; height:8px; background:var(--gray-light); border-radius:4px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:4px; transition:width 0.8s ease; }
+.progress-pct  { font-size:11px; font-weight:700; color:var(--gray); min-width:28px; }
+
+/* ── MOVIMIENTOS ── */
+.mov-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+}
+
+.mov-badge.entrada { background: var(--green-light); color: var(--green); }
+.mov-badge.salida  { background: var(--red-light);   color: var(--red); }
+.mov-badge.ajuste  { background: var(--amber-light);  color: #c25e00; }
+
+/* ── EMPTY ── */
+.empty { padding:48px; text-align:center; color:var(--gray); font-size:14px; font-weight:600; }
+.empty-icon { font-size:48px; margin-bottom:12px; }
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 13px;
+  color: var(--gray);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px) {
+  .hero-animals { font-size:40px; }
+  .hero-text h1 { font-size:22px; }
+  thead th:nth-child(4), td:nth-child(4) { display:none; }
+  .last-update { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="header-logo">
+      <div class="logo-icon">🐾</div>
+      <div>
+        <div class="logo-text">Veterinaria Babys</div>
+        <div class="logo-sub">Control de Stock</div>
+      </div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="last-update">🕐 <span id="lastUpdate">Cargando...</span></span>
+    <a href="https://docs.google.com/forms/d/10D3jshvBcTbGlw-JEsQ55nkC2nkDaBvbynaPUtEmCaY/viewform" target="_blank" class="btn-form">
+      ➕ Registrar movimiento
+    </a>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1>¡Hola! 👋<br>¿Cómo está el stock hoy?</h1>
+      <p>Revisá el inventario de tu veterinaria en un vistazo</p>
+    </div>
+    <div class="hero-animals">🐶🐱🐰</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="container">
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <span style="font-weight:700;">Cargando inventario... 🐾</span>
+  </div>
+
+  <div id="content" style="display:none;">
+
+    <!-- KPIs -->
+    <div class="kpi-grid" style="margin-top:8px;">
+      <div class="kpi-card ok">
+        <span class="kpi-emoji">✅</span>
+        <div class="kpi-label">En orden</div>
+        <div class="kpi-number" id="numOk">—</div>
+        <div class="kpi-sub">productos</div>
+      </div>
+      <div class="kpi-card warn">
+        <span class="kpi-emoji">⚠️</span>
+        <div class="kpi-label">Stock bajo</div>
+        <div class="kpi-number" id="numWarn">—</div>
+        <div class="kpi-sub">para reponer</div>
+      </div>
+      <div class="kpi-card danger">
+        <span class="kpi-emoji">🚨</span>
+        <div class="kpi-label">Sin stock</div>
+        <div class="kpi-number" id="numDanger">—</div>
+        <div class="kpi-sub">urgente</div>
+      </div>
+      <div class="kpi-card value">
+        <span class="kpi-emoji">💰</span>
+        <div class="kpi-label">Valor inventario</div>
+        <div class="kpi-number" id="numValue">—</div>
+        <div class="kpi-sub">total en stock</div>
+      </div>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert-banner hidden" id="alertBanner">
+      <span class="alert-icon" id="alertIcon"></span>
+      <div>
+        <div class="alert-title" id="alertTitle"></div>
+        <div class="alert-sub" id="alertSub"></div>
+      </div>
+    </div>
+
+    <!-- Stock table -->
+    <div class="section-title">📦 Inventario completo</div>
+    <div class="table-card" id="stockCard">
+      <div class="table-header">
+        <span class="table-title">🐾 Productos</span>
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="filtrar('todos',this)">Todos</button>
+          <button class="filter-tab" onclick="filtrar('problema',this)">⚠️ Con problema</button>
+          <button class="filter-tab" onclick="filtrar('ok',this)">✅ OK</button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Stock actual</th>
+            <th>Mínimo</th>
+            <th>Nivel</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="stockBody"></tbody>
+      </table>
+    </div>
+
+
+    <!-- AI Chat -->
+    <div class="section-title">🤖 Asistente IA</div>
+    <div class="table-card" id="chatCard" style="margin-bottom:28px;">
+      <div class="table-header">
+        <span class="table-title">💬 Preguntale a tu asistente</span>
+        <span class="table-count" style="background:#FFF0DC;color:var(--accent);border-color:#f5d99e;">Con IA ✨</span>
+      </div>
+      <div style="padding:20px 22px;">
+        <div id="apiKeySection" style="margin-bottom:16px;">
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input type="password" id="apiKeyInput" placeholder="Pegá tu API key de Anthropic (sk-ant-...)"
+              style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:12px;font-family:Nunito Sans,sans-serif;font-size:13px;outline:none;color:var(--dark);">
+            <button onclick="guardarApiKey()"
+              style="background:var(--primary);color:white;border:none;padding:10px 18px;border-radius:12px;font-family:Nunito,sans-serif;font-weight:800;font-size:13px;cursor:pointer;">
+              Guardar
+            </button>
+          </div>
+          <p style="font-size:11px;color:var(--gray);margin-top:6px;font-weight:600;">Tu API key de Anthropic se guarda solo en este navegador, nunca se sube a ningún servidor.</p>
+        </div>
+        <div id="chatMessages" style="min-height:60px;max-height:320px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;"></div>
+        <div style="display:flex;gap:10px;">
+          <input type="text" id="chatInput" placeholder="Ej: ¿Qué productos me faltan reponer? ¿Cuánto vale mi inventario?"
+            style="flex:1;padding:12px 16px;border:2px solid var(--border);border-radius:50px;font-family:Nunito Sans,sans-serif;font-size:14px;outline:none;color:var(--dark);"
+            onkeydown="if(event.key===&apos;Enter&apos;) enviarMensaje()">
+          <button onclick="enviarMensaje()" id="btnEnviar"
+            style="background:var(--accent);color:white;border:none;padding:12px 22px;border-radius:50px;font-family:Nunito,sans-serif;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;box-shadow:0 4px 12px rgba(247,127,0,0.3);">
+            Enviar ✨
+          </button>
+        </div>
+        <div style="margin-top:14px;">
+          <div style="font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Preguntas rápidas</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">📦 ¿Qué me falta reponer?</button>
+            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">💰 ¿Cuánto vale mi inventario?</button>
+            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">📊 Dame un resumen ejecutivo</button>
+            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">📈 ¿Cómo estuvo esta semana vs la anterior?</button>
+            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">🔮 ¿Cuándo se me va a agotar el stock?</button>
+            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">🛒 ¿Qué debería comprarle a mis proveedores?</button>
+            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">💤 ¿Qué productos no se venden?</button>
+            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">🔥 ¿Cuál es mi producto más vendido?</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movimientos -->
+    <div class="section-title">📋 Últimos movimientos</div>
+    <div class="table-card" id="movCard">
+      <div class="table-header">
+        <span class="table-title">📅 Historial reciente</span>
+        <span class="table-count" id="movCount">—</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Producto</th>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Responsable</th>
+          </tr>
+        </thead>
+        <tbody id="movBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</main>
+
+<div class="footer">
+  🐾 Veterinaria Babys &nbsp;·&nbsp; Actualizado automáticamente desde Google Sheets
+</div>
+
+<script>
+const SHEET_ID  = "1DybrN_TADZV5qkj15IN2Br_NrlW3HA_M7JUyDer2KNc";
+const GID_STOCK = "0";
+const GID_MOV   = "116787606";
+
+let todosLosProductos = [];
+
+function csvUrl(gid) {
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+}
+
+async function fetchCSV(gid) {
+  const res  = await fetch(csvUrl(gid));
+  const text = await res.text();
+  return parseCSV(text);
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split("\n");
+  return lines.map(line => {
+    const cols = []; let cur = "", inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ""; }
+      else { cur += ch; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
+async function init() {
+  try {
+    const [stockRows, movRows] = await Promise.all([
+      fetchCSV(GID_STOCK),
+      fetchCSV(GID_MOV)
+    ]);
+
+    renderStock(stockRows);
+    renderMovimientos(movRows);
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("content").style.display = "block";
+
+    setTimeout(() => {
+      document.querySelectorAll(".kpi-card, .table-card").forEach((el,i) => {
+        setTimeout(() => el.classList.add("visible"), i * 90);
+      });
+      const banner = document.getElementById("alertBanner");
+      if (!banner.classList.contains("hidden")) {
+        setTimeout(() => banner.classList.add("visible"), 300);
+      }
+    }, 50);
+
+    const now = new Date();
+    document.getElementById("lastUpdate").textContent =
+      now.toLocaleTimeString("es-AR", {hour:"2-digit", minute:"2-digit"});
+
+    setTimeout(init, 120000);
+
+    // Check API key
+    if (localStorage.getItem("anthropic_key")) {
+      const s = document.getElementById("apiKeySection");
+      if (s) s.style.display = "none";
+    }
+
+  } catch(err) {
+    document.getElementById("loading").innerHTML = `
+      <div style="text-align:center;">
+        <div style="font-size:48px;margin-bottom:12px;">🐾</div>
+        <div style="font-weight:800;font-size:16px;color:#E63946;">No se pudieron cargar los datos</div>
+        <div style="font-size:13px;color:#6B8F71;margin-top:6px;font-weight:600;">Verificá que la planilla sea pública</div>
+        <button onclick="init()" style="margin-top:16px;padding:10px 24px;background:#40916C;color:white;border:none;border-radius:50px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;">Reintentar 🔄</button>
+      </div>`;
+    console.error(err);
+  }
+}
+
+function renderStock(rows) {
+  const tbody = document.getElementById("stockBody");
+  tbody.innerHTML = "";
+  todosLosProductos = [];
+
+  let numOk=0, numWarn=0, numDanger=0, valorTotal=0;
+
+  let dataStart = 1;
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i][1] && rows[i][1].trim() !== "" && rows[i][1].trim() !== "Producto") {
+      dataStart = i; break;
+    }
+  }
+
+  for (let i = dataStart; i < rows.length; i++) {
+    const row    = rows[i];
+    const nombre = (row[1]||"").trim();
+    const cat    = (row[2]||"").trim();
+    const stock  = parseFloat(row[4])||0;
+    const minimo = parseFloat(row[5])||0;
+    const maximo = parseFloat(row[6])||0;
+    const precio = parseFloat(row[7])||0;
+
+    if (!nombre) continue;
+
+    valorTotal += stock * precio;
+
+    let estadoClass, estadoLabel, estadoIcon;
+    if (stock === 0)          { estadoClass="danger"; estadoLabel="Sin stock"; estadoIcon="🚨"; numDanger++; }
+    else if (stock <= minimo) { estadoClass="warn";   estadoLabel="Reponer";   estadoIcon="⚠️"; numWarn++;   }
+    else                      { estadoClass="ok";     estadoLabel="OK";        estadoIcon="✅"; numOk++;     }
+
+    const pct      = maximo > 0 ? Math.min(100, Math.round(stock/maximo*100)) : 0;
+    const barColor = estadoClass==="ok" ? "#40916C" : estadoClass==="warn" ? "#F4A261" : "#E63946";
+
+    const tr = document.createElement("tr");
+    tr.dataset.estado = estadoClass;
+    tr.innerHTML = `
+      <td>
+        <div class="product-name">${nombre}</div>
+        <div class="product-cat">${cat}</div>
+      </td>
+      <td><span class="stock-num" style="color:${barColor}">${stock}</span></td>
+      <td style="color:#6B8F71;font-weight:700;">${minimo}</td>
+      <td>
+        <div class="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${barColor}"></div></div>
+          <span class="progress-pct">${pct}%</span>
+        </div>
+      </td>
+      <td><span class="status-pill ${estadoClass}">${estadoIcon} ${estadoLabel}</span></td>
+    `;
+    tbody.appendChild(tr);
+    todosLosProductos.push(tr);
+  }
+
+  document.getElementById("numOk").textContent     = numOk;
+  document.getElementById("numWarn").textContent   = numWarn;
+  document.getElementById("numDanger").textContent = numDanger;
+  document.getElementById("numValue").textContent  = "$" + Math.round(valorTotal).toLocaleString("es-AR");
+
+  // Guardar para IA
+  stockDataGlobal = [];
+  for (let i = dataStart; i < rows.length; i++) {
+    const row = rows[i];
+    const nombre = (row[1]||"").trim();
+    if (!nombre) continue;
+    const stock  = parseFloat(row[4])||0;
+    const minimo = parseFloat(row[5])||0;
+    const maximo = parseFloat(row[6])||0;
+    const precio = parseFloat(row[7])||0;
+    let estado = stock===0?"Sin stock":stock<=minimo?"Reponer":"OK";
+    stockDataGlobal.push({nombre,categoria:(row[2]||"").trim(),stock,minimo,maximo,precio,estado});
+  }
+
+  const banner = document.getElementById("alertBanner");
+  if (numDanger > 0) {
+    banner.classList.remove("hidden","warn");
+    banner.classList.add("danger");
+    document.getElementById("alertIcon").textContent  = "🚨";
+    document.getElementById("alertTitle").textContent = `${numDanger} producto${numDanger>1?"s":""} sin stock`;
+    document.getElementById("alertSub").textContent   = "Necesitan reposición urgente — contactá a tus proveedores.";
+  } else if (numWarn > 0) {
+    banner.classList.remove("hidden","danger");
+    banner.classList.add("warn");
+    document.getElementById("alertIcon").textContent  = "⚠️";
+    document.getElementById("alertTitle").textContent = `${numWarn} producto${numWarn>1?"s":""} con stock bajo`;
+    document.getElementById("alertSub").textContent   = "Revisalos antes de que se agoten.";
+  }
+}
+
+function renderMovimientos(rows) {
+  const tbody = document.getElementById("movBody");
+  tbody.innerHTML = "";
+
+  let dataStart = 1;
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i][2] && rows[i][2].trim() !== "" && rows[i][2].trim() !== "Producto") {
+      dataStart = i; break;
+    }
+  }
+
+  const validos  = rows.slice(dataStart).filter(r => r[2] && r[2].trim() !== "");
+  document.getElementById("movCount").textContent = validos.length + " registros";
+
+  // Guardar para IA
+  movDataGlobal = validos.map(r => ({
+    fecha:(r[1]||"").trim(),
+    producto:(r[2]||"").trim(),
+    tipo:(r[4]||"").trim(),
+    cantidad:(r[5]||"").trim(),
+    responsable:(r[6]||"").trim()
+  }));
+
+  const recientes = validos.slice(-15).reverse();
+
+  if (recientes.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="empty"><div class="empty-icon">📋</div>No hay movimientos registrados todavía</td></tr>`;
+    return;
+  }
+
+  recientes.forEach(row => {
+    const fecha = (row[1]||"").trim();
+    const prod  = (row[2]||"").trim();
+    const tipo  = (row[4]||"").trim();
+    const cant  = (row[5]||"").trim();
+    const resp  = (row[6]||"").trim().split("—")[0].trim();
+
+    let tipoClass="ajuste", tipoLabel="~ Ajuste";
+    if (tipo.includes("ENTRADA"))     { tipoClass="entrada"; tipoLabel="⬆️ Entrada"; }
+    else if (tipo.includes("SALIDA")) { tipoClass="salida";  tipoLabel="⬇️ Salida";  }
+    else if (tipo.includes("AJUSTE")) { tipoClass="ajuste";  tipoLabel="🔄 Ajuste";  }
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td style="color:#6B8F71;font-size:13px;font-weight:700;">${fecha}</td>
+      <td style="font-weight:800;text-align:left;font-family:'Nunito',sans-serif;">${prod}</td>
+      <td><span class="mov-badge ${tipoClass}">${tipoLabel}</span></td>
+      <td style="font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;">${cant}</td>
+      <td style="color:#6B8F71;font-size:13px;font-weight:600;text-align:left;">${resp}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function filtrar(tipo, btn) {
+  document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+  btn.classList.add("active");
+  todosLosProductos.forEach(tr => {
+    if (tipo==="todos") tr.style.display="";
+    else if (tipo==="problema") tr.style.display=(tr.dataset.estado==="warn"||tr.dataset.estado==="danger")?"":"none";
+    else if (tipo==="ok") tr.style.display=tr.dataset.estado==="ok"?"":"none";
+  });
+}
+
+
+// ── AI CHAT ────────────────────────────────────────────────────────────────
+let stockDataGlobal = [];
+let movDataGlobal   = [];
+let chatHistory     = [];
+
+function guardarApiKey() {
+  const key = document.getElementById("apiKeyInput").value.trim();
+  if (!key.startsWith("sk-ant-")) {
+    alert("La API key debe empezar con sk-ant-");
+    return;
+  }
+  localStorage.setItem("anthropic_key", key);
+  document.getElementById("apiKeySection").style.display = "none";
+  agregarMensaje("sistema", "✅ API key guardada. ¡Ya podés consultarme sobre tu negocio!");
+  mostrarAlertasAutomaticas();
+}
+
+function preguntaRapida(btn) {
+  document.getElementById("chatInput").value = btn.textContent.replace(/^[^\w¿]+/, "").trim();
+  enviarMensaje();
+}
+
+function renderMarkdown(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^### (.+)$/gm, '<div style="font-weight:800;font-size:15px;margin:12px 0 4px;color:var(--dark);">$1</div>')
+    .replace(/^## (.+)$/gm, '<div style="font-weight:900;font-size:17px;margin:14px 0 6px;color:var(--primary);">$1</div>')
+    .replace(/^- (.+)$/gm, '<div style="display:flex;gap:8px;margin:4px 0;"><span style="color:var(--primary-light);font-weight:900;">•</span><span>$1</span></div>')
+    .replace(/^\d+\. (.+)$/gm, '<div style="display:flex;gap:8px;margin:4px 0;"><span style="color:var(--primary);font-weight:700;">›</span><span>$1</span></div>')
+    .replace(/
+
+/g, '<br><br>')
+    .replace(/
+/g, '<br>');
+}
+
+function agregarMensaje(tipo, texto) {
+  const div = document.getElementById("chatMessages");
+  const msg = document.createElement("div");
+
+  if (tipo === "user") {
+    msg.style.cssText = "align-self:flex-end;background:var(--primary);color:white;padding:10px 16px;border-radius:18px 18px 4px 18px;max-width:80%;font-size:14px;font-weight:600;";
+    msg.textContent = texto;
+  } else if (tipo === "ai") {
+    msg.style.cssText = "align-self:flex-start;background:white;color:var(--dark);padding:16px 18px;border-radius:18px 18px 18px 4px;max-width:90%;font-size:14px;line-height:1.6;border:2px solid var(--border);box-shadow:0 2px 8px rgba(45,106,79,0.08);";
+    msg.innerHTML = texto;
+  } else if (tipo === "alerta") {
+    msg.style.cssText = "align-self:stretch;background:var(--red-light);color:var(--red);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;border:2px solid #f5c6be;";
+    msg.innerHTML = texto;
+  } else if (tipo === "warn") {
+    msg.style.cssText = "align-self:stretch;background:var(--amber-light);color:#c25e00;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;border:2px solid #f5d99e;";
+    msg.innerHTML = texto;
+  } else {
+    msg.style.cssText = "align-self:center;background:var(--primary-pale);color:var(--primary);padding:8px 14px;border-radius:10px;font-size:12px;font-weight:700;text-align:center;";
+    msg.innerHTML = texto;
+  }
+
+  div.appendChild(msg);
+  div.scrollTop = div.scrollHeight;
+  return msg;
+}
+
+// ── ALERTAS AUTOMÁTICAS ───────────────────────────────────────────────────
+function mostrarAlertasAutomaticas() {
+  if (stockDataGlobal.length === 0) return;
+
+  const alertas = generarAlertas();
+  if (alertas.length === 0) return;
+
+  agregarMensaje("sistema", "🔍 <strong>Análisis automático detectó " + alertas.length + " alerta" + (alertas.length > 1 ? "s" : "") + ":</strong>");
+
+  alertas.forEach(a => {
+    agregarMensaje(a.tipo, a.icono + " <strong>" + a.titulo + "</strong><br>" + a.detalle);
+  });
+}
+
+function generarAlertas() {
+  const alertas = [];
+  const hoy = new Date();
+  const hace7  = new Date(); hace7.setDate(hace7.getDate() - 7);
+  const hace14 = new Date(); hace14.setDate(hace14.getDate() - 14);
+
+  const parseDate = (str) => {
+    if (!str) return null;
+    const p = str.split("/");
+    return p.length === 3 ? new Date(p[2], p[1]-1, p[0]) : new Date(str);
+  };
+
+  const movSemana  = movDataGlobal.filter(m => { const d = parseDate(m.fecha); return d && d >= hace7; });
+  const movSemana2 = movDataGlobal.filter(m => { const d = parseDate(m.fecha); return d && d >= hace14 && d < hace7; });
+
+  const ventas7  = {};
+  const ventas14 = {};
+  movSemana.filter(m => m.tipo.includes("SALIDA")).forEach(m => {
+    ventas7[m.producto] = (ventas7[m.producto]||0) + (parseFloat(m.cantidad)||0);
+  });
+  movSemana2.filter(m => m.tipo.includes("SALIDA")).forEach(m => {
+    ventas14[m.producto] = (ventas14[m.producto]||0) + (parseFloat(m.cantidad)||0);
+  });
+
+  // 1. Stock crítico (sin stock)
+  const sinStock = stockDataGlobal.filter(p => p.estado === "Sin stock");
+  if (sinStock.length > 0) {
+    alertas.push({
+      tipo: "alerta",
+      icono: "🚨",
+      titulo: "Stock crítico — " + sinStock.length + " producto" + (sinStock.length > 1 ? "s" : "") + " sin stock",
+      detalle: sinStock.map(p => p.nombre).join(", ")
+    });
+  }
+
+  // 2. Stock bajo
+  const stockBajo = stockDataGlobal.filter(p => p.estado === "Reponer");
+  if (stockBajo.length > 0) {
+    alertas.push({
+      tipo: "warn",
+      icono: "⚠️",
+      titulo: "Stock bajo en " + stockBajo.length + " producto" + (stockBajo.length > 1 ? "s" : ""),
+      detalle: stockBajo.map(p => p.nombre + " (" + p.stock + "/" + p.minimo + ")").join(", ")
+    });
+  }
+
+  // 3. Caída de ventas > 50%
+  Object.keys(ventas14).forEach(prod => {
+    const ant = ventas14[prod];
+    const act = ventas7[prod] || 0;
+    if (ant > 2 && act < ant * 0.5) {
+      alertas.push({
+        tipo: "warn",
+        icono: "📉",
+        titulo: "Caída de ventas: " + prod,
+        detalle: "Vendiste " + act + " esta semana vs " + ant + " la semana anterior (" + Math.round((1 - act/ant)*100) + "% menos)"
+      });
+    }
+  });
+
+  // 4. Productos sin rotación (con stock pero sin ventas en 14 días)
+  const activos = new Set([...Object.keys(ventas7), ...Object.keys(ventas14)]);
+  const parados = stockDataGlobal.filter(p => !activos.has(p.nombre) && p.stock > 0 && p.precio > 0);
+  if (parados.length > 0) {
+    const valorParado = parados.reduce((s, p) => s + p.stock * p.precio, 0);
+    alertas.push({
+      tipo: "warn",
+      icono: "💤",
+      titulo: parados.length + " producto" + (parados.length > 1 ? "s" : "") + " sin movimiento (14 días)",
+      detalle: "Capital inmovilizado: $" + Math.round(valorParado).toLocaleString("es-AR") + " — " + parados.map(p => p.nombre).join(", ")
+    });
+  }
+
+  // 5. Predicción agotamiento en menos de 5 días
+  stockDataGlobal.forEach(p => {
+    const venta = ventas7[p.nombre] || 0;
+    if (venta > 0 && p.stock > 0) {
+      const dias = Math.round((p.stock / venta) * 7);
+      if (dias <= 5) {
+        alertas.push({
+          tipo: "warn",
+          icono: "⏳",
+          titulo: p.nombre + " se agota en ~" + dias + " días",
+          detalle: "Stock actual: " + p.stock + " | Ritmo de venta: " + venta + " por semana"
+        });
+      }
+    }
+  });
+
+  return alertas;
+}
+
+// ── CONTEXTO PARA LA IA ────────────────────────────────────────────────────
+function construirContexto() {
+  const hoyStr = new Date().toLocaleDateString("es-AR");
+  const hace7  = new Date(); hace7.setDate(hace7.getDate() - 7);
+  const hace14 = new Date(); hace14.setDate(hace14.getDate() - 14);
+
+  const parseDate = (str) => {
+    if (!str) return null;
+    const p = str.split("/");
+    return p.length === 3 ? new Date(p[2], p[1]-1, p[0]) : new Date(str);
+  };
+
+  const movSemana  = movDataGlobal.filter(m => { const d = parseDate(m.fecha); return d && d >= hace7; });
+  const movSemana2 = movDataGlobal.filter(m => { const d = parseDate(m.fecha); return d && d >= hace14 && d < hace7; });
+
+  const ventas7 = {}, ventas14 = {};
+  movSemana.filter(m => m.tipo.includes("SALIDA")).forEach(m => {
+    ventas7[m.producto] = (ventas7[m.producto]||0) + (parseFloat(m.cantidad)||0);
+  });
+  movSemana2.filter(m => m.tipo.includes("SALIDA")).forEach(m => {
+    ventas14[m.producto] = (ventas14[m.producto]||0) + (parseFloat(m.cantidad)||0);
+  });
+
+  const sinStock   = stockDataGlobal.filter(p => p.estado === "Sin stock");
+  const reponer    = stockDataGlobal.filter(p => p.estado === "Reponer");
+  const ok         = stockDataGlobal.filter(p => p.estado === "OK");
+  const valorTotal = stockDataGlobal.reduce((s, p) => s + p.stock * p.precio, 0);
+  const activos    = new Set([...Object.keys(ventas7), ...Object.keys(ventas14)]);
+  const parados    = stockDataGlobal.filter(p => !activos.has(p.nombre) && p.stock > 0);
+
+  const predicciones = [];
+  stockDataGlobal.forEach(p => {
+    const v = ventas7[p.nombre] || 0;
+    if (v > 0 && p.stock > 0) predicciones.push({ nombre: p.nombre, dias: Math.round((p.stock/v)*7), ventas: v });
+  });
+
+  const totalVentas7  = Object.values(ventas7).reduce((s,v) => s+v, 0);
+  const totalVentas14 = Object.values(ventas14).reduce((s,v) => s+v, 0);
+
+  return `Sos un asistente de gestión de stock y negocios llamado "Asistente Babys".
+Fecha: ${hoyStr}. Total productos: ${stockDataGlobal.length}. Movimientos registrados: ${movDataGlobal.length}.
+
+## REGLAS ESTRICTAS — NUNCA VIOLARLAS:
+1. NUNCA inventes datos. Si no tenés el dato, decí explícitamente "No tengo ese dato en el sistema".
+2. NUNCA hagas suposiciones sobre datos que no están en el contexto.
+3. Si los datos son insuficientes para responder (ej: menos de 7 días de historial), avisalo.
+4. Siempre basate ÚNICAMENTE en los datos del contexto.
+5. Si detectás inconsistencias en los datos, mencionálo.
+
+## FORMATO DE RESPUESTA OBLIGATORIO:
+Siempre respondé con esta estructura:
+**📋 Resumen ejecutivo** (1-2 líneas)
+**💡 Insights** (3-5 puntos concretos con datos reales)
+**⚡ Recomendación accionable** (qué hacer HOY)
+**❓ Preguntas sugeridas** (2-3 preguntas para profundizar)
+
+## DATOS DEL NEGOCIO:
+
+### RESUMEN GENERAL
+- OK: ${ok.length} | A reponer: ${reponer.length} | Sin stock: ${sinStock.length}
+- Valor inventario: $${Math.round(valorTotal).toLocaleString("es-AR")}
+- Ventas esta semana: ${totalVentas7} unidades | Semana anterior: ${totalVentas14} unidades
+- Tendencia: ${totalVentas7 > totalVentas14 ? "📈 +"+Math.round((totalVentas7/Math.max(totalVentas14,1)-1)*100)+"% vs semana anterior" : "📉 "+Math.round((1-totalVentas7/Math.max(totalVentas14,1))*100)+"% menos que semana anterior"}
+- Productos sin movimiento (14 días): ${parados.length}
+
+### STOCK DETALLADO
+${stockDataGlobal.map(p => {
+  const v7 = ventas7[p.nombre]||0;
+  const v14 = ventas14[p.nombre]||0;
+  const pred = predicciones.find(x => x.nombre === p.nombre);
+  const trend = v7 > v14 ? "↑" : v7 < v14 ? "↓" : "=";
+  return `- ${p.nombre} | cat:${p.categoria} | stock:${p.stock} | mín:${p.minimo} | máx:${p.maximo} | precio:$${p.precio} | estado:${p.estado} | ventas7d:${v7} | ventas14d:${v14} | tendencia:${trend}${pred ? " | agota:~"+pred.dias+"días" : ""}`;
+}).join("\n")}
+
+### VENTAS ESTA SEMANA (top productos)
+${Object.entries(ventas7).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([p,v]) => {
+  const ant = ventas14[p]||0;
+  const diff = v - ant;
+  return `- ${p}: ${v} uds ${diff >= 0 ? "(+"+diff+" vs ant)" : "("+diff+" vs ant)"}`;
+}).join("\n") || "Sin ventas registradas esta semana"}
+
+### PREDICCIÓN AGOTAMIENTO
+${predicciones.sort((a,b)=>a.dias-b.dias).map(p => `- ${p.nombre}: ~${p.dias} días (vendiendo ${p.ventas}/semana)`).join("\n") || "Insuficientes datos de ventas para predecir"}
+
+### PRODUCTOS SIN ROTACIÓN
+${parados.length > 0 ? parados.map(p => `- ${p.nombre}: ${p.stock} uds × $${p.precio} = $${p.stock*p.precio} inmovilizado`).join("\n") : "Todos los productos tuvieron movimiento"}
+
+### ÚLTIMOS 30 MOVIMIENTOS
+${movDataGlobal.slice(-30).reverse().map(m => `- ${m.fecha} | ${m.tipo} | ${m.producto} | cant:${m.cantidad} | ${m.responsable}`).join("\n") || "Sin movimientos registrados"}
+
+### ALERTAS ACTIVAS DEL SISTEMA
+${sinStock.length > 0 ? "🚨 SIN STOCK: " + sinStock.map(p=>p.nombre).join(", ") : ""}
+${reponer.length > 0 ? "⚠️ REPONER: " + reponer.map(p=>p.nombre+" ("+p.stock+"/"+p.minimo+")").join(", ") : ""}
+${predicciones.filter(p=>p.dias<=5).length > 0 ? "⏳ SE AGOTAN PRONTO: " + predicciones.filter(p=>p.dias<=5).map(p=>p.nombre+" (~"+p.dias+"d)").join(", ") : ""}`;
+}
+
+// ── ENVIAR MENSAJE ─────────────────────────────────────────────────────────
+async function enviarMensaje() {
+  const input    = document.getElementById("chatInput");
+  const pregunta = input.value.trim();
+  if (!pregunta) return;
+
+  const apiKey = localStorage.getItem("anthropic_key");
+  if (!apiKey) {
+    agregarMensaje("sistema", "⚠️ Primero guardá tu API key de Anthropic arriba.");
+    return;
+  }
+
+  input.value = "";
+  agregarMensaje("user", pregunta);
+  chatHistory.push({ role: "user", content: pregunta });
+
+  const btnEnviar = document.getElementById("btnEnviar");
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = "Analizando...";
+
+  const loadingMsg = agregarMensaje("ai", '<div style="display:flex;align-items:center;gap:8px;opacity:0.6;"><div style="width:8px;height:8px;background:var(--primary-light);border-radius:50%;animation:spin 1s linear infinite;"></div> Procesando datos del negocio...</div>');
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 1024,
+        system: construirContexto(),
+        messages: chatHistory.slice(-6)
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      loadingMsg.innerHTML = "❌ Error: " + data.error.message;
+      chatHistory.pop();
+    } else {
+      const respuesta = data.content[0].text;
+      loadingMsg.innerHTML = renderMarkdown(respuesta);
+      chatHistory.push({ role: "assistant", content: respuesta });
+      if (chatHistory.length > 12) chatHistory = chatHistory.slice(-12);
+    }
+
+  } catch(err) {
+    loadingMsg.innerHTML = "❌ No se pudo conectar con Anthropic. Verificá tu API key y conexión.";
+    chatHistory.pop();
+    console.error(err);
+  }
+
+  btnEnviar.disabled = false;
+  btnEnviar.textContent = "Enviar ✨";
+}
+
+init();
+</script>
+</body>
+</html>
