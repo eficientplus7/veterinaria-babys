@@ -899,7 +899,6 @@ function renderMarkdown(text) {
     .replace(/^### (.+)$/gm, '<div style="font-weight:800;font-size:15px;margin:12px 0 4px;color:var(--dark);">$1</div>')
     .replace(/^## (.+)$/gm, '<div style="font-weight:900;font-size:17px;margin:14px 0 6px;color:var(--primary);">$1</div>')
     .replace(/^- (.+)$/gm, '<div style="display:flex;gap:8px;margin:4px 0;"><span style="color:var(--primary-light);font-weight:900;">•</span><span>$1</span></div>')
-    .replace(/^\d+\. (.+)$/gm, '<div style="display:flex;gap:8px;margin:4px 0;"><span style="color:var(--primary);font-weight:700;">›</span><span>$1</span></div>')
     .replace(/\n\n/g, '<br><br>')
     .replace(/\n/g, '<br>');
 }
