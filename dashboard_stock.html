@@ -1328,6 +1328,9 @@ function renderPrecios(rows) {
     const desc     = (r[5] || r[1] || "").trim();
     if (!desc) continue;
     const proveedor = (r[0] || "").trim();
+    // Ignorar filas donde "proveedor" parece una descripción de producto
+    const esProveedorValido = proveedor.length > 0 && proveedor.length < 60 && !proveedor.includes(':') && !proveedor.includes('min') && !proveedor.match(/^\d/);
+    if (!esProveedorValido) continue;
     const codigo    = (r[3] || "").trim();
     const compra    = parseFloat(r[10]) || parseFloat(r[8]) || 0;
     const publico   = parseFloat(r[12]) || parseFloat(r[9]) || 0;
