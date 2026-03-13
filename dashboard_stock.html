@@ -815,7 +815,7 @@ async function fetchCSV(gid) {
 }
 
 async function fetchCSV_external(sheetId) {
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=31145639`;
   const res  = await fetch(url);
   const text = await res.text();
   return parseCSV(text);
