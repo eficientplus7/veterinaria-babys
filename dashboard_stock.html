@@ -1317,38 +1317,40 @@ ${predicciones.filter(p=>p.dias<=5).length > 0 ? "⏳ SE AGOTAN PRONTO: " + pred
 }
 
 // ── PRECIOS PROVEEDORES ────────────────────────────────────────────────────
+// Columnas normalizadas del sheet:
+// 0:Proveedor 1:Codigo 2:Descripcion 3:Precio_Costo_SinIVA
+// 4:Precio_Costo_ConIVA 5:Precio_Venta_Sugerido 6:Margen_Estimado 7:Vigencia
 function renderPrecios(rows) {
-  // Cols: Proveedor(0) Marca(1) Categoria(2) Codigo(3) EAN(4) Descripcion(5)
-  //       Presentacion(6) KG(7) SinIVA(8) ConIVA(9) Compra(10) Mayor(11) Publico(12) Vigencia(13)
   preciosDataGlobal = [];
   const proveedores = new Set();
 
   for (let i = 1; i < rows.length; i++) {
-    const r = rows[i];
-    const desc     = (r[5] || r[1] || "").trim();
-    if (!desc) continue;
+    const r         = rows[i];
     const proveedor = (r[0] || "").trim();
-    // Ignorar filas donde "proveedor" parece una descripción de producto
-    const esProveedorValido = proveedor.length > 0 && proveedor.length < 60 && !proveedor.includes(':') && !proveedor.includes('min') && !proveedor.match(/^\d/);
-    if (!esProveedorValido) continue;
-    const codigo    = (r[3] || "").trim();
-    const compra    = parseFloat(r[10]) || parseFloat(r[8]) || 0;
-    const publico   = parseFloat(r[12]) || parseFloat(r[9]) || 0;
-    const vigencia  = (r[13] || "").trim();
+    const desc      = (r[2] || "").trim();
+    if (!desc || !proveedor) continue;
+
+    const codigo   = (r[1] || "").trim();
+    const sinIVA   = parseFloat(String(r[3]).replace(/[^0-9.]/g,"")) || 0;
+    const conIVA   = parseFloat(String(r[4]).replace(/[^0-9.]/g,"")) || 0;
+    const venta    = parseFloat(String(r[5]).replace(/[^0-9.]/g,"")) || 0;
+    const vigencia = (r[7] || "").trim();
+
+    // Usar conIVA como costo base; si no hay, estimar desde sinIVA
+    const costo = conIVA || (sinIVA > 0 ? sinIVA * 1.21 : 0);
 
     let margen = null, margenClass = "sin", margenLabel = "—";
-    if (compra > 0 && publico > 0) {
-      margen = Math.round(((publico - compra) / compra) * 100);
+    if (costo > 0 && venta > 0) {
+      margen = Math.round(((venta - costo) / costo) * 100);
       if (margen >= 40)      { margenClass = "alto";  margenLabel = "+" + margen + "%"; }
       else if (margen >= 20) { margenClass = "medio"; margenLabel = margen + "%"; }
       else                   { margenClass = "bajo";  margenLabel = margen + "%"; }
     }
 
     proveedores.add(proveedor);
-    preciosDataGlobal.push({ desc, proveedor, codigo, compra, publico, vigencia, margen, margenClass, margenLabel });
+    preciosDataGlobal.push({ desc, proveedor, codigo, sinIVA, conIVA, costo, venta, vigencia, margen, margenClass, margenLabel });
   }
 
-  // Llenar select de proveedores
   const sel = document.getElementById("preciosProveedor");
   sel.innerHTML = '<option value="">Todos los proveedores</option>';
   [...proveedores].sort().forEach(p => {
@@ -1357,11 +1359,9 @@ function renderPrecios(rows) {
     sel.appendChild(opt);
   });
 
-  // KPIs
-  const conMargen = preciosDataGlobal.filter(p => p.margen !== null);
+  const conMargen  = preciosDataGlobal.filter(p => p.margen !== null);
   const margenProm = conMargen.length > 0
-    ? Math.round(conMargen.reduce((s, p) => s + p.margen, 0) / conMargen.length)
-    : 0;
+    ? Math.round(conMargen.reduce((s, p) => s + p.margen, 0) / conMargen.length) : 0;
 
   document.getElementById("preciosTotalProd").textContent = preciosDataGlobal.length.toLocaleString("es-AR");
   document.getElementById("preciosTotalProv").textContent = proveedores.size;
@@ -1402,8 +1402,12 @@ function filtrarPrecios() {
         ${p.codigo ? `<div class="product-cat">Cód: ${p.codigo}</div>` : ""}
       </td>
       <td style="text-align:left;"><span style="font-size:12px;font-weight:700;color:var(--gray);">${p.proveedor}</span></td>
-      <td><span class="precio-num" style="color:var(--primary-mid);">${p.compra > 0 ? "$" + p.compra.toLocaleString("es-AR") : "—"}</span></td>
-      <td><span class="precio-num" style="color:var(--dark);">${p.publico > 0 ? "$" + p.publico.toLocaleString("es-AR") : "—"}</span></td>
+      <td>
+        ${p.sinIVA > 0 ? `<div class="precio-num" style="color:var(--primary-mid);">$${p.sinIVA.toLocaleString("es-AR")}</div><div style="font-size:10px;color:var(--gray);">sin IVA</div>` : ""}
+        ${p.conIVA > 0 ? `<div class="precio-num" style="color:var(--primary);">$${p.conIVA.toLocaleString("es-AR")}</div><div style="font-size:10px;color:var(--gray);">con IVA</div>` : ""}
+        ${!p.sinIVA && !p.conIVA ? '<span style="color:var(--gray);">—</span>' : ""}
+      </td>
+      <td><span class="precio-num" style="color:var(--dark);">${p.venta > 0 ? "$" + p.venta.toLocaleString("es-AR") : "—"}</span></td>
       <td><span class="margen-pill ${p.margenClass}">${p.margenLabel}</span></td>
       <td style="font-size:12px;color:var(--gray);font-weight:600;">${p.vigencia}</td>
     `;
