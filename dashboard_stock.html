@@ -455,99 +455,6 @@ td:not(:first-child) { text-align: center; }
   thead th:nth-child(4), td:nth-child(4) { display:none; }
   .last-update { display:none; }
 }
-
-/* ── PRECIOS PROVEEDORES ── */
-.search-bar {
-  display: flex;
-  gap: 10px;
-  padding: 16px 22px;
-  border-bottom: 2px solid var(--gray-light);
-  background: var(--gray-light);
-  flex-wrap: wrap;
-}
-
-.search-input {
-  flex: 1;
-  min-width: 200px;
-  padding: 10px 16px;
-  border: 2px solid var(--border);
-  border-radius: 50px;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  outline: none;
-  color: var(--dark);
-  background: white;
-  transition: border-color 0.2s;
-}
-
-.search-input:focus { border-color: var(--primary-mid); }
-
-.search-select {
-  padding: 10px 16px;
-  border: 2px solid var(--border);
-  border-radius: 50px;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  outline: none;
-  color: var(--dark);
-  background: white;
-  cursor: pointer;
-}
-
-.margen-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 50px;
-  font-size: 12px;
-  font-weight: 800;
-  font-family: 'Nunito', sans-serif;
-}
-
-.margen-pill.alto   { background: var(--green-light); color: var(--green); }
-.margen-pill.medio  { background: var(--amber-light); color: #c25e00; }
-.margen-pill.bajo   { background: var(--red-light);   color: var(--red); }
-.margen-pill.sin    { background: var(--gray-light);  color: var(--gray); }
-
-.precio-num {
-  font-family: 'Nunito', sans-serif;
-  font-weight: 800;
-  font-size: 14px;
-}
-
-.precios-kpi {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  padding: 16px 22px;
-  background: var(--gray-light);
-  border-bottom: 2px solid var(--border);
-}
-
-.precios-kpi-item {
-  text-align: center;
-  background: white;
-  border-radius: 12px;
-  padding: 12px;
-  border: 2px solid var(--border);
-}
-
-.precios-kpi-num {
-  font-family: 'Nunito', sans-serif;
-  font-weight: 900;
-  font-size: 22px;
-  color: var(--primary-mid);
-}
-
-.precios-kpi-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--gray);
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  margin-top: 2px;
-}
 </style>
 </head>
 <body>
@@ -655,68 +562,6 @@ td:not(:first-child) { text-align: center; }
     </div>
 
 
-    <!-- Precios Proveedores -->
-    <div class="section-title">💰 Precios Proveedores</div>
-    <div class="table-card" id="preciosCard" style="margin-bottom:28px;">
-      <div class="table-header">
-        <span class="table-title">🏷️ Comparador de precios</span>
-        <span class="table-count" id="preciosCount">Cargando...</span>
-      </div>
-
-      <!-- KPIs precios -->
-      <div class="precios-kpi" id="preciosKpis">
-        <div class="precios-kpi-item">
-          <div class="precios-kpi-num" id="preciosTotalProd">—</div>
-          <div class="precios-kpi-label">Productos</div>
-        </div>
-        <div class="precios-kpi-item">
-          <div class="precios-kpi-num" id="preciosTotalProv">—</div>
-          <div class="precios-kpi-label">Proveedores</div>
-        </div>
-        <div class="precios-kpi-item">
-          <div class="precios-kpi-num" id="preciosMargenProm">—</div>
-          <div class="precios-kpi-label">Margen promedio</div>
-        </div>
-      </div>
-
-      <!-- Buscador -->
-      <div class="search-bar">
-        <input type="text" class="search-input" id="preciosSearch"
-          placeholder="🔍 Buscar por producto, código o descripción..."
-          oninput="filtrarPrecios()">
-        <select class="search-select" id="preciosProveedor" onchange="filtrarPrecios()">
-          <option value="">Todos los proveedores</option>
-        </select>
-        <select class="search-select" id="preciosMargen" onchange="filtrarPrecios()">
-          <option value="">Todos los márgenes</option>
-          <option value="alto">✅ Margen alto (+40%)</option>
-          <option value="medio">⚠️ Margen medio (20-40%)</option>
-          <option value="bajo">🔴 Margen bajo (-20%)</option>
-        </select>
-      </div>
-
-      <!-- Tabla -->
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Proveedor</th>
-              <th>Precio Compra</th>
-              <th>Precio Público</th>
-              <th>Margen</th>
-              <th>Vigencia</th>
-            </tr>
-          </thead>
-          <tbody id="preciosBody"></tbody>
-        </table>
-      </div>
-      <div id="preciosEmpty" style="display:none;" class="empty">
-        <div class="empty-icon">💰</div>
-        No se encontraron productos con ese filtro
-      </div>
-    </div>
-
     <!-- AI Chat -->
     <div class="section-title">🤖 Asistente IA</div>
     <div class="table-card" id="chatCard" style="margin-bottom:28px;">
@@ -794,40 +639,17 @@ td:not(:first-child) { text-align: center; }
 const SHEET_ID  = "1DybrN_TADZV5qkj15IN2Br_NrlW3HA_M7JUyDer2KNc";
 const GID_STOCK = "0";
 const GID_MOV   = "116787606";
-const SHEET_PRECIOS_ID = "1uA2NarE8XXwfB6tRbT87oEVhrpJbxQghsYfcU5uhQro";
 
 let todosLosProductos = [];
-let preciosDataGlobal = [];
-let todosLosPrecios   = [];
 
 function csvUrl(gid) {
   return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
-}
-
-function csvUrlExternal(sheetId) {
-  return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=0`;
 }
 
 async function fetchCSV(gid) {
   const res  = await fetch(csvUrl(gid));
   const text = await res.text();
   return parseCSV(text);
-}
-
-async function fetchCSV_external(sheetId) {
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=31145639`;
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10000);
-  try {
-    const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeout);
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const text = await res.text();
-    return parseCSV(text);
-  } catch(e) {
-    clearTimeout(timeout);
-    throw e;
-  }
 }
 
 function parseCSV(text) {
@@ -854,13 +676,6 @@ async function init() {
 
     renderStock(stockRows);
     renderMovimientos(movRows);
-
-    // Cargar precios en paralelo (no bloquea si falla)
-    fetchCSV_external(SHEET_PRECIOS_ID).then(preciosRows => {
-      if (preciosRows && preciosRows.length > 1) renderPrecios(preciosRows);
-    }).catch(() => {
-      document.getElementById("preciosCount").textContent = "No disponible";
-    });
 
     document.getElementById("loading").style.display = "none";
     document.getElementById("content").style.display = "block";
@@ -1316,112 +1131,7 @@ ${reponer.length > 0 ? "⚠️ REPONER: " + reponer.map(p=>p.nombre+" ("+p.stock
 ${predicciones.filter(p=>p.dias<=5).length > 0 ? "⏳ SE AGOTAN PRONTO: " + predicciones.filter(p=>p.dias<=5).map(p=>p.nombre+" (~"+p.dias+"d)").join(", ") : ""}`;
 }
 
-// ── PRECIOS PROVEEDORES ────────────────────────────────────────────────────
-// Columnas normalizadas del sheet:
-// 0:Proveedor 1:Codigo 2:Descripcion 3:Precio_Costo_SinIVA
-// 4:Precio_Costo_ConIVA 5:Precio_Venta_Sugerido 6:Margen_Estimado 7:Vigencia
-function renderPrecios(rows) {
-  preciosDataGlobal = [];
-  const proveedores = new Set();
-
-  for (let i = 1; i < rows.length; i++) {
-    const r         = rows[i];
-    const proveedor = (r[0] || "").trim();
-    const desc      = (r[2] || "").trim();
-    if (!desc || !proveedor) continue;
-
-    const codigo   = (r[1] || "").trim();
-    const sinIVA   = parseFloat(String(r[3]).replace(/[^0-9.]/g,"")) || 0;
-    const conIVA   = parseFloat(String(r[4]).replace(/[^0-9.]/g,"")) || 0;
-    const venta    = parseFloat(String(r[5]).replace(/[^0-9.]/g,"")) || 0;
-    const vigencia = (r[7] || "").trim();
-
-    // Usar conIVA como costo base; si no hay, estimar desde sinIVA
-    const costo = conIVA || (sinIVA > 0 ? sinIVA * 1.21 : 0);
-
-    let margen = null, margenClass = "sin", margenLabel = "—";
-    if (costo > 0 && venta > 0) {
-      margen = Math.round(((venta - costo) / costo) * 100);
-      if (margen >= 40)      { margenClass = "alto";  margenLabel = "+" + margen + "%"; }
-      else if (margen >= 20) { margenClass = "medio"; margenLabel = margen + "%"; }
-      else                   { margenClass = "bajo";  margenLabel = margen + "%"; }
-    }
-
-    proveedores.add(proveedor);
-    preciosDataGlobal.push({ desc, proveedor, codigo, sinIVA, conIVA, costo, venta, vigencia, margen, margenClass, margenLabel });
-  }
-
-  const sel = document.getElementById("preciosProveedor");
-  sel.innerHTML = '<option value="">Todos los proveedores</option>';
-  [...proveedores].sort().forEach(p => {
-    const opt = document.createElement("option");
-    opt.value = p; opt.textContent = p;
-    sel.appendChild(opt);
-  });
-
-  const conMargen  = preciosDataGlobal.filter(p => p.margen !== null);
-  const margenProm = conMargen.length > 0
-    ? Math.round(conMargen.reduce((s, p) => s + p.margen, 0) / conMargen.length) : 0;
-
-  document.getElementById("preciosTotalProd").textContent = preciosDataGlobal.length.toLocaleString("es-AR");
-  document.getElementById("preciosTotalProv").textContent = proveedores.size;
-  document.getElementById("preciosMargenProm").textContent = margenProm + "%";
-  document.getElementById("preciosCount").textContent = preciosDataGlobal.length.toLocaleString("es-AR") + " productos";
-
-  filtrarPrecios();
-}
-
-function filtrarPrecios() {
-  const busqueda  = (document.getElementById("preciosSearch").value || "").toLowerCase();
-  const proveedor = document.getElementById("preciosProveedor").value;
-  const margenFil = document.getElementById("preciosMargen").value;
-
-  const filtrados = preciosDataGlobal.filter(p => {
-    const matchBusq = !busqueda || p.desc.toLowerCase().includes(busqueda) || p.codigo.toLowerCase().includes(busqueda);
-    const matchProv = !proveedor || p.proveedor === proveedor;
-    const matchMarg = !margenFil || p.margenClass === margenFil;
-    return matchBusq && matchProv && matchMarg;
-  });
-
-  const tbody = document.getElementById("preciosBody");
-  const empty = document.getElementById("preciosEmpty");
-  tbody.innerHTML = "";
-
-  if (filtrados.length === 0) {
-    empty.style.display = "block";
-    return;
-  }
-  empty.style.display = "none";
-
-  // Mostrar máximo 200 resultados
-  filtrados.slice(0, 200).forEach(p => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>
-        <div class="product-name">${p.desc}</div>
-        ${p.codigo ? `<div class="product-cat">Cód: ${p.codigo}</div>` : ""}
-      </td>
-      <td style="text-align:left;"><span style="font-size:12px;font-weight:700;color:var(--gray);">${p.proveedor}</span></td>
-      <td>
-        ${p.sinIVA > 0 ? `<div class="precio-num" style="color:var(--primary-mid);">$${p.sinIVA.toLocaleString("es-AR")}</div><div style="font-size:10px;color:var(--gray);">sin IVA</div>` : ""}
-        ${p.conIVA > 0 ? `<div class="precio-num" style="color:var(--primary);">$${p.conIVA.toLocaleString("es-AR")}</div><div style="font-size:10px;color:var(--gray);">con IVA</div>` : ""}
-        ${!p.sinIVA && !p.conIVA ? '<span style="color:var(--gray);">—</span>' : ""}
-      </td>
-      <td><span class="precio-num" style="color:var(--dark);">${p.venta > 0 ? "$" + p.venta.toLocaleString("es-AR") : "—"}</span></td>
-      <td><span class="margen-pill ${p.margenClass}">${p.margenLabel}</span></td>
-      <td style="font-size:12px;color:var(--gray);font-weight:600;">${p.vigencia}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  if (filtrados.length > 200) {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td colspan="6" style="text-align:center;padding:12px;font-size:13px;color:var(--gray);font-weight:700;">... y ${filtrados.length - 200} más. Refiná la búsqueda para ver más resultados.</td>`;
-    tbody.appendChild(tr);
-  }
-}
-
-// ── INIT ───────────────────────────────────────────────────────────────────
+// ── ENVIAR MENSAJE ─────────────────────────────────────────────────────────
 async function enviarMensaje() {
   const input    = document.getElementById("chatInput");
   const pregunta = input.value.trim();
