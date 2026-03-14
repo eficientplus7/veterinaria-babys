@@ -1337,9 +1337,10 @@ function renderPrecios(rows) {
     if (!desc || !proveedor) continue;
 
     const codigo   = (r[1] || "").trim();
-    const sinIVA   = parseFloat(String(r[3]).replace(/[^0-9.]/g,"")) || 0;
-    const conIVA   = parseFloat(String(r[4]).replace(/[^0-9.]/g,"")) || 0;
-    const venta    = parseFloat(String(r[5]).replace(/[^0-9.]/g,"")) || 0;
+    const parsePrecioAR = v => parseFloat(String(v).replace(/\$/g,"").replace(/\./g,"").replace(/,/g,".").trim()) || 0;
+    const sinIVA   = parsePrecioAR(r[3]);
+    const conIVA   = parsePrecioAR(r[4]);
+    const venta    = parsePrecioAR(r[5]);
     const vigencia = (r[7] || "").trim();
     const stock    = (r[8] || "Disponible").trim();
 
