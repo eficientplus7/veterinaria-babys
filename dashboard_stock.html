@@ -708,6 +708,51 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
 [data-theme="light"] .footer { background: #ffffff; border-top-color: #e2e8f0; color: #94a3b8; }
 [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea { background-color: #f8fafc !important; color: #1e293b !important; border-color: #e2e8f0 !important; }
 
+
+[data-theme="light"] .kpi-card.ok     .kpi-number { color: #059669; }
+[data-theme="light"] .kpi-card.warn   .kpi-number { color: #d97706; }
+[data-theme="light"] .kpi-card.danger .kpi-number { color: #dc2626; }
+[data-theme="light"] .kpi-card.value  .kpi-number { color: #1e40af; }
+[data-theme="light"] .kpi-number { color: #1e293b; }
+[data-theme="light"] .kpi-sub { color: #64748b; }
+[data-theme="light"] .kpi-emoji { filter: none; }
+
+/* Tabla movimientos — textos hardcoded en JS */
+[data-theme="light"] td { color: #1e293b; }
+[data-theme="light"] .product-name { color: #1e293b !important; }
+[data-theme="light"] .stock-num { color: inherit; }
+
+/* Precio violeta → azul en light */
+[data-theme="light"] .precio-num { color: #1e40af !important; }
+[data-theme="light"] [style*="color:#a78bfa"] { color: #1e40af !important; }
+[data-theme="light"] [style*="color: #a78bfa"] { color: #1e40af !important; }
+[data-theme="light"] .precios-kpi-num { color: #1e40af; }
+
+/* Cantidades en movimientos */
+[data-theme="light"] [style*="font-family:'Plus Jakarta Sans'"] { color: #1e293b !important; }
+
+/* Carrito qty badge */
+[data-theme="light"] .carrito-item-qty { color: #1e40af; background: #eff6ff; border-color: #bfdbfe; }
+
+/* nav badge en light */
+[data-theme="light"] .nav-item.active .nav-badge { background: rgba(37,99,235,0.15); color: #93c5fd; }
+
+/* scroll bars light */
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
+[data-theme="light"] * { scrollbar-color: rgba(0,0,0,0.15) transparent; }
+
+/* topbar text */
+[data-theme="light"] .topbar { background: #ffffff; }
+[data-theme="light"] #settingsBtn { background: rgba(0,0,0,0.04); color: #475569; border-color: #e2e8f0; }
+
+/* progress bar track */
+[data-theme="light"] .progress-bar { background: #e2e8f0; }
+[data-theme="light"] .progress-pct { color: #64748b; }
+[data-theme="light"] .table-count { border-color: #e2e8f0; color: #64748b; }
+[data-theme="light"] .mov-badge.entrada { background: #dcfce7 !important; color: #166534 !important; border-color: #86efac !important; }
+[data-theme="light"] .mov-badge.salida  { background: #fee2e2 !important; color: #991b1b !important; border-color: #fca5a5 !important; }
+[data-theme="light"] .mov-badge.ajuste  { background: #fef9c3 !important; color: #854d0e !important; border-color: #fde047 !important; }
+
 </style>
 </head>
 <body>
@@ -842,9 +887,9 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
               <button onclick="setCursor('default')" class="cursor-opt" data-id="default" style="padding:7px 6px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">↖ Default</button>
               <button onclick="setCursor('paw')" class="cursor-opt" data-id="paw" style="padding:7px 6px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">🐾 Huella</button>
               <button onclick="setCursor('bone')" class="cursor-opt" data-id="bone" style="padding:7px 6px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">🦴 Hueso</button>
-              <button onclick="setCursor('cat')" class="cursor-opt" data-id="cat" style="padding:7px 6px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">🐱 Gato</button>
-              <button onclick="setCursor('dog')" class="cursor-opt" data-id="dog" style="padding:7px 6px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">🐶 Perro</button>
-              <button onclick="setCursor('star')" class="cursor-opt" data-id="star" style="padding:7px 6px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">✦ Estrella</button>
+              
+              
+              
               <button onclick="setCursor('cross')" class="cursor-opt" data-id="cross" style="padding:7px 6px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">✚ Cruz vet</button>
               <button onclick="setCursor('fish')" class="cursor-opt" data-id="fish" style="padding:7px 6px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;">🐟 Pez</button>
             </div>
@@ -2020,20 +2065,28 @@ function ejecutarAccionChat(accion, etiqueta, btn) {
 }
 
 
-// ── CURSORES SVG ──────────────────────────────────────────────
-const CURSORS = {
-  default: 'auto',
-  paw:   `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cellipse cx='16' cy='22' rx='7' ry='6' fill='%23a78bfa' opacity='0.95'/%3E%3Cellipse cx='9' cy='14' rx='3.2' ry='4' fill='%23a78bfa'/%3E%3Cellipse cx='23' cy='14' rx='3.2' ry='4' fill='%23a78bfa'/%3E%3Cellipse cx='12.5' cy='10' rx='2.8' ry='3.5' fill='%23a78bfa'/%3E%3Cellipse cx='19.5' cy='10' rx='2.8' ry='3.5' fill='%23a78bfa'/%3E%3C/svg%3E") 16 16, auto`,
-  bone:  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='18' viewBox='0 0 34 18'%3E%3Crect x='7' y='6' width='20' height='6' rx='3' fill='%23a78bfa'/%3E%3Ccircle cx='5' cy='5' r='4' fill='%23a78bfa'/%3E%3Ccircle cx='5' cy='13' r='4' fill='%23a78bfa'/%3E%3Ccircle cx='29' cy='5' r='4' fill='%23a78bfa'/%3E%3Ccircle cx='29' cy='13' r='4' fill='%23a78bfa'/%3E%3C/svg%3E") 17 9, auto`,
-  cat:   `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='32' viewBox='0 0 28 32'%3E%3Cellipse cx='14' cy='20' rx='9' ry='10' fill='%23a78bfa'/%3E%3Cpolygon points='5,10 2,2 10,8' fill='%23a78bfa'/%3E%3Cpolygon points='23,10 26,2 18,8' fill='%23a78bfa'/%3E%3Ccircle cx='10' cy='18' r='2' fill='%23fff'/%3E%3Ccircle cx='18' cy='18' r='2' fill='%23fff'/%3E%3Cpath d='M12 23 Q14 25 16 23' stroke='%23fff' stroke-width='1.2' fill='none'/%3E%3C/svg%3E") 14 16, auto`,
-  dog:   `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cellipse cx='15' cy='16' rx='10' ry='10' fill='%23a78bfa'/%3E%3Cellipse cx='6' cy='12' rx='4' ry='6' fill='%23a78bfa'/%3E%3Cellipse cx='24' cy='12' rx='4' ry='6' fill='%23a78bfa'/%3E%3Ccircle cx='11' cy='14' r='2' fill='%23fff'/%3E%3Ccircle cx='19' cy='14' r='2' fill='%23fff'/%3E%3Cellipse cx='15' cy='19' rx='4' ry='3' fill='%23221f30'/%3E%3C/svg%3E") 15 15, auto`,
-  star:  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 L13.5 10.5 L22 12 L13.5 13.5 L12 22 L10.5 13.5 L2 12 L10.5 10.5 Z' fill='%23a78bfa'/%3E%3C/svg%3E") 12 12, auto`,
-  cross: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='10' y='2' width='4' height='20' rx='2' fill='%2310b981'/%3E%3Crect x='2' y='10' width='20' height='4' rx='2' fill='%2310b981'/%3E%3C/svg%3E") 12 12, auto`,
-  fish:  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='20' viewBox='0 0 32 20'%3E%3Cellipse cx='15' cy='10' rx='10' ry='7' fill='%23a78bfa'/%3E%3Cpolygon points='27,10 32,4 32,16' fill='%23a78bfa'/%3E%3Ccircle cx='9' cy='8' r='2' fill='%23fff'/%3E%3C/svg%3E") 16 10, auto`,
-};
+// Cursors built dynamically in buildCursors()
 
 let currentCursor = localStorage.getItem('vb_cursor') || 'paw';
 let currentTheme  = localStorage.getItem('vb_theme')  || 'dark';
+
+function getCursorColor() {
+  // Adaptar color del cursor al tema activo
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  return isLight ? '%232563eb' : '%23a78bfa'; // azul en light, violeta en dark
+}
+
+function buildCursors() {
+  const col = getCursorColor();
+  const green = '%2310b981';
+  return {
+    default: 'auto',
+    paw:   `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cellipse cx='16' cy='22' rx='7' ry='6' fill='${col}' opacity='0.95'/%3E%3Cellipse cx='9' cy='14' rx='3.2' ry='4' fill='${col}'/%3E%3Cellipse cx='23' cy='14' rx='3.2' ry='4' fill='${col}'/%3E%3Cellipse cx='12.5' cy='10' rx='2.8' ry='3.5' fill='${col}'/%3E%3Cellipse cx='19.5' cy='10' rx='2.8' ry='3.5' fill='${col}'/%3E%3C/svg%3E") 16 16, auto`,
+    bone:  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='18' viewBox='0 0 34 18'%3E%3Crect x='7' y='6' width='20' height='6' rx='3' fill='${col}'/%3E%3Ccircle cx='5' cy='5' r='4' fill='${col}'/%3E%3Ccircle cx='5' cy='13' r='4' fill='${col}'/%3E%3Ccircle cx='29' cy='5' r='4' fill='${col}'/%3E%3Ccircle cx='29' cy='13' r='4' fill='${col}'/%3E%3C/svg%3E") 17 9, auto`,
+    cross: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='10' y='2' width='4' height='20' rx='2' fill='${green}'/%3E%3Crect x='2' y='10' width='20' height='4' rx='2' fill='${green}'/%3E%3C/svg%3E") 12 12, auto`,
+    fish:  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='20' viewBox='0 0 32 20'%3E%3Cellipse cx='15' cy='10' rx='10' ry='7' fill='${col}'/%3E%3Cpolygon points='27,10 32,4 32,16' fill='${col}'/%3E%3Ccircle cx='9' cy='8' r='2' fill='%23fff'/%3E%3C/svg%3E") 16 10, auto`,
+  };
+}
 
 function applyCursor(id) {
   const style = document.getElementById('cursorStyle') || (() => {
@@ -2042,16 +2095,18 @@ function applyCursor(id) {
     document.head.appendChild(s);
     return s;
   })();
-  const cur = CURSORS[id] || 'auto';
+  const cursors = buildCursors();
+  const cur = cursors[id] || 'auto';
+  // Aplicar a body y a TODOS los elementos sin excepción
   style.textContent = cur === 'auto'
-    ? ''
-    : `* { cursor: ${cur} !important; }`;
-  // highlight activo
+    ? 'body, * { cursor: auto !important; }'
+    : `body, *, *:hover, button, a, input, select { cursor: ${cur} !important; }`;
+  // highlight activo en el panel
   document.querySelectorAll('.cursor-opt').forEach(b => {
     const active = b.dataset.id === id;
-    b.style.borderColor    = active ? 'var(--vi-a)' : 'var(--border)';
-    b.style.background     = active ? 'var(--vi-pale)' : 'transparent';
-    b.style.color          = active ? 'var(--primary-light)' : 'var(--text-2)';
+    b.style.borderColor = active ? 'var(--vi-a)' : 'var(--border)';
+    b.style.background  = active ? 'var(--vi-pale)' : 'transparent';
+    b.style.color       = active ? 'var(--primary-light)' : 'var(--text-2)';
   });
 }
 
@@ -2077,6 +2132,8 @@ function setTheme(theme) {
     btnLight.style.background  = isDark ? 'transparent' : 'var(--vi-pale)';
     btnLight.style.color       = isDark ? 'var(--text-2)' : 'var(--primary-light)';
   }
+  // Re-aplicar cursor con el color del tema nuevo
+  applyCursor(currentCursor);
 }
 
 function toggleSettings() {
