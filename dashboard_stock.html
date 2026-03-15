@@ -829,23 +829,24 @@ td:not(:first-child) { text-align:center; }
 
 /* Fila de producto en el carrito */
 .add-product-row {
-  display: grid; grid-template-columns: 1fr auto 36px;
-  gap: 8px; align-items: center;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 .add-product-qty {
   padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px;
   font-family: 'Inter', sans-serif; font-size: 14px; color: var(--dark);
-  background: white; outline: none; width: 90px; text-align: center;
-  transition: border-color 0.16s, box-shadow 0.16s;
+  background: white; outline: none; width: 80px; text-align: center;
+  transition: border-color 0.16s, box-shadow 0.16s; flex-shrink: 0;
 }
 .add-product-qty:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
 .btn-add-to-cart {
-  padding: 10px 16px; background: var(--primary-pale); color: var(--primary);
-  border: 1.5px solid #BFDBFE; border-radius: 10px;
+  padding: 10px 14px; background: var(--primary-mid); color: white;
+  border: none; border-radius: 10px;
   font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px;
-  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0;
 }
-.btn-add-to-cart:hover { background: var(--primary); color: white; border-color: var(--primary); }
+.btn-add-to-cart:hover { background: var(--primary); transform: translateY(-1px); }
 
 /* Carrito de productos */
 .carrito-wrap {
@@ -986,6 +987,12 @@ td:not(:first-child) { text-align:center; }
     <button class="nav-item active" onclick="switchTab('stock', this)">
       <span class="nav-icon">📦</span>
       <span>Stock</span>
+    </button>
+
+    <button class="nav-item" onclick="switchTab('precios', this)">
+      <span class="nav-icon">💰</span>
+      <span>Proveedores</span>
+      <span class="nav-badge" id="preciosTabBadge">—</span>
     </button>
 
     <div class="nav-section-label" style="margin-top:8px;">Actividad</div>
@@ -1309,13 +1316,15 @@ td:not(:first-child) { text-align:center; }
               </div>
 
               <!-- Fila cantidad + botón agregar -->
-              <div class="add-product-row">
-                <div style="flex:1;font-size:13.5px;color:var(--dark);font-weight:500;padding:0 4px;" id="productoSeleccionadoLabel">
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="font-size:13.5px;color:var(--dark);font-weight:500;min-height:20px;" id="productoSeleccionadoLabel">
                   <span style="color:var(--gray-mid);font-style:italic;">Ningún producto seleccionado</span>
                 </div>
-                <input type="number" class="add-product-qty" id="addCantidad"
-                  placeholder="Cant." min="-9999" step="1" value="">
-                <button type="button" class="btn-add-to-cart" onclick="agregarAlCarrito()">+ Agregar</button>
+                <div class="add-product-row">
+                  <input type="number" class="add-product-qty" id="addCantidad"
+                    placeholder="Cant." min="-9999" step="1" value="">
+                  <button type="button" class="btn-add-to-cart" onclick="agregarAlCarrito()">+ Agregar</button>
+                </div>
               </div>
 
             </div>
