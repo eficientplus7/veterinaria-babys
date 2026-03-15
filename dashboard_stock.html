@@ -7,25 +7,31 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary:     #2D6A4F;
-  --primary-mid: #40916C;
+  --primary:      #2D6A4F;
+  --primary-mid:  #40916C;
   --primary-light:#74C69D;
   --primary-pale: #D8F3DC;
-  --accent:      #F77F00;
-  --accent-light:#FFF0DC;
-  --red:         #E63946;
-  --red-light:   #FDECEA;
-  --amber:       #F4A261;
-  --amber-light: #FFF3E0;
-  --green:       #2D6A4F;
-  --green-light: #D8F3DC;
-  --bg:          #F0F7F4;
-  --card:        #FFFFFF;
-  --dark:        #1B3A2D;
-  --gray:        #6B8F71;
-  --gray-light:  #EAF4EE;
-  --border:      #C8E6C9;
-  --text:        #1B3A2D;
+  --accent:       #F77F00;
+  --accent-light: #FFF0DC;
+  --red:          #E63946;
+  --red-light:    #FDECEA;
+  --amber:        #F4A261;
+  --amber-light:  #FFF3E0;
+  --green:        #2D6A4F;
+  --green-light:  #D8F3DC;
+  --bg:           #F0F7F4;
+  --card:         #FFFFFF;
+  --dark:         #1B3A2D;
+  --gray:         #6B8F71;
+  --gray-light:   #EAF4EE;
+  --border:       #C8E6C9;
+  --text:         #1B3A2D;
+  --shadow-sm:    0 2px 8px rgba(45,106,79,0.08);
+  --shadow-md:    0 4px 20px rgba(45,106,79,0.12);
+  --shadow-lg:    0 8px 40px rgba(45,106,79,0.16);
+  --radius:       16px;
+  --radius-sm:    10px;
+  --radius-lg:    24px;
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -40,135 +46,160 @@ body {
 /* ── HEADER ── */
 .header {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-mid) 100%);
-  padding: 0 28px;
-  height: 70px;
+  padding: 0 32px;
+  height: 68px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 4px 20px rgba(45,106,79,0.25);
+  box-shadow: 0 4px 24px rgba(45,106,79,0.3);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
 .header-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .logo-icon {
-  width: 42px;
-  height: 42px;
-  background: rgba(255,255,255,0.2);
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.18);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 20px;
+  backdrop-filter: blur(4px);
 }
 
 .logo-text {
   font-family: 'Nunito', sans-serif;
   font-weight: 900;
-  font-size: 20px;
+  font-size: 18px;
   color: white;
   line-height: 1.1;
 }
 
 .logo-sub {
   font-size: 11px;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255,255,255,0.65);
   font-weight: 600;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .last-update {
   font-size: 12px;
-  color: rgba(255,255,255,0.65);
+  color: rgba(255,255,255,0.6);
   display: flex;
   align-items: center;
   gap: 5px;
+  font-weight: 600;
 }
 
 .btn-form {
   background: var(--accent);
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 9px 20px;
   border-radius: 50px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   cursor: pointer;
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   transition: all 0.2s;
   font-family: 'Nunito', sans-serif;
-  box-shadow: 0 4px 12px rgba(247,127,0,0.35);
+  box-shadow: 0 4px 14px rgba(247,127,0,0.4);
+  white-space: nowrap;
 }
 
 .btn-form:hover {
   background: #e67300;
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(247,127,0,0.4);
+  box-shadow: 0 6px 20px rgba(247,127,0,0.45);
 }
 
-/* ── HERO BANNER ── */
-.hero {
-  background: linear-gradient(135deg, var(--primary-mid) 0%, var(--primary-light) 100%);
-  padding: 28px 28px 0;
-  position: relative;
-  overflow: hidden;
+/* ── TAB NAV ── */
+.tab-nav-wrap {
+  background: white;
+  border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: 68px;
+  z-index: 90;
+  box-shadow: 0 2px 12px rgba(45,106,79,0.06);
 }
 
-.hero-content {
-  max-width: 1100px;
+.tab-nav {
+  max-width: 1140px;
   margin: 0 auto;
+  padding: 0 20px;
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+  gap: 4px;
 }
 
-.hero-text h1 {
+.tab-btn {
+  padding: 16px 24px;
+  border: none;
+  background: transparent;
   font-family: 'Nunito', sans-serif;
-  font-weight: 900;
-  font-size: 28px;
-  color: white;
-  line-height: 1.2;
-  margin-bottom: 6px;
-}
-
-.hero-text p {
-  color: rgba(255,255,255,0.8);
+  font-weight: 700;
   font-size: 14px;
-  margin-bottom: 20px;
+  color: var(--gray);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
 }
 
-.hero-animals {
-  font-size: 64px;
-  line-height: 1;
-  opacity: 0.9;
-  padding-bottom: 4px;
-  letter-spacing: 4px;
+.tab-btn:hover {
+  color: var(--primary-mid);
+  background: var(--gray-light);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
-/* ── LAYOUT ── */
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary-mid);
+  font-weight: 900;
+}
+
+.tab-badge {
+  background: var(--primary-pale);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-family: 'Nunito', sans-serif;
+}
+
+.tab-btn.active .tab-badge {
+  background: var(--primary-mid);
+  color: white;
+}
+
+/* ── TAB CONTENT ── */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── CONTAINER ── */
 .container {
-  max-width: 1100px;
+  max-width: 1140px;
   margin: 0 auto;
   padding: 28px 20px;
 }
@@ -179,18 +210,18 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 300px;
+  height: 320px;
   gap: 16px;
   color: var(--gray);
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--border);
+  width: 38px;
+  height: 38px;
+  border: 3px solid var(--border);
   border-top-color: var(--primary-mid);
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.75s linear infinite;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -200,35 +231,47 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 @media(max-width:700px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } }
 
 .kpi-card {
   background: var(--card);
-  border-radius: 20px;
-  padding: 22px 20px;
-  border: 2px solid transparent;
+  border-radius: var(--radius);
+  padding: 24px 22px;
+  border: 1.5px solid var(--border);
   position: relative;
   overflow: hidden;
   opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.45s cubic-bezier(0.34,1.56,0.64,1);
-  box-shadow: 0 2px 12px rgba(45,106,79,0.08);
+  transform: translateY(16px);
+  transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow-sm);
 }
 
 .kpi-card.visible { opacity: 1; transform: translateY(0); }
-.kpi-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(45,106,79,0.15); }
 
-.kpi-card.ok     { border-color: var(--green-light); }
-.kpi-card.warn   { border-color: var(--amber-light); }
-.kpi-card.danger { border-color: var(--red-light); }
-.kpi-card.value  { border-color: var(--primary-pale); }
+.kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.kpi-card.ok::before    { background: var(--primary-mid); }
+.kpi-card.warn::before  { background: var(--amber); }
+.kpi-card.danger::before { background: var(--red); }
+.kpi-card.value::before { background: linear-gradient(90deg, var(--primary-mid), var(--primary-light)); }
 
 .kpi-emoji {
-  font-size: 32px;
-  margin-bottom: 12px;
+  font-size: 28px;
+  margin-bottom: 14px;
   display: block;
 }
 
@@ -243,7 +286,7 @@ body {
 
 .kpi-number {
   font-family: 'Nunito', sans-serif;
-  font-size: 42px;
+  font-size: 38px;
   font-weight: 900;
   line-height: 1;
   margin-bottom: 4px;
@@ -252,21 +295,21 @@ body {
 .kpi-card.ok     .kpi-number { color: var(--green); }
 .kpi-card.warn   .kpi-number { color: var(--amber); }
 .kpi-card.danger .kpi-number { color: var(--red); }
-.kpi-card.value  .kpi-number { color: var(--primary-mid); font-size: 28px; }
+.kpi-card.value  .kpi-number { color: var(--primary-mid); font-size: 26px; }
 
 .kpi-sub { font-size: 13px; color: var(--gray); font-weight: 600; }
 
 /* ── ALERT BANNER ── */
 .alert-banner {
-  border-radius: 16px;
-  padding: 16px 20px;
-  margin-bottom: 28px;
+  border-radius: var(--radius-sm);
+  padding: 14px 20px;
+  margin-bottom: 24px;
   display: flex;
   align-items: center;
   gap: 14px;
   opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.4s ease 0.2s;
+  transform: translateY(8px);
+  transition: all 0.35s ease 0.15s;
   font-weight: 700;
 }
 
@@ -275,22 +318,22 @@ body {
 
 .alert-banner.danger {
   background: var(--red-light);
-  border: 2px solid #f5c6be;
+  border: 1.5px solid #f5c6be;
 }
 
 .alert-banner.warn {
   background: var(--amber-light);
-  border: 2px solid #f5d99e;
+  border: 1.5px solid #f5d99e;
 }
 
-.alert-icon { font-size: 28px; }
-.alert-title { font-size: 15px; font-weight: 800; color: var(--dark); }
-.alert-sub   { font-size: 13px; color: var(--gray); font-weight: 600; margin-top: 2px; }
+.alert-icon  { font-size: 26px; }
+.alert-title { font-size: 14px; font-weight: 800; color: var(--dark); }
+.alert-sub   { font-size: 12px; color: var(--gray); font-weight: 600; margin-top: 2px; }
 
 /* ── SECTION TITLE ── */
 .section-title {
   font-family: 'Nunito', sans-serif;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 800;
   color: var(--dark);
   margin-bottom: 14px;
@@ -302,21 +345,21 @@ body {
 /* ── TABLE CARD ── */
 .table-card {
   background: var(--card);
-  border-radius: 20px;
-  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
   overflow: hidden;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   opacity: 0;
-  transform: translateY(16px);
-  transition: all 0.45s ease 0.3s;
-  box-shadow: 0 2px 12px rgba(45,106,79,0.07);
+  transform: translateY(14px);
+  transition: opacity 0.4s ease 0.2s, transform 0.4s ease 0.2s;
+  box-shadow: var(--shadow-sm);
 }
 
 .table-card.visible { opacity:1; transform:translateY(0); }
 
 .table-header {
-  padding: 18px 22px;
-  border-bottom: 2px solid var(--gray-light);
+  padding: 16px 22px;
+  border-bottom: 1.5px solid var(--gray-light);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -328,7 +371,7 @@ body {
 .table-title {
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--dark);
   display: flex;
   align-items: center;
@@ -342,7 +385,7 @@ body {
   padding: 4px 12px;
   border-radius: 20px;
   font-weight: 700;
-  border: 2px solid var(--border);
+  border: 1.5px solid var(--border);
 }
 
 .filter-tabs { display:flex; gap:6px; }
@@ -353,7 +396,7 @@ body {
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
-  border: 2px solid var(--border);
+  border: 1.5px solid var(--border);
   background: white;
   color: var(--gray);
   transition: all 0.15s;
@@ -366,7 +409,7 @@ body {
 table { width:100%; border-collapse:collapse; font-size:14px; }
 
 thead th {
-  padding: 12px 18px;
+  padding: 11px 18px;
   text-align: left;
   font-size: 11px;
   font-weight: 800;
@@ -374,20 +417,20 @@ thead th {
   letter-spacing: 0.8px;
   color: var(--gray);
   background: white;
-  border-bottom: 2px solid var(--gray-light);
+  border-bottom: 1.5px solid var(--gray-light);
 }
 
 thead th:not(:first-child) { text-align:center; }
 
 tbody tr {
-  border-bottom: 2px solid var(--gray-light);
-  transition: background 0.15s;
+  border-bottom: 1.5px solid var(--gray-light);
+  transition: background 0.12s;
 }
 
 tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background: var(--primary-pale); }
 
-td { padding: 15px 18px; vertical-align: middle; }
+td { padding: 14px 18px; vertical-align: middle; }
 td:not(:first-child) { text-align: center; }
 
 .product-name { font-weight: 800; font-size: 14px; font-family:'Nunito',sans-serif; }
@@ -399,7 +442,7 @@ td:not(:first-child) { text-align: center; }
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: 50px;
   font-size: 12px;
   font-weight: 800;
@@ -411,7 +454,7 @@ td:not(:first-child) { text-align: center; }
 .status-pill.danger { background: var(--red-light);   color: var(--red); }
 
 .progress-wrap { display:flex; align-items:center; gap:8px; justify-content:center; }
-.progress-bar  { width:70px; height:8px; background:var(--gray-light); border-radius:4px; overflow:hidden; }
+.progress-bar  { width:72px; height:7px; background:var(--gray-light); border-radius:4px; overflow:hidden; }
 .progress-fill { height:100%; border-radius:4px; transition:width 0.8s ease; }
 .progress-pct  { font-size:11px; font-weight:700; color:var(--gray); min-width:28px; }
 
@@ -433,25 +476,22 @@ td:not(:first-child) { text-align: center; }
 
 /* ── EMPTY ── */
 .empty { padding:48px; text-align:center; color:var(--gray); font-size:14px; font-weight:600; }
-.empty-icon { font-size:48px; margin-bottom:12px; }
+.empty-icon { font-size:44px; margin-bottom:12px; }
 
 /* ── FOOTER ── */
 .footer {
   text-align: center;
-  padding: 24px;
+  padding: 22px;
   font-size: 13px;
   color: var(--gray);
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  border-top: 1.5px solid var(--border);
+  background: white;
 }
 
 /* ── RESPONSIVE ── */
 @media(max-width:600px) {
-  .hero-animals { font-size:40px; }
-  .hero-text h1 { font-size:22px; }
+  .tab-btn span:not(.tab-badge) { display:none; }
   thead th:nth-child(4), td:nth-child(4) { display:none; }
   .last-update { display:none; }
 }
@@ -460,8 +500,8 @@ td:not(:first-child) { text-align: center; }
 .search-bar {
   display: flex;
   gap: 10px;
-  padding: 16px 22px;
-  border-bottom: 2px solid var(--gray-light);
+  padding: 14px 20px;
+  border-bottom: 1.5px solid var(--gray-light);
   background: var(--gray-light);
   flex-wrap: wrap;
 }
@@ -470,21 +510,24 @@ td:not(:first-child) { text-align: center; }
   flex: 1;
   min-width: 200px;
   padding: 10px 16px;
-  border: 2px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 50px;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
   outline: none;
   color: var(--dark);
   background: white;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.search-input:focus { border-color: var(--primary-mid); }
+.search-input:focus {
+  border-color: var(--primary-mid);
+  box-shadow: 0 0 0 3px rgba(64,145,108,0.12);
+}
 
 .search-select {
   padding: 10px 16px;
-  border: 2px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 50px;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 13px;
@@ -493,7 +536,10 @@ td:not(:first-child) { text-align: center; }
   color: var(--dark);
   background: white;
   cursor: pointer;
+  transition: border-color 0.2s;
 }
+
+.search-select:focus { border-color: var(--primary-mid); }
 
 .margen-pill {
   display: inline-flex;
@@ -520,23 +566,23 @@ td:not(:first-child) { text-align: center; }
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  padding: 16px 22px;
+  padding: 16px 20px;
   background: var(--gray-light);
-  border-bottom: 2px solid var(--border);
+  border-bottom: 1.5px solid var(--border);
 }
 
 .precios-kpi-item {
   text-align: center;
   background: white;
-  border-radius: 12px;
-  padding: 12px;
-  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  border: 1.5px solid var(--border);
 }
 
 .precios-kpi-num {
   font-family: 'Nunito', sans-serif;
   font-weight: 900;
-  font-size: 22px;
+  font-size: 24px;
   color: var(--primary-mid);
 }
 
@@ -548,19 +594,259 @@ td:not(:first-child) { text-align: center; }
   letter-spacing: 0.6px;
   margin-top: 2px;
 }
+
+/* ── CHAT IA ── */
+.chat-wrap {
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  min-height: 520px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s;
+}
+
+.chat-wrap.visible { opacity: 1; transform: translateY(0); }
+
+.chat-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-mid) 100%);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-avatar {
+  width: 38px;
+  height: 38px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.chat-header-name {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  color: white;
+}
+
+.chat-header-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.65);
+  font-weight: 600;
+}
+
+.chat-online {
+  width: 8px;
+  height: 8px;
+  background: #52e891;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(82,232,145,0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* API Key section */
+.api-key-section {
+  padding: 16px 20px;
+  background: var(--primary-pale);
+  border-bottom: 1.5px solid var(--border);
+}
+
+.api-key-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.api-key-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 13px;
+  outline: none;
+  color: var(--dark);
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.api-key-input:focus {
+  border-color: var(--primary-mid);
+  box-shadow: 0 0 0 3px rgba(64,145,108,0.12);
+}
+
+.btn-save-key {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-save-key:hover {
+  background: var(--dark);
+  transform: translateY(-1px);
+}
+
+.api-key-hint {
+  font-size: 11px;
+  color: var(--gray);
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+/* Quick questions */
+.quick-questions {
+  padding: 12px 20px;
+  border-bottom: 1.5px solid var(--gray-light);
+  background: var(--gray-light);
+}
+
+.quick-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gray);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.quick-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.quick-chip {
+  background: white;
+  color: var(--primary);
+  border: 1.5px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.quick-chip:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* Messages area */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--bg);
+  scroll-behavior: smooth;
+}
+
+.chat-messages::-webkit-scrollbar { width: 5px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* Chat input bar */
+.chat-input-bar {
+  padding: 14px 20px;
+  background: white;
+  border-top: 1.5px solid var(--border);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  color: var(--dark);
+  background: var(--bg);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.chat-input:focus {
+  border-color: var(--primary-mid);
+  box-shadow: 0 0 0 3px rgba(64,145,108,0.1);
+  background: white;
+}
+
+.btn-send {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(247,127,0,0.35);
+}
+
+.btn-send:hover:not(:disabled) {
+  background: #e67300;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(247,127,0,0.4);
+}
+
+.btn-send:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header class="header">
-  <div class="header-left">
-    <div class="header-logo">
-      <div class="logo-icon">🐾</div>
-      <div>
-        <div class="logo-text">Veterinaria Babys</div>
-        <div class="logo-sub">Control de Stock</div>
-      </div>
+  <div class="header-logo">
+    <div class="logo-icon">🐾</div>
+    <div>
+      <div class="logo-text">Veterinaria Babys</div>
+      <div class="logo-sub">Control de Stock</div>
     </div>
   </div>
   <div class="header-right">
@@ -571,232 +857,280 @@ td:not(:first-child) { text-align: center; }
   </div>
 </header>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-content">
-    <div class="hero-text">
-      <h1>¡Hola! 👋<br>¿Cómo está el stock hoy?</h1>
-      <p>Revisá el inventario de tu veterinaria en un vistazo</p>
-    </div>
-    <div class="hero-animals">🐶🐱🐰</div>
-  </div>
+<!-- TAB NAVIGATION -->
+<div class="tab-nav-wrap">
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('stock', this)">
+      <span>📦 Stock</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('precios', this)">
+      <span>💰 Precios</span>
+      <span class="tab-badge" id="preciosTabBadge">—</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('ia', this)">
+      <span>🤖 Asistente IA</span>
+    </button>
+  </nav>
 </div>
 
-<!-- MAIN -->
-<main class="container">
+<!-- LOADING -->
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <span style="font-weight:700;color:var(--gray);">Cargando inventario... 🐾</span>
+</div>
 
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <span style="font-weight:700;">Cargando inventario... 🐾</span>
+<!-- CONTENT -->
+<div id="content" style="display:none;">
+
+  <!-- ── TAB 1: STOCK ── -->
+  <div id="tab-stock" class="tab-content active">
+    <div class="container">
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card ok">
+          <span class="kpi-emoji">✅</span>
+          <div class="kpi-label">En orden</div>
+          <div class="kpi-number" id="numOk">—</div>
+          <div class="kpi-sub">productos</div>
+        </div>
+        <div class="kpi-card warn">
+          <span class="kpi-emoji">⚠️</span>
+          <div class="kpi-label">Stock bajo</div>
+          <div class="kpi-number" id="numWarn">—</div>
+          <div class="kpi-sub">para reponer</div>
+        </div>
+        <div class="kpi-card danger">
+          <span class="kpi-emoji">🚨</span>
+          <div class="kpi-label">Sin stock</div>
+          <div class="kpi-number" id="numDanger">—</div>
+          <div class="kpi-sub">urgente</div>
+        </div>
+        <div class="kpi-card value">
+          <span class="kpi-emoji">💰</span>
+          <div class="kpi-label">Valor inventario</div>
+          <div class="kpi-number" id="numValue">—</div>
+          <div class="kpi-sub">total en stock</div>
+        </div>
+      </div>
+
+      <!-- Alert Banner -->
+      <div class="alert-banner hidden" id="alertBanner">
+        <span class="alert-icon" id="alertIcon"></span>
+        <div>
+          <div class="alert-title" id="alertTitle"></div>
+          <div class="alert-sub" id="alertSub"></div>
+        </div>
+      </div>
+
+      <!-- Stock Table -->
+      <div class="section-title">📦 Inventario completo</div>
+      <div class="table-card" id="stockCard">
+        <div class="table-header">
+          <span class="table-title">🐾 Productos</span>
+          <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filtrar('todos',this)">Todos</button>
+            <button class="filter-tab" onclick="filtrar('problema',this)">⚠️ Con problema</button>
+            <button class="filter-tab" onclick="filtrar('ok',this)">✅ OK</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Stock actual</th>
+                <th>Mínimo</th>
+                <th>Nivel</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="stockBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Movimientos -->
+      <div class="section-title">📋 Últimos movimientos</div>
+      <div class="table-card" id="movCard">
+        <div class="table-header">
+          <span class="table-title">📅 Historial reciente</span>
+          <span class="table-count" id="movCount">—</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody id="movBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <div id="content" style="display:none;">
+  <!-- ── TAB 2: PRECIOS ── -->
+  <div id="tab-precios" class="tab-content">
+    <div class="container">
 
-    <!-- KPIs -->
-    <div class="kpi-grid" style="margin-top:8px;">
-      <div class="kpi-card ok">
-        <span class="kpi-emoji">✅</span>
-        <div class="kpi-label">En orden</div>
-        <div class="kpi-number" id="numOk">—</div>
-        <div class="kpi-sub">productos</div>
-      </div>
-      <div class="kpi-card warn">
-        <span class="kpi-emoji">⚠️</span>
-        <div class="kpi-label">Stock bajo</div>
-        <div class="kpi-number" id="numWarn">—</div>
-        <div class="kpi-sub">para reponer</div>
-      </div>
-      <div class="kpi-card danger">
-        <span class="kpi-emoji">🚨</span>
-        <div class="kpi-label">Sin stock</div>
-        <div class="kpi-number" id="numDanger">—</div>
-        <div class="kpi-sub">urgente</div>
-      </div>
-      <div class="kpi-card value">
-        <span class="kpi-emoji">💰</span>
-        <div class="kpi-label">Valor inventario</div>
-        <div class="kpi-number" id="numValue">—</div>
-        <div class="kpi-sub">total en stock</div>
-      </div>
-    </div>
-
-    <!-- Alert -->
-    <div class="alert-banner hidden" id="alertBanner">
-      <span class="alert-icon" id="alertIcon"></span>
-      <div>
-        <div class="alert-title" id="alertTitle"></div>
-        <div class="alert-sub" id="alertSub"></div>
-      </div>
-    </div>
-
-    <!-- Stock table -->
-    <div class="section-title">📦 Inventario completo</div>
-    <div class="table-card" id="stockCard">
-      <div class="table-header">
-        <span class="table-title">🐾 Productos</span>
-        <div class="filter-tabs">
-          <button class="filter-tab active" onclick="filtrar('todos',this)">Todos</button>
-          <button class="filter-tab" onclick="filtrar('problema',this)">⚠️ Con problema</button>
-          <button class="filter-tab" onclick="filtrar('ok',this)">✅ OK</button>
+      <div class="section-title">💰 Precios Proveedores</div>
+      <div class="table-card" id="preciosCard">
+        <div class="table-header">
+          <span class="table-title">🏷️ Comparador de precios</span>
+          <span class="table-count" id="preciosCount">Cargando...</span>
         </div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Stock actual</th>
-            <th>Mínimo</th>
-            <th>Nivel</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody id="stockBody"></tbody>
-      </table>
-    </div>
 
-
-    <!-- Precios Proveedores -->
-    <div class="section-title">💰 Precios Proveedores</div>
-    <div class="table-card" id="preciosCard" style="margin-bottom:28px;">
-      <div class="table-header">
-        <span class="table-title">🏷️ Comparador de precios</span>
-        <span class="table-count" id="preciosCount">Cargando...</span>
-      </div>
-
-      <!-- KPIs precios -->
-      <div class="precios-kpi" id="preciosKpis">
-        <div class="precios-kpi-item">
-          <div class="precios-kpi-num" id="preciosTotalProd">—</div>
-          <div class="precios-kpi-label">Productos</div>
-        </div>
-        <div class="precios-kpi-item">
-          <div class="precios-kpi-num" id="preciosTotalProv">—</div>
-          <div class="precios-kpi-label">Proveedores</div>
-        </div>
-        <div class="precios-kpi-item">
-          <div class="precios-kpi-num" id="preciosMargenProm">—</div>
-          <div class="precios-kpi-label">Margen promedio</div>
-        </div>
-      </div>
-
-      <!-- Buscador -->
-      <div class="search-bar">
-        <input type="text" class="search-input" id="preciosSearch"
-          placeholder="🔍 Buscar por producto, código o descripción..."
-          oninput="filtrarPrecios()">
-        <select class="search-select" id="preciosProveedor" onchange="filtrarPrecios()">
-          <option value="">Todos los proveedores</option>
-        </select>
-        <select class="search-select" id="preciosMargen" onchange="filtrarPrecios()">
-          <option value="">Todos los márgenes</option>
-          <option value="alto">✅ Margen alto (+40%)</option>
-          <option value="medio">⚠️ Margen medio (20-40%)</option>
-          <option value="bajo">🔴 Margen bajo (-20%)</option>
-        </select>
-        <select class="search-select" id="preciosStock" onchange="filtrarPrecios()">
-          <option value="">Todo el stock</option>
-          <option value="Disponible">✅ Disponible</option>
-          <option value="Agotado">❌ Agotado</option>
-        </select>
-      </div>
-
-      <!-- Tabla -->
-      <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Proveedor</th>
-              <th>Precio Compra</th>
-              <th>Precio Público</th>
-              <th>Margen</th>
-              <th>Stock</th>
-              <th>Vigencia</th>
-            </tr>
-          </thead>
-          <tbody id="preciosBody"></tbody>
-        </table>
-      </div>
-      <div id="preciosEmpty" style="display:none;" class="empty">
-        <div class="empty-icon">💰</div>
-        No se encontraron productos con ese filtro
-      </div>
-    </div>
-
-    <!-- AI Chat -->
-    <div class="section-title">🤖 Asistente IA</div>
-    <div class="table-card" id="chatCard" style="margin-bottom:28px;">
-      <div class="table-header">
-        <span class="table-title">💬 Preguntale a tu asistente</span>
-        <span class="table-count" style="background:#FFF0DC;color:var(--accent);border-color:#f5d99e;">Con IA ✨</span>
-      </div>
-      <div style="padding:20px 22px;">
-        <div id="apiKeySection" style="margin-bottom:16px;">
-          <div style="display:flex;gap:10px;align-items:center;">
-            <input type="password" id="apiKeyInput" placeholder="Pegá tu API key de Anthropic (sk-ant-...)"
-              style="flex:1;padding:10px 14px;border:2px solid var(--border);border-radius:12px;font-family:Nunito Sans,sans-serif;font-size:13px;outline:none;color:var(--dark);">
-            <button onclick="guardarApiKey()"
-              style="background:var(--primary);color:white;border:none;padding:10px 18px;border-radius:12px;font-family:Nunito,sans-serif;font-weight:800;font-size:13px;cursor:pointer;">
-              Guardar
-            </button>
+        <!-- KPIs precios -->
+        <div class="precios-kpi" id="preciosKpis">
+          <div class="precios-kpi-item">
+            <div class="precios-kpi-num" id="preciosTotalProd">—</div>
+            <div class="precios-kpi-label">Productos</div>
           </div>
-          <p style="font-size:11px;color:var(--gray);margin-top:6px;font-weight:600;">Tu API key de Anthropic se guarda solo en este navegador, nunca se sube a ningún servidor.</p>
+          <div class="precios-kpi-item">
+            <div class="precios-kpi-num" id="preciosTotalProv">—</div>
+            <div class="precios-kpi-label">Proveedores</div>
+          </div>
+          <div class="precios-kpi-item">
+            <div class="precios-kpi-num" id="preciosMargenProm">—</div>
+            <div class="precios-kpi-label">Margen promedio</div>
+          </div>
         </div>
-        <div id="chatMessages" style="min-height:60px;max-height:320px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;"></div>
-        <div style="display:flex;gap:10px;">
-          <input type="text" id="chatInput" placeholder="Ej: ¿Qué productos me faltan reponer? ¿Cuánto vale mi inventario?"
-            style="flex:1;padding:12px 16px;border:2px solid var(--border);border-radius:50px;font-family:Nunito Sans,sans-serif;font-size:14px;outline:none;color:var(--dark);"
-            onkeydown="if(event.key===&apos;Enter&apos;) enviarMensaje()">
-          <button onclick="enviarMensaje()" id="btnEnviar"
-            style="background:var(--accent);color:white;border:none;padding:12px 22px;border-radius:50px;font-family:Nunito,sans-serif;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;box-shadow:0 4px 12px rgba(247,127,0,0.3);">
+
+        <!-- Buscador -->
+        <div class="search-bar">
+          <input type="text" class="search-input" id="preciosSearch"
+            placeholder="🔍 Buscar por producto, código o descripción..."
+            oninput="filtrarPrecios()">
+          <select class="search-select" id="preciosProveedor" onchange="filtrarPrecios()">
+            <option value="">Todos los proveedores</option>
+          </select>
+          <select class="search-select" id="preciosMargen" onchange="filtrarPrecios()">
+            <option value="">Todos los márgenes</option>
+            <option value="alto">✅ Margen alto (+40%)</option>
+            <option value="medio">⚠️ Margen medio (20-40%)</option>
+            <option value="bajo">🔴 Margen bajo (-20%)</option>
+          </select>
+          <select class="search-select" id="preciosStock" onchange="filtrarPrecios()">
+            <option value="">Todo el stock</option>
+            <option value="Disponible">✅ Disponible</option>
+            <option value="Agotado">❌ Agotado</option>
+          </select>
+        </div>
+
+        <!-- Tabla -->
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Proveedor</th>
+                <th>Precio Compra</th>
+                <th>Precio Público</th>
+                <th>Margen</th>
+                <th>Stock</th>
+                <th>Vigencia</th>
+              </tr>
+            </thead>
+            <tbody id="preciosBody"></tbody>
+          </table>
+        </div>
+        <div id="preciosEmpty" style="display:none;" class="empty">
+          <div class="empty-icon">💰</div>
+          No se encontraron productos con ese filtro
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── TAB 3: ASISTENTE IA ── -->
+  <div id="tab-ia" class="tab-content">
+    <div class="container">
+
+      <div class="chat-wrap" id="chatCard">
+
+        <!-- Chat header -->
+        <div class="chat-header">
+          <div class="chat-header-left">
+            <div class="chat-avatar">🤖</div>
+            <div>
+              <div class="chat-header-name">Asistente Babys</div>
+              <div class="chat-header-sub">Powered by Claude · Datos en tiempo real</div>
+            </div>
+          </div>
+          <div class="chat-online"></div>
+        </div>
+
+        <!-- API Key -->
+        <div id="apiKeySection" class="api-key-section">
+          <div class="api-key-row">
+            <input type="password" id="apiKeyInput" class="api-key-input"
+              placeholder="Pegá tu API key de Anthropic (sk-ant-...)">
+            <button onclick="guardarApiKey()" class="btn-save-key">Guardar</button>
+          </div>
+          <p class="api-key-hint">Tu API key se guarda solo en este navegador, nunca se sube a ningún servidor.</p>
+        </div>
+
+        <!-- Quick questions -->
+        <div class="quick-questions">
+          <div class="quick-label">Preguntas rápidas</div>
+          <div class="quick-chips">
+            <button onclick="preguntaRapida(this)" class="quick-chip">📦 ¿Qué me falta reponer?</button>
+            <button onclick="preguntaRapida(this)" class="quick-chip">💰 ¿Cuánto vale mi inventario?</button>
+            <button onclick="preguntaRapida(this)" class="quick-chip">📊 Dame un resumen ejecutivo</button>
+            <button onclick="preguntaRapida(this)" class="quick-chip">📈 ¿Cómo estuvo esta semana vs la anterior?</button>
+            <button onclick="preguntaRapida(this)" class="quick-chip">🔮 ¿Cuándo se me va a agotar el stock?</button>
+            <button onclick="preguntaRapida(this)" class="quick-chip">🛒 ¿Qué debería comprarle a mis proveedores?</button>
+            <button onclick="preguntaRapida(this)" class="quick-chip">💤 ¿Qué productos no se venden?</button>
+            <button onclick="preguntaRapida(this)" class="quick-chip">🔥 ¿Cuál es mi producto más vendido?</button>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="chatMessages" class="chat-messages"></div>
+
+        <!-- Input bar -->
+        <div class="chat-input-bar">
+          <input type="text" id="chatInput" class="chat-input"
+            placeholder="Preguntame sobre tu stock, ventas o proveedores..."
+            onkeydown="if(event.key==='Enter') enviarMensaje()">
+          <button onclick="enviarMensaje()" id="btnEnviar" class="btn-send">
             Enviar ✨
           </button>
         </div>
-        <div style="margin-top:14px;">
-          <div style="font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Preguntas rápidas</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;">
-            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">📦 ¿Qué me falta reponer?</button>
-            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">💰 ¿Cuánto vale mi inventario?</button>
-            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">📊 Dame un resumen ejecutivo</button>
-            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">📈 ¿Cómo estuvo esta semana vs la anterior?</button>
-            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">🔮 ¿Cuándo se me va a agotar el stock?</button>
-            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">🛒 ¿Qué debería comprarle a mis proveedores?</button>
-            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">💤 ¿Qué productos no se venden?</button>
-            <button onclick="preguntaRapida(this)" style="background:var(--primary-pale);color:var(--primary);border:2px solid var(--border);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;font-family:Nunito,sans-serif;">🔥 ¿Cuál es mi producto más vendido?</button>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Movimientos -->
-    <div class="section-title">📋 Últimos movimientos</div>
-    <div class="table-card" id="movCard">
-      <div class="table-header">
-        <span class="table-title">📅 Historial reciente</span>
-        <span class="table-count" id="movCount">—</span>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Producto</th>
-            <th>Tipo</th>
-            <th>Cantidad</th>
-            <th>Responsable</th>
-          </tr>
-        </thead>
-        <tbody id="movBody"></tbody>
-      </table>
-    </div>
 
+    </div>
   </div>
-</main>
+
+</div>
 
 <div class="footer">
   🐾 Veterinaria Babys &nbsp;·&nbsp; Actualizado automáticamente desde Google Sheets
 </div>
 
 <script>
+// ── TAB SWITCHER ────────────────────────────────────────────────────────────
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  btn.classList.add('active');
+  // Trigger visibility animations on tab switch
+  if (tab === 'ia') {
+    const chatWrap = document.getElementById('chatCard');
+    if (chatWrap) setTimeout(() => chatWrap.classList.add('visible'), 50);
+  }
+}
+
 const SHEET_ID  = "1DybrN_TADZV5qkj15IN2Br_NrlW3HA_M7JUyDer2KNc";
 const GID_STOCK = "0";
 const GID_MOV   = "116787606";
@@ -1324,7 +1658,6 @@ ${predicciones.filter(p=>p.dias<=5).length > 0 ? "⏳ SE AGOTAN PRONTO: " + pred
 ${(() => {
   if (!preciosDataGlobal || preciosDataGlobal.length === 0) return "### PRECIOS PROVEEDORES\nSin datos de precios cargados aún.";
 
-  // Resumen por proveedor
   const porProveedor = {};
   preciosDataGlobal.forEach(p => {
     if (!porProveedor[p.proveedor]) porProveedor[p.proveedor] = { total: 0, conVenta: 0, sinVenta: 0, margenes: [] };
@@ -1338,19 +1671,16 @@ ${(() => {
     return `- ${prov}: ${d.total} productos | margen prom: ${margenProm !== null ? margenProm+"%" : "s/d"} | sin precio venta: ${d.sinVenta}`;
   }).join("\n");
 
-  // Productos sin precio de venta (máx 20)
   const sinPrecioVenta = preciosDataGlobal.filter(p => !p.venta || p.venta === 0).slice(0, 20);
   const sinPrecioTxt = sinPrecioVenta.length > 0
     ? sinPrecioVenta.map(p => `- ${p.desc} (${p.proveedor}) | costo: $${p.costo ? p.costo.toLocaleString("es-AR") : "s/d"}`).join("\n")
     : "Todos los productos tienen precio de venta cargado.";
 
-  // Productos con margen bajo (máx 15)
   const margenBajo = preciosDataGlobal.filter(p => p.margen !== null && p.margen < 20).slice(0, 15);
   const margenBajoTxt = margenBajo.length > 0
     ? margenBajo.map(p => `- ${p.desc} (${p.proveedor}) | costo: $${p.costo ? p.costo.toLocaleString("es-AR") : "s/d"} | venta: $${p.venta ? p.venta.toLocaleString("es-AR") : "s/d"} | margen: ${p.margen}%`).join("\n")
     : "No hay productos con margen bajo detectado.";
 
-  // Stats globales
   const conMargen = preciosDataGlobal.filter(p => p.margen !== null);
   const margenGlobal = conMargen.length > 0 ? Math.round(conMargen.reduce((s,p)=>s+(p.margen||0),0)/conMargen.length) : 0;
   const sinVentaTotal = preciosDataGlobal.filter(p => !p.venta || p.venta === 0).length;
@@ -1396,7 +1726,6 @@ function renderPrecios(rows) {
     const vigencia = (r[7] || "").trim();
     const stock    = (r[8] || "Disponible").trim();
 
-    // Usar conIVA como costo base; si no hay, estimar desde sinIVA
     const costo = conIVA || (sinIVA > 0 ? sinIVA * 1.21 : 0);
 
     let margen = null, margenClass = "sin", margenLabel = "—";
@@ -1428,6 +1757,10 @@ function renderPrecios(rows) {
   document.getElementById("preciosMargenProm").textContent = margenProm + "%";
   document.getElementById("preciosCount").textContent = preciosDataGlobal.length.toLocaleString("es-AR") + " productos";
 
+  // Actualizar badge del tab
+  const badge = document.getElementById("preciosTabBadge");
+  if (badge) badge.textContent = preciosDataGlobal.length.toLocaleString("es-AR");
+
   filtrarPrecios();
 }
 
@@ -1455,7 +1788,6 @@ function filtrarPrecios() {
   }
   empty.style.display = "none";
 
-  // Mostrar máximo 200 resultados
   filtrados.slice(0, 200).forEach(p => {
     const tr = document.createElement("tr");
     const ventaCell = p.venta > 0
@@ -1497,20 +1829,18 @@ function filtrarPrecios() {
 async function sugerirPrecio(btn, desc, costo, proveedor) {
   const apiKey = localStorage.getItem("anthropic_key");
   if (!apiKey) {
-    alert("Primero guardá tu API key de Anthropic en el chat de abajo.");
+    alert("Primero guardá tu API key de Anthropic en el Asistente IA.");
     return;
   }
 
   btn.textContent = "⏳ Analizando...";
   btn.disabled = true;
 
-  // Calcular margen promedio de productos del mismo proveedor que SÍ tienen precio
   const conPrecio = preciosDataGlobal.filter(p => p.proveedor === proveedor && p.venta > 0 && p.costo > 0);
   const margenProm = conPrecio.length > 0
     ? Math.round(conPrecio.reduce((s, p) => s + ((p.venta - p.costo) / p.costo * 100), 0) / conPrecio.length)
     : null;
 
-  // Calcular margen promedio global
   const todos = preciosDataGlobal.filter(p => p.venta > 0 && p.costo > 0);
   const margenGlobal = todos.length > 0
     ? Math.round(todos.reduce((s, p) => s + ((p.venta - p.costo) / p.costo * 100), 0) / todos.length)
@@ -1556,7 +1886,6 @@ Respondé SOLO con este formato JSON (sin markdown, sin explicación extra):
     const margen   = json.margen;
     const razon    = json.justificacion;
 
-    // Reemplazar el botón con el precio sugerido + tooltip
     const td = btn.parentElement;
     td.innerHTML = `
       <span class="precio-num" style="color:var(--accent);">$${precio.toLocaleString("es-AR")}</span>
@@ -1564,7 +1893,6 @@ Respondé SOLO con este formato JSON (sin markdown, sin explicación extra):
       <div style="font-size:10px;color:var(--gray);font-style:italic;max-width:140px;">${razon}</div>
     `;
 
-    // Actualizar margen pill en la misma fila
     const row = td.closest("tr");
     if (row) {
       const margenPill = row.querySelector(".margen-pill");
@@ -1582,7 +1910,7 @@ Respondé SOLO con este formato JSON (sin markdown, sin explicación extra):
   }
 }
 
-// ── INIT ───────────────────────────────────────────────────────────────────
+// ── ENVIAR MENSAJE ──────────────────────────────────────────────────────────
 async function enviarMensaje() {
   const input    = document.getElementById("chatInput");
   const pregunta = input.value.trim();
