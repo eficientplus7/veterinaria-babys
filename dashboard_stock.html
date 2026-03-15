@@ -717,8 +717,188 @@ td:not(:first-child) { text-align:center; }
 }
 
 /* ══════════════════════════════════════════
-   RESPONSIVE — mobile sidebar collapse
+   MODAL — REGISTRAR MOVIMIENTO
 ══════════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.55);
+  backdrop-filter: blur(3px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-overlay.open {
+  display: flex;
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+
+.modal {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 25px 50px rgba(15,23,42,0.2);
+  overflow: hidden;
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp { from { transform:translateY(16px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+
+.modal-header {
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.modal-close {
+  width: 32px; height: 32px;
+  background: var(--gray-light);
+  border: none; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px; color: var(--gray);
+  transition: all 0.14s;
+}
+.modal-close:hover { background: var(--border); color: var(--dark); }
+
+.modal-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+
+.form-label {
+  font-size: 12px; font-weight: 600; color: var(--gray);
+  text-transform: uppercase; letter-spacing: 0.6px;
+}
+
+.form-control {
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--dark);
+  background: white;
+  outline: none;
+  transition: border-color 0.16s, box-shadow 0.16s;
+  width: 100%;
+}
+.form-control:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+/* Tipo de movimiento — pills de selección */
+.tipo-pills {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.tipo-pill {
+  padding: 10px 8px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  color: var(--gray);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.tipo-pill .pill-icon { font-size: 18px; }
+.tipo-pill:hover { border-color: var(--primary-light); color: var(--primary); background: var(--primary-pale); }
+.tipo-pill.selected.entrada  { border-color: var(--ok); background: var(--ok-light); color: #065F46; }
+.tipo-pill.selected.salida   { border-color: var(--red); background: var(--red-light); color: #991B1B; }
+.tipo-pill.selected.ajuste   { border-color: var(--amber); background: var(--amber-light); color: #92400E; }
+
+.modal-footer {
+  padding: 16px 24px 22px;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-cancel {
+  flex: 1; padding: 12px;
+  background: var(--gray-light); color: var(--gray);
+  border: none; border-radius: 10px;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px;
+  cursor: pointer; transition: all 0.14s;
+}
+.btn-cancel:hover { background: var(--border); }
+
+.btn-submit {
+  flex: 2; padding: 12px;
+  background: var(--primary-mid); color: white;
+  border: none; border-radius: 10px;
+  font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px;
+  cursor: pointer; transition: all 0.16s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 3px 10px rgba(37,99,235,0.25);
+}
+.btn-submit:hover:not(:disabled) { background: var(--primary); transform: translateY(-1px); }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.form-success {
+  display: none;
+  padding: 32px 24px;
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.form-success.show { display: flex; }
+.success-icon { font-size: 44px; }
+.success-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 17px; color: var(--dark); }
+.success-sub { font-size: 13.5px; color: var(--gray); }
+
+/* Botón sidebar para abrir modal */
+.btn-nuevo-mov {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--primary-mid);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.16s;
+  font-family: 'Inter', sans-serif;
+  margin-top: 8px;
+}
+.btn-nuevo-mov:hover {
+  background: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+  transform: translateY(-1px);
+}
 @media(max-width:900px) {
   body { flex-direction: column; }
   .sidebar { width:100%; min-width:0; height:auto; position:relative; flex-direction:row; }
@@ -805,10 +985,9 @@ td:not(:first-child) { text-align:center; }
       <span class="sidebar-time-icon">🕐</span>
       <span class="sidebar-time-text">Actualizado: <span id="lastUpdate">—</span></span>
     </div>
-    <a href="https://docs.google.com/forms/d/10D3jshvBcTbGlw-JEsQ55nkC2nkDaBvbynaPUtEmCaY/viewform"
-       target="_blank" class="btn-form-sidebar">
+    <button class="btn-nuevo-mov" onclick="abrirModal()">
       ➕ Registrar movimiento
-    </a>
+    </button>
   </div>
 
 </aside>
@@ -1063,6 +1242,98 @@ td:not(:first-child) { text-align:center; }
   </div>
 
 </div><!-- /.app-body -->
+
+<!-- ══════════════════════════════════════
+     MODAL — REGISTRAR MOVIMIENTO
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarModalSiAfuera(event)">
+  <div class="modal">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="modal-title">
+        <span>📦</span> Registrar movimiento
+      </div>
+      <button class="modal-close" onclick="cerrarModal()">✕</button>
+    </div>
+
+    <!-- Form -->
+    <div id="modalForm">
+      <div class="modal-body">
+
+        <!-- Tipo -->
+        <div class="form-group">
+          <div class="form-label">Tipo de movimiento</div>
+          <div class="tipo-pills">
+            <button type="button" class="tipo-pill entrada" onclick="seleccionarTipo('ENTRADA', this)">
+              <span class="pill-icon">⬆️</span>
+              Entrada
+            </button>
+            <button type="button" class="tipo-pill salida" onclick="seleccionarTipo('SALIDA', this)">
+              <span class="pill-icon">⬇️</span>
+              Salida
+            </button>
+            <button type="button" class="tipo-pill ajuste" onclick="seleccionarTipo('AJUSTE', this)">
+              <span class="pill-icon">🔄</span>
+              Ajuste
+            </button>
+          </div>
+          <input type="hidden" id="movTipo">
+        </div>
+
+        <!-- Producto -->
+        <div class="form-group">
+          <label class="form-label" for="movProducto">Producto</label>
+          <select class="form-control" id="movProducto">
+            <option value="">— Seleccioná un producto —</option>
+          </select>
+        </div>
+
+        <!-- Cantidad -->
+        <div class="form-group">
+          <label class="form-label" for="movCantidad">Cantidad</label>
+          <input type="number" class="form-control" id="movCantidad"
+            placeholder="Ej: 5 (para ajuste negativo usá -3)"
+            min="-9999" step="1">
+        </div>
+
+        <!-- Responsable -->
+        <div class="form-group">
+          <label class="form-label" for="movResponsable">Responsable</label>
+          <select class="form-control" id="movResponsable">
+            <option value="">— Seleccioná —</option>
+          </select>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="form-group">
+          <label class="form-label" for="movObs">Observaciones <span style="color:var(--gray-mid);font-weight:400;text-transform:none;">(opcional)</span></label>
+          <input type="text" class="form-control" id="movObs"
+            placeholder="Ej: pedido semanal, venta con receta...">
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn-submit" id="btnSubmitMov" onclick="enviarMovimiento()">
+          <span id="btnSubmitTxt">✅ Guardar movimiento</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Success state -->
+    <div class="form-success" id="modalSuccess">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">¡Movimiento registrado!</div>
+      <div class="success-sub" id="successMsg">Se actualizó el stock correctamente.</div>
+      <button class="btn-submit" style="margin-top:8px;flex:0;padding:10px 28px;"
+        onclick="nuevoMovimiento()">➕ Registrar otro</button>
+    </div>
+
+  </div>
+</div>
 
 <script>
 // ── TAB SWITCHER ──────────────────────────────────────────────────────────
@@ -1553,6 +1824,139 @@ async function enviarMensaje() {
   } catch(e){loadingMsg.innerHTML="❌ Error de conexión.";chatHistory.pop();console.error(e);}
   btnEnviar.disabled=false; btnEnviar.textContent="✨";
 }
+
+// ── MODAL MOVIMIENTOS ─────────────────────────────────────────
+// URL del Apps Script de STOCK (sistema_stock_completo.gs)
+// Después de deployarlo como Web App, pegá la URL acá:
+const APPS_SCRIPT_STOCK_URL = "https://script.google.com/macros/s/AKfycbx-s0iArPr53clMuz1LyzWdObmjRFzlrEimTVEBjcmdJ8qL-Jk_kQXSAML3OcODu0blMA/exec";
+
+let tipoSeleccionado = "";
+
+function abrirModal() {
+  // Poblar productos desde stockDataGlobal
+  const sel = document.getElementById("movProducto");
+  sel.innerHTML = '<option value="">— Seleccioná un producto —</option>';
+  const productos = stockDataGlobal.length > 0
+    ? stockDataGlobal.map(p => p.nombre).sort()
+    : [];
+  // Si aún no cargó el stock, leer de las filas de la tabla
+  if (productos.length === 0) {
+    document.querySelectorAll("#stockBody tr").forEach(tr => {
+      const nombre = tr.querySelector(".product-name")?.textContent?.trim();
+      if (nombre) productos.push(nombre);
+    });
+  }
+  productos.forEach(nombre => {
+    const opt = document.createElement("option");
+    opt.value = nombre; opt.textContent = nombre;
+    sel.appendChild(opt);
+  });
+
+  // Poblar responsables (hardcodeados por ahora — se pueden traer del Sheet Equipo)
+  const selResp = document.getElementById("movResponsable");
+  selResp.innerHTML = '<option value="">— Seleccioná —</option>';
+  ["Manuel", "María", "Carlos", "Laura", "Otro"].forEach(r => {
+    const opt = document.createElement("option");
+    opt.value = r; opt.textContent = r;
+    selResp.appendChild(opt);
+  });
+
+  // Reset estado
+  tipoSeleccionado = "";
+  document.querySelectorAll(".tipo-pill").forEach(p => p.classList.remove("selected"));
+  document.getElementById("movTipo").value = "";
+  document.getElementById("movCantidad").value = "";
+  document.getElementById("movObs").value = "";
+  document.getElementById("movProducto").value = "";
+  document.getElementById("movResponsable").value = "";
+  document.getElementById("modalForm").style.display = "";
+  document.getElementById("modalSuccess").classList.remove("show");
+  document.getElementById("btnSubmitMov").disabled = false;
+  document.getElementById("btnSubmitTxt").textContent = "✅ Guardar movimiento";
+
+  document.getElementById("modalOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function cerrarModal() {
+  document.getElementById("modalOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function cerrarModalSiAfuera(e) {
+  if (e.target === document.getElementById("modalOverlay")) cerrarModal();
+}
+
+function seleccionarTipo(tipo, btn) {
+  tipoSeleccionado = tipo;
+  document.getElementById("movTipo").value = tipo;
+  document.querySelectorAll(".tipo-pill").forEach(p => p.classList.remove("selected"));
+  btn.classList.add("selected");
+}
+
+async function enviarMovimiento() {
+  const tipo        = tipoSeleccionado;
+  const producto    = document.getElementById("movProducto").value.trim();
+  const cantidad    = document.getElementById("movCantidad").value.trim();
+  const responsable = document.getElementById("movResponsable").value.trim();
+  const obs         = document.getElementById("movObs").value.trim();
+
+  if (!tipo)        { alert("Seleccioná el tipo de movimiento."); return; }
+  if (!producto)    { alert("Seleccioná un producto."); return; }
+  if (!cantidad || isNaN(parseFloat(cantidad))) { alert("Ingresá una cantidad válida."); return; }
+  if (!responsable) { alert("Seleccioná el responsable."); return; }
+
+  const btn = document.getElementById("btnSubmitMov");
+  btn.disabled = true;
+  document.getElementById("btnSubmitTxt").textContent = "Guardando...";
+
+  try {
+    // Enviar al Apps Script
+    const formData = new FormData();
+    formData.append("accion", "movimiento");
+    formData.append("producto", producto);
+    formData.append("tipo", tipo);
+    formData.append("cantidad", cantidad);
+    formData.append("responsable", responsable);
+    formData.append("observaciones", obs);
+
+    const res = await fetch(APPS_SCRIPT_STOCK_URL, {
+      method: "POST",
+      body: formData
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      // Mostrar éxito
+      document.getElementById("modalForm").style.display = "none";
+      document.getElementById("successMsg").textContent =
+        tipo + " de " + cantidad + " unidad" + (Math.abs(cantidad) > 1 ? "es" : "") +
+        " de " + producto + " registrada.";
+      document.getElementById("modalSuccess").classList.add("show");
+
+      // Refrescar datos después de 2 segundos
+      setTimeout(() => { init(); }, 2000);
+    } else {
+      alert("Error: " + (data.msg || "No se pudo guardar."));
+      btn.disabled = false;
+      document.getElementById("btnSubmitTxt").textContent = "✅ Guardar movimiento";
+    }
+  } catch(err) {
+    alert("Error de conexión. Verificá tu internet.");
+    console.error(err);
+    btn.disabled = false;
+    document.getElementById("btnSubmitTxt").textContent = "✅ Guardar movimiento";
+  }
+}
+
+function nuevoMovimiento() {
+  abrirModal();
+}
+
+// Cerrar con Escape
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") cerrarModal();
+});
 
 init();
 </script>
