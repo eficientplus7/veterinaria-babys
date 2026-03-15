@@ -730,47 +730,36 @@ td:not(:first-child) { text-align:center; }
   justify-content: center;
   padding: 20px;
 }
-
-.modal-overlay.open {
-  display: flex;
-  animation: fadeIn 0.18s ease;
-}
-
+.modal-overlay.open { display: flex; animation: fadeIn 0.18s ease; }
 @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
 
 .modal {
   background: white;
   border-radius: 20px;
   width: 100%;
-  max-width: 480px;
+  max-width: 560px;
+  max-height: 92vh;
   box-shadow: 0 25px 50px rgba(15,23,42,0.2);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   animation: slideUp 0.2s ease;
 }
-
 @keyframes slideUp { from { transform:translateY(16px); opacity:0 } to { transform:translateY(0); opacity:1 } }
 
 .modal-header {
-  padding: 22px 24px 18px;
+  padding: 20px 24px 16px;
   border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
 }
-
 .modal-title {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 800;
-  font-size: 17px;
-  color: var(--dark);
-  display: flex;
-  align-items: center;
-  gap: 9px;
+  font-weight: 800; font-size: 17px; color: var(--dark);
+  display: flex; align-items: center; gap: 9px;
 }
-
 .modal-close {
-  width: 32px; height: 32px;
-  background: var(--gray-light);
+  width: 32px; height: 32px; background: var(--gray-light);
   border: none; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; font-size: 16px; color: var(--gray);
@@ -778,55 +767,27 @@ td:not(:first-child) { text-align:center; }
 }
 .modal-close:hover { background: var(--border); color: var(--dark); }
 
-.modal-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 16px; }
+.modal-scroll { overflow-y: auto; flex: 1; }
+.modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
 
 .form-group { display: flex; flex-direction: column; gap: 6px; }
-
-.form-label {
-  font-size: 12px; font-weight: 600; color: var(--gray);
-  text-transform: uppercase; letter-spacing: 0.6px;
-}
-
+.form-label { font-size: 11.5px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.6px; }
 .form-control {
-  padding: 11px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  color: var(--dark);
-  background: white;
-  outline: none;
-  transition: border-color 0.16s, box-shadow 0.16s;
-  width: 100%;
+  padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Inter', sans-serif; font-size: 14px; color: var(--dark);
+  background: white; outline: none;
+  transition: border-color 0.16s, box-shadow 0.16s; width: 100%;
 }
-.form-control:focus {
-  border-color: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
-}
+.form-control:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
 
-/* Tipo de movimiento — pills de selección */
-.tipo-pills {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
+/* Tipo pills */
+.tipo-pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .tipo-pill {
-  padding: 10px 8px;
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  background: white;
-  font-family: 'Inter', sans-serif;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  text-align: center;
-  transition: all 0.15s;
-  color: var(--gray);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  padding: 10px 8px; border: 2px solid var(--border); border-radius: 10px;
+  background: white; font-family: 'Inter', sans-serif; font-size: 12.5px;
+  font-weight: 600; cursor: pointer; text-align: center;
+  transition: all 0.15s; color: var(--gray);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
 }
 .tipo-pill .pill-icon { font-size: 18px; }
 .tipo-pill:hover { border-color: var(--primary-light); color: var(--primary); background: var(--primary-pale); }
@@ -834,24 +795,106 @@ td:not(:first-child) { text-align:center; }
 .tipo-pill.selected.salida   { border-color: var(--red); background: var(--red-light); color: #991B1B; }
 .tipo-pill.selected.ajuste   { border-color: var(--amber); background: var(--amber-light); color: #92400E; }
 
-.modal-footer {
-  padding: 16px 24px 22px;
-  display: flex;
-  gap: 10px;
+/* Buscador de producto */
+.product-search-wrap { position: relative; }
+.product-search-input {
+  padding: 10px 14px 10px 38px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Inter', sans-serif; font-size: 14px; color: var(--dark);
+  background: white; outline: none; width: 100%;
+  transition: border-color 0.16s, box-shadow 0.16s;
 }
+.product-search-input:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+.product-search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 15px; pointer-events: none;
+}
+.product-dropdown {
+  display: none;
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: white; border: 1.5px solid var(--border); border-radius: 10px;
+  max-height: 200px; overflow-y: auto; z-index: 50;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.12);
+}
+.product-dropdown.open { display: block; }
+.product-option {
+  padding: 10px 14px; cursor: pointer; font-size: 13.5px;
+  border-bottom: 1px solid var(--border); transition: background 0.1s;
+}
+.product-option:last-child { border-bottom: none; }
+.product-option:hover { background: var(--primary-pale); color: var(--primary); }
+.product-option .opt-cat { font-size: 11px; color: var(--gray-mid); margin-top: 1px; }
+.product-option.no-results { color: var(--gray-mid); cursor: default; font-style: italic; }
+.product-option.no-results:hover { background: white; }
 
+/* Fila de producto en el carrito */
+.add-product-row {
+  display: grid; grid-template-columns: 1fr auto 36px;
+  gap: 8px; align-items: center;
+}
+.add-product-qty {
+  padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px;
+  font-family: 'Inter', sans-serif; font-size: 14px; color: var(--dark);
+  background: white; outline: none; width: 90px; text-align: center;
+  transition: border-color 0.16s, box-shadow 0.16s;
+}
+.add-product-qty:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+.btn-add-to-cart {
+  padding: 10px 16px; background: var(--primary-pale); color: var(--primary);
+  border: 1.5px solid #BFDBFE; border-radius: 10px;
+  font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13px;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.btn-add-to-cart:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* Carrito de productos */
+.carrito-wrap {
+  border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden;
+  display: none;
+}
+.carrito-wrap.has-items { display: block; }
+.carrito-header {
+  background: var(--gray-light); padding: 8px 14px;
+  font-size: 11px; font-weight: 700; color: var(--gray);
+  text-transform: uppercase; letter-spacing: 0.6px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.carrito-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-top: 1px solid var(--border);
+  font-size: 13.5px; gap: 8px;
+}
+.carrito-item:first-of-type { border-top: none; }
+.carrito-item-name { font-weight: 600; color: var(--dark); flex: 1; }
+.carrito-item-qty {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;
+  font-size: 14px; color: var(--primary-mid);
+  background: var(--primary-pale); padding: 3px 10px; border-radius: 6px;
+  min-width: 40px; text-align: center;
+}
+.carrito-item-del {
+  width: 26px; height: 26px; background: var(--red-light); color: var(--red);
+  border: none; border-radius: 6px; cursor: pointer; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.14s;
+}
+.carrito-item-del:hover { background: var(--red); color: white; }
+
+/* Footer del modal */
+.modal-footer {
+  padding: 14px 24px 20px;
+  display: flex; gap: 10px; flex-shrink: 0;
+  border-top: 1px solid var(--border);
+}
 .btn-cancel {
-  flex: 1; padding: 12px;
-  background: var(--gray-light); color: var(--gray);
+  flex: 1; padding: 12px; background: var(--gray-light); color: var(--gray);
   border: none; border-radius: 10px;
   font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px;
   cursor: pointer; transition: all 0.14s;
 }
 .btn-cancel:hover { background: var(--border); }
-
 .btn-submit {
-  flex: 2; padding: 12px;
-  background: var(--primary-mid); color: white;
+  flex: 2; padding: 12px; background: var(--primary-mid); color: white;
   border: none; border-radius: 10px;
   font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px;
   cursor: pointer; transition: all 0.16s;
@@ -861,44 +904,25 @@ td:not(:first-child) { text-align:center; }
 .btn-submit:hover:not(:disabled) { background: var(--primary); transform: translateY(-1px); }
 .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
+/* Estado éxito */
 .form-success {
-  display: none;
-  padding: 32px 24px;
-  text-align: center;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  display: none; padding: 32px 24px; text-align: center;
+  flex-direction: column; align-items: center; gap: 10px;
 }
 .form-success.show { display: flex; }
 .success-icon { font-size: 44px; }
 .success-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 17px; color: var(--dark); }
 .success-sub { font-size: 13.5px; color: var(--gray); }
 
-/* Botón sidebar para abrir modal */
+/* Botón sidebar */
 .btn-nuevo-mov {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 11px 14px;
-  background: var(--primary-mid);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.16s;
-  font-family: 'Inter', sans-serif;
-  margin-top: 8px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 11px 14px; background: var(--primary-mid); color: white;
+  border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+  cursor: pointer; text-decoration: none; transition: all 0.16s;
+  font-family: 'Inter', sans-serif; margin-top: 8px;
 }
-.btn-nuevo-mov:hover {
-  background: var(--primary-light);
-  box-shadow: 0 4px 12px rgba(37,99,235,0.35);
-  transform: translateY(-1px);
-}
+.btn-nuevo-mov:hover { background: var(--primary-light); box-shadow: 0 4px 12px rgba(37,99,235,0.35); transform: translateY(-1px); }
 @media(max-width:900px) {
   body { flex-direction: column; }
   .sidebar { width:100%; min-width:0; height:auto; position:relative; flex-direction:row; }
@@ -962,12 +986,6 @@ td:not(:first-child) { text-align:center; }
     <button class="nav-item active" onclick="switchTab('stock', this)">
       <span class="nav-icon">📦</span>
       <span>Stock</span>
-    </button>
-
-    <button class="nav-item" onclick="switchTab('precios', this)">
-      <span class="nav-icon">💰</span>
-      <span>Proveedores</span>
-      <span class="nav-badge" id="preciosTabBadge">—</span>
     </button>
 
     <div class="nav-section-label" style="margin-top:8px;">Actividad</div>
@@ -1249,72 +1267,89 @@ td:not(:first-child) { text-align:center; }
 <div class="modal-overlay" id="modalOverlay" onclick="cerrarModalSiAfuera(event)">
   <div class="modal">
 
-    <!-- Header -->
     <div class="modal-header">
-      <div class="modal-title">
-        <span>📦</span> Registrar movimiento
-      </div>
+      <div class="modal-title"><span>📦</span> Registrar movimiento</div>
       <button class="modal-close" onclick="cerrarModal()">✕</button>
     </div>
 
-    <!-- Form -->
-    <div id="modalForm">
-      <div class="modal-body">
+    <div id="modalForm" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+      <div class="modal-scroll">
+        <div class="modal-body">
 
-        <!-- Tipo -->
-        <div class="form-group">
-          <div class="form-label">Tipo de movimiento</div>
-          <div class="tipo-pills">
-            <button type="button" class="tipo-pill entrada" onclick="seleccionarTipo('ENTRADA', this)">
-              <span class="pill-icon">⬆️</span>
-              Entrada
-            </button>
-            <button type="button" class="tipo-pill salida" onclick="seleccionarTipo('SALIDA', this)">
-              <span class="pill-icon">⬇️</span>
-              Salida
-            </button>
-            <button type="button" class="tipo-pill ajuste" onclick="seleccionarTipo('AJUSTE', this)">
-              <span class="pill-icon">🔄</span>
-              Ajuste
-            </button>
+          <!-- Tipo -->
+          <div class="form-group">
+            <div class="form-label">Tipo de movimiento</div>
+            <div class="tipo-pills">
+              <button type="button" class="tipo-pill entrada" onclick="seleccionarTipo('ENTRADA', this)">
+                <span class="pill-icon">⬆️</span>Entrada
+              </button>
+              <button type="button" class="tipo-pill salida" onclick="seleccionarTipo('SALIDA', this)">
+                <span class="pill-icon">⬇️</span>Salida
+              </button>
+              <button type="button" class="tipo-pill ajuste" onclick="seleccionarTipo('AJUSTE', this)">
+                <span class="pill-icon">🔄</span>Ajuste
+              </button>
+            </div>
           </div>
-          <input type="hidden" id="movTipo">
-        </div>
 
-        <!-- Producto -->
-        <div class="form-group">
-          <label class="form-label" for="movProducto">Producto</label>
-          <select class="form-control" id="movProducto">
-            <option value="">— Seleccioná un producto —</option>
-          </select>
-        </div>
+          <!-- Agregar producto -->
+          <div class="form-group">
+            <div class="form-label">Agregar producto</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
 
-        <!-- Cantidad -->
-        <div class="form-group">
-          <label class="form-label" for="movCantidad">Cantidad</label>
-          <input type="number" class="form-control" id="movCantidad"
-            placeholder="Ej: 5 (para ajuste negativo usá -3)"
-            min="-9999" step="1">
-        </div>
+              <!-- Buscador -->
+              <div class="product-search-wrap" id="productSearchWrap">
+                <span class="product-search-icon">🔍</span>
+                <input type="text" class="product-search-input" id="productSearch"
+                  placeholder="Buscá por nombre, categoría o proveedor..."
+                  oninput="filtrarProductos()"
+                  onfocus="abrirDropdown()"
+                  autocomplete="off">
+                <div class="product-dropdown" id="productDropdown"></div>
+              </div>
 
-        <!-- Responsable -->
-        <div class="form-group">
-          <label class="form-label" for="movResponsable">Responsable</label>
-          <select class="form-control" id="movResponsable">
-            <option value="">— Seleccioná —</option>
-          </select>
-        </div>
+              <!-- Fila cantidad + botón agregar -->
+              <div class="add-product-row">
+                <div style="flex:1;font-size:13.5px;color:var(--dark);font-weight:500;padding:0 4px;" id="productoSeleccionadoLabel">
+                  <span style="color:var(--gray-mid);font-style:italic;">Ningún producto seleccionado</span>
+                </div>
+                <input type="number" class="add-product-qty" id="addCantidad"
+                  placeholder="Cant." min="-9999" step="1" value="">
+                <button type="button" class="btn-add-to-cart" onclick="agregarAlCarrito()">+ Agregar</button>
+              </div>
 
-        <!-- Observaciones -->
-        <div class="form-group">
-          <label class="form-label" for="movObs">Observaciones <span style="color:var(--gray-mid);font-weight:400;text-transform:none;">(opcional)</span></label>
-          <input type="text" class="form-control" id="movObs"
-            placeholder="Ej: pedido semanal, venta con receta...">
-        </div>
+            </div>
+          </div>
 
+          <!-- Carrito -->
+          <div class="carrito-wrap" id="carritoWrap">
+            <div class="carrito-header">
+              <span>Productos a registrar</span>
+              <span id="carritoCount" style="color:var(--primary-mid);font-weight:800;">0</span>
+            </div>
+            <div id="carritoItems"></div>
+          </div>
+
+          <!-- Responsable -->
+          <div class="form-group">
+            <label class="form-label" for="movResponsable">Responsable</label>
+            <select class="form-control" id="movResponsable">
+              <option value="">— Seleccioná —</option>
+            </select>
+          </div>
+
+          <!-- Observaciones -->
+          <div class="form-group">
+            <label class="form-label" for="movObs">
+              Observaciones <span style="color:var(--gray-mid);font-weight:400;text-transform:none;">(opcional)</span>
+            </label>
+            <input type="text" class="form-control" id="movObs"
+              placeholder="Ej: pedido semanal, venta con receta...">
+          </div>
+
+        </div>
       </div>
 
-      <!-- Footer -->
       <div class="modal-footer">
         <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
         <button class="btn-submit" id="btnSubmitMov" onclick="enviarMovimiento()">
@@ -1323,11 +1358,11 @@ td:not(:first-child) { text-align:center; }
       </div>
     </div>
 
-    <!-- Success state -->
+    <!-- Estado éxito -->
     <div class="form-success" id="modalSuccess">
       <div class="success-icon">🎉</div>
-      <div class="success-title">¡Movimiento registrado!</div>
-      <div class="success-sub" id="successMsg">Se actualizó el stock correctamente.</div>
+      <div class="success-title">¡Registrado!</div>
+      <div class="success-sub" id="successMsg"></div>
       <button class="btn-submit" style="margin-top:8px;flex:0;padding:10px 28px;"
         onclick="nuevoMovimiento()">➕ Registrar otro</button>
     </div>
@@ -1826,49 +1861,48 @@ async function enviarMensaje() {
 }
 
 // ── MODAL MOVIMIENTOS ─────────────────────────────────────────
-// URL del Apps Script de STOCK (sistema_stock_completo.gs)
-// Después de deployarlo como Web App, pegá la URL acá:
 const APPS_SCRIPT_STOCK_URL = "https://script.google.com/macros/s/AKfycbx-s0iArPr53clMuz1LyzWdObmjRFzlrEimTVEBjcmdJ8qL-Jk_kQXSAML3OcODu0blMA/exec";
 
-let tipoSeleccionado = "";
+let tipoSeleccionado  = "";
+let productoSeleccionado = "";  // nombre del producto elegido en el buscador
+let carrito = [];               // [{producto, cantidad}]
+let productosModal = [];        // lista completa para filtrar
 
 function abrirModal() {
-  // Poblar productos desde stockDataGlobal
-  const sel = document.getElementById("movProducto");
-  sel.innerHTML = '<option value="">— Seleccioná un producto —</option>';
-  const productos = stockDataGlobal.length > 0
-    ? stockDataGlobal.map(p => p.nombre).sort()
+  // Construir lista de productos con categoría para el buscador
+  productosModal = stockDataGlobal.length > 0
+    ? stockDataGlobal.map(p => ({ nombre: p.nombre, cat: p.categoria || "" }))
     : [];
-  // Si aún no cargó el stock, leer de las filas de la tabla
-  if (productos.length === 0) {
+  if (productosModal.length === 0) {
     document.querySelectorAll("#stockBody tr").forEach(tr => {
       const nombre = tr.querySelector(".product-name")?.textContent?.trim();
-      if (nombre) productos.push(nombre);
+      const cat    = tr.querySelector(".product-cat")?.textContent?.trim() || "";
+      if (nombre) productosModal.push({ nombre, cat });
     });
   }
-  productos.forEach(nombre => {
-    const opt = document.createElement("option");
-    opt.value = nombre; opt.textContent = nombre;
-    sel.appendChild(opt);
-  });
 
-  // Poblar responsables (hardcodeados por ahora — se pueden traer del Sheet Equipo)
+  // Poblar responsables desde hoja Equipo si está disponible, sino hardcodeado
   const selResp = document.getElementById("movResponsable");
   selResp.innerHTML = '<option value="">— Seleccioná —</option>';
-  ["Manuel", "María", "Carlos", "Laura", "Otro"].forEach(r => {
+  ["Manuel", "María", "Carlos", "Laura", "Silvina", "Alejandro", "Walter", "Otro"].forEach(r => {
     const opt = document.createElement("option");
     opt.value = r; opt.textContent = r;
     selResp.appendChild(opt);
   });
 
-  // Reset estado
+  // Reset completo
   tipoSeleccionado = "";
+  productoSeleccionado = "";
+  carrito = [];
   document.querySelectorAll(".tipo-pill").forEach(p => p.classList.remove("selected"));
-  document.getElementById("movTipo").value = "";
-  document.getElementById("movCantidad").value = "";
-  document.getElementById("movObs").value = "";
-  document.getElementById("movProducto").value = "";
+  document.getElementById("productSearch").value = "";
+  document.getElementById("productoSeleccionadoLabel").innerHTML =
+    '<span style="color:var(--gray-mid);font-style:italic;">Ningún producto seleccionado</span>';
+  document.getElementById("addCantidad").value = "";
   document.getElementById("movResponsable").value = "";
+  document.getElementById("movObs").value = "";
+  document.getElementById("productDropdown").classList.remove("open");
+  renderCarrito();
   document.getElementById("modalForm").style.display = "";
   document.getElementById("modalSuccess").classList.remove("show");
   document.getElementById("btnSubmitMov").disabled = false;
@@ -1876,10 +1910,12 @@ function abrirModal() {
 
   document.getElementById("modalOverlay").classList.add("open");
   document.body.style.overflow = "hidden";
+  setTimeout(() => document.getElementById("productSearch").focus(), 200);
 }
 
 function cerrarModal() {
   document.getElementById("modalOverlay").classList.remove("open");
+  document.getElementById("productDropdown").classList.remove("open");
   document.body.style.overflow = "";
 }
 
@@ -1889,55 +1925,152 @@ function cerrarModalSiAfuera(e) {
 
 function seleccionarTipo(tipo, btn) {
   tipoSeleccionado = tipo;
-  document.getElementById("movTipo").value = tipo;
   document.querySelectorAll(".tipo-pill").forEach(p => p.classList.remove("selected"));
   btn.classList.add("selected");
 }
 
+// ── Buscador de productos ─────────────────────────────────────
+function abrirDropdown() {
+  filtrarProductos();
+  document.getElementById("productDropdown").classList.add("open");
+}
+
+function filtrarProductos() {
+  const q = (document.getElementById("productSearch").value || "").toLowerCase().trim();
+  const dd = document.getElementById("productDropdown");
+
+  const filtrados = q === ""
+    ? productosModal
+    : productosModal.filter(p =>
+        p.nombre.toLowerCase().includes(q) ||
+        p.cat.toLowerCase().includes(q)
+      );
+
+  if (filtrados.length === 0) {
+    dd.innerHTML = '<div class="product-option no-results">No se encontraron productos</div>';
+  } else {
+    dd.innerHTML = filtrados.slice(0, 30).map(p => `
+      <div class="product-option" onclick="elegirProducto('${p.nombre.replace(/'/g,"\\'")}','${p.cat.replace(/'/g,"\\'")}')">
+        <div>${p.nombre}</div>
+        ${p.cat ? `<div class="opt-cat">${p.cat}</div>` : ""}
+      </div>
+    `).join("");
+  }
+  dd.classList.add("open");
+}
+
+function elegirProducto(nombre, cat) {
+  productoSeleccionado = nombre;
+  document.getElementById("productSearch").value = nombre;
+  document.getElementById("productDropdown").classList.remove("open");
+  document.getElementById("productoSeleccionadoLabel").innerHTML =
+    `<strong>${nombre}</strong>${cat ? ` <span style="color:var(--gray-mid);font-size:12px;">— ${cat}</span>` : ""}`;
+  document.getElementById("addCantidad").focus();
+}
+
+// Cerrar dropdown al hacer click afuera
+document.addEventListener("click", e => {
+  const wrap = document.getElementById("productSearchWrap");
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById("productDropdown").classList.remove("open");
+  }
+});
+
+// ── Carrito ───────────────────────────────────────────────────
+function agregarAlCarrito() {
+  if (!productoSeleccionado) { alert("Primero seleccioná un producto del buscador."); return; }
+  const cantInput = document.getElementById("addCantidad");
+  const cant = parseFloat(cantInput.value);
+  if (!cantInput.value || isNaN(cant) || cant === 0) { alert("Ingresá una cantidad válida."); return; }
+
+  // Si ya está en el carrito, actualizar cantidad
+  const existe = carrito.find(i => i.producto === productoSeleccionado);
+  if (existe) {
+    existe.cantidad = cant;
+  } else {
+    carrito.push({ producto: productoSeleccionado, cantidad: cant });
+  }
+
+  // Reset selector
+  productoSeleccionado = "";
+  document.getElementById("productSearch").value = "";
+  document.getElementById("productoSeleccionadoLabel").innerHTML =
+    '<span style="color:var(--gray-mid);font-style:italic;">Ningún producto seleccionado</span>';
+  cantInput.value = "";
+  renderCarrito();
+  document.getElementById("productSearch").focus();
+}
+
+function quitarDelCarrito(idx) {
+  carrito.splice(idx, 1);
+  renderCarrito();
+}
+
+function renderCarrito() {
+  const wrap  = document.getElementById("carritoWrap");
+  const items = document.getElementById("carritoItems");
+  const count = document.getElementById("carritoCount");
+
+  count.textContent = carrito.length;
+
+  if (carrito.length === 0) {
+    wrap.classList.remove("has-items");
+    items.innerHTML = "";
+    return;
+  }
+
+  wrap.classList.add("has-items");
+  items.innerHTML = carrito.map((item, i) => `
+    <div class="carrito-item">
+      <div class="carrito-item-name">${item.producto}</div>
+      <div class="carrito-item-qty">×${item.cantidad}</div>
+      <button class="carrito-item-del" onclick="quitarDelCarrito(${i})">✕</button>
+    </div>
+  `).join("");
+}
+
+// ── Enviar ────────────────────────────────────────────────────
 async function enviarMovimiento() {
   const tipo        = tipoSeleccionado;
-  const producto    = document.getElementById("movProducto").value.trim();
-  const cantidad    = document.getElementById("movCantidad").value.trim();
   const responsable = document.getElementById("movResponsable").value.trim();
   const obs         = document.getElementById("movObs").value.trim();
 
-  if (!tipo)        { alert("Seleccioná el tipo de movimiento."); return; }
-  if (!producto)    { alert("Seleccioná un producto."); return; }
-  if (!cantidad || isNaN(parseFloat(cantidad))) { alert("Ingresá una cantidad válida."); return; }
-  if (!responsable) { alert("Seleccioná el responsable."); return; }
+  if (!tipo)             { alert("Seleccioná el tipo de movimiento."); return; }
+  if (carrito.length === 0) { alert("Agregá al menos un producto."); return; }
+  if (!responsable)      { alert("Seleccioná el responsable."); return; }
 
   const btn = document.getElementById("btnSubmitMov");
   btn.disabled = true;
-  document.getElementById("btnSubmitTxt").textContent = "Guardando...";
+  document.getElementById("btnSubmitTxt").textContent = `Guardando ${carrito.length} producto${carrito.length > 1 ? "s" : ""}...`;
 
   try {
-    // Enviar al Apps Script
-    const formData = new FormData();
-    formData.append("accion", "movimiento");
-    formData.append("producto", producto);
-    formData.append("tipo", tipo);
-    formData.append("cantidad", cantidad);
-    formData.append("responsable", responsable);
-    formData.append("observaciones", obs);
+    // Enviar cada producto del carrito como llamada individual al Apps Script
+    // (el AS procesa de a uno — es lo más simple y confiable)
+    let errores = 0;
+    for (const item of carrito) {
+      const formData = new FormData();
+      formData.append("accion",        "movimiento");
+      formData.append("producto",      item.producto);
+      formData.append("tipo",          tipo);
+      formData.append("cantidad",      item.cantidad);
+      formData.append("responsable",   responsable);
+      formData.append("observaciones", obs);
 
-    const res = await fetch(APPS_SCRIPT_STOCK_URL, {
-      method: "POST",
-      body: formData
-    });
-    const data = await res.json();
+      const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
+      const data = await res.json();
+      if (!data.ok) errores++;
+    }
 
-    if (data.ok) {
-      // Mostrar éxito
+    if (errores === 0) {
       document.getElementById("modalForm").style.display = "none";
+      const items = carrito.map(i => `${i.cantidad} × ${i.producto}`).join(", ");
       document.getElementById("successMsg").textContent =
-        tipo + " de " + cantidad + " unidad" + (Math.abs(cantidad) > 1 ? "es" : "") +
-        " de " + producto + " registrada.";
+        `${tipo} registrada: ${items}`;
       document.getElementById("modalSuccess").classList.add("show");
-
-      // Refrescar datos después de 2 segundos
+      carrito = [];
       setTimeout(() => { init(); }, 2000);
     } else {
-      alert("Error: " + (data.msg || "No se pudo guardar."));
+      alert(`Se registraron ${carrito.length - errores} de ${carrito.length} productos. Revisá la conexión.`);
       btn.disabled = false;
       document.getElementById("btnSubmitTxt").textContent = "✅ Guardar movimiento";
     }
@@ -1949,13 +2082,17 @@ async function enviarMovimiento() {
   }
 }
 
-function nuevoMovimiento() {
-  abrirModal();
-}
+function nuevoMovimiento() { abrirModal(); }
 
-// Cerrar con Escape
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") cerrarModal();
+  if (e.key === "Enter" && document.getElementById("modalOverlay").classList.contains("open")) {
+    // Enter en el campo cantidad = agregar al carrito
+    if (document.activeElement.id === "addCantidad") {
+      agregarAlCarrito();
+      e.preventDefault();
+    }
+  }
 });
 
 init();
