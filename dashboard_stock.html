@@ -193,7 +193,7 @@ body{
 .content-wrapper{flex:1;display:flex;align-items:stretch;overflow:hidden;min-height:0;height:0;}
 .main-content{flex:1;min-width:0;overflow-y:auto;padding:24px 28px;}
 .right-panel{
-  width:340px;min-width:340px;background:#13111c;
+  width:400px;min-width:400px;background:#13111c;
   border-left:1px solid #2d2a40;
   display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;
   height:100%;
@@ -834,7 +834,7 @@ input[type="number"] { -moz-appearance: textfield; }
                     <th>Precio Compra</th>
                     <th>Precio Público</th>
                     <th>Margen</th>
-                    <th>Stock</th>
+                    <th style="min-width:80px;">Stock</th>
                     <th>Vigencia</th>
                   </tr>
                 </thead>
@@ -1311,6 +1311,10 @@ function renderMarkdown(text) {
     .replace(/^## (.+)$/gm, '<div style="font-weight:700;font-size:15px;margin:10px 0 4px;color:#1E293B;">$1</div>')
     .replace(/^• (.+)$/gm, '<div style="display:flex;gap:8px;margin:5px 0;align-items:flex-start;"><span style="color:#3B82F6;font-weight:900;margin-top:1px;">•</span><span>$1</span></div>')
     .replace(/^- (.+)$/gm,  '<div style="display:flex;gap:8px;margin:5px 0;align-items:flex-start;"><span style="color:#3B82F6;font-weight:900;margin-top:1px;">•</span><span>$1</span></div>')
+    .replace(/\[([^\]]+)\]\((#[^)]+)\)/g, (match, texto, href) => {
+      const accion = href.replace('#','');
+      return `<button onclick="ejecutarAccionChat('${accion}','${texto.replace(/'/g,"\\'")}',this)" style="background:rgba(99,102,241,0.1);color:#a78bfa;border:1px solid rgba(99,102,241,0.3);padding:4px 11px;border-radius:6px;font-size:12.5px;font-weight:600;cursor:pointer;margin:2px 3px 2px 0;display:inline-block;">${texto}</button>`;
+    })
     .replace(/\n\n/g, '<br>').replace(/\n/g, '<br>');
 }
 
@@ -1493,8 +1497,8 @@ function filtrarPrecios() {
       ?`<span class="precio-num" style="color:var(--text);">$${p.venta.toLocaleString("es-AR")}</span>`
       :`<button onclick="sugerirPrecio(this,'${p.desc.replace(/'/g,"\\'")}',${p.costo},'${p.proveedor}')" style="background:transparent;color:#fdba74;border:1px solid #78350f;border:1px solid rgba(245,158,11,0.3);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">💡 Sugerir</button>`;
     const stockBadge=p.stock==="Agotado"
-      ?`<span style="background:transparent;color:#fca5a5;border:1px solid #7f1d1d;padding:3px 8px;border-radius:5px;font-size:11.5px;font-weight:600;border:1px solid rgba(239,68,68,0.3);">❌ Agotado</span>`
-      :`<span style="background:transparent;color:#86efac;border:1px solid #064e3b;padding:3px 8px;border-radius:5px;font-size:11.5px;font-weight:600;border:1px solid rgba(16,185,129,0.3);">✅ Disp.</span>`;
+      ?`<span style="background:transparent;color:#fca5a5;border:1px solid #7f1d1d;padding:3px 8px;border-radius:5px;font-size:11.5px;font-weight:600;white-space:nowrap;">❌ Agotado</span>`
+      :`<span style="background:transparent;color:#86efac;border:1px solid #064e3b;padding:3px 8px;border-radius:5px;font-size:11.5px;font-weight:600;white-space:nowrap;">✅ Disp.</span>`;
     tr.innerHTML=`
       <td><div class="product-name">${p.desc}</div>${p.codigo?`<div class="product-cat">Cód: ${p.codigo}</div>`:""}</td>
       <td style="text-align:left;"><span style="font-size:12.5px;font-weight:500;color:#a1a1aa;">${p.proveedor}</span></td>
@@ -1790,6 +1794,56 @@ document.addEventListener("keydown", e => {
     }
   }
 });
+
+
+function ejecutarAccionChat(accion, etiqueta, btn) {
+  // Determinar qué producto/proveedor está mencionado en el mensaje padre
+  const msgEl = btn.closest('div[style*="background:#1c1a29"]') || btn.closest('div');
+  const textoMensaje = msgEl ? msgEl.textContent : '';
+
+  // Buscar proveedor relevante en preciosDataGlobal
+  let proveedorInfo = null;
+  if (preciosDataGlobal.length > 0) {
+    // Intentar matchear con algún proveedor mencionado en el texto
+    const proveedores = [...new Set(preciosDataGlobal.map(p => p.proveedor))];
+    for (const prov of proveedores) {
+      if (textoMensaje.toLowerCase().includes(prov.toLowerCase().split('/')[0].toLowerCase())) {
+        proveedorInfo = prov;
+        break;
+      }
+    }
+    if (!proveedorInfo) proveedorInfo = proveedores[0]; // fallback al primero
+  }
+
+  // Buscar datos en stockDataGlobal y preciosDataGlobal
+  let respuesta = '';
+
+  if (accion === 'contactar-proveedor' || etiqueta.toLowerCase().includes('contactar')) {
+    const hoja = 'https://docs.google.com/spreadsheets/d/1DybrN_TADZV5qkj15IN2Br_NrlW3HA_M7JUyDer2KNc/edit#gid=0';
+    const productos = proveedorInfo
+      ? preciosDataGlobal.filter(p => p.proveedor === proveedorInfo).slice(0,3).map(p => `• ${p.desc}`)
+      : [];
+    respuesta = proveedorInfo
+      ? `📞 **Proveedor:** ${proveedorInfo}\n\nProductos con stock bajo de este proveedor:\n${productos.join('\n')}\n\nContactá a tu proveedor para reponer. Los datos de contacto están en la [hoja de Proveedores](${hoja}).`
+      : `Para ver contactos de proveedores, consultá la hoja de Proveedores en Google Sheets.`;
+  } else if (accion === 'ver-detalle-stock' || etiqueta.toLowerCase().includes('detalle')) {
+    const sinStock = stockDataGlobal.filter(p => p.stock === 0);
+    const bajo = stockDataGlobal.filter(p => p.stock > 0 && p.stock <= p.minimo);
+    const lineas = [
+      sinStock.length > 0 ? `**Sin stock (${sinStock.length}):** ${sinStock.map(p=>p.nombre).join(', ')}` : null,
+      bajo.length > 0 ? `**Stock bajo (${bajo.length}):** ${bajo.map(p=>`${p.nombre} (${p.stock}/${p.minimo})`).join(', ')}` : null,
+    ].filter(Boolean);
+    respuesta = lineas.length > 0 ? lineas.join('\n\n') : '✅ Todo el stock está en orden.';
+  } else {
+    // Acción genérica — enviar como pregunta al chat
+    const input = document.getElementById('chatInput');
+    input.value = etiqueta;
+    enviarMensaje();
+    return;
+  }
+
+  agregarMensaje('ai', respuesta);
+}
 
 init();
 </script>
