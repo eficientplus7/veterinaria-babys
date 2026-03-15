@@ -250,7 +250,7 @@ body {
 
 /* Top bar (thin) */
 .topbar {
-  height: 68px;
+  height: 72px;
   background: var(--card);
   border-bottom: 1px solid var(--border);
   display: flex;
@@ -265,15 +265,15 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1px;
+  gap: 2px;
 }
 
 .topbar-title {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 700;
-  font-size: 26px;
-  color: var(--dark);
-  letter-spacing: -0.5px;
+  font-weight: 800;
+  font-size: 28px;
+  color: #1E293B;
+  letter-spacing: -0.6px;
   line-height: 1.1;
 }
 
@@ -281,7 +281,7 @@ body {
   font-size: 14px;
   color: var(--gray-mid);
   font-weight: 400;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .topbar-right {
@@ -301,8 +301,9 @@ body {
 .content-wrapper {
   flex: 1;
   display: flex;
+  align-items: stretch;
   overflow: hidden;
-  min-height: 0; /* crítico para que flex no desborde */
+  min-height: 0;
 }
 
 /* Main content (scrollable) */
@@ -497,13 +498,19 @@ td:not(:first-child) { text-align:center; }
 .stock-num    { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:20px; letter-spacing:-0.5px; }
 
 .status-pill {
-  display:inline-flex; align-items:center; gap:4px;
-  padding:4px 10px; border-radius:6px;
-  font-size:12px; font-weight:600; font-family:'Inter',sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.1px;
 }
-.status-pill.ok     { background:var(--ok-light);    color:#065F46; }
-.status-pill.warn   { background:var(--amber-light);  color:#92400E; }
-.status-pill.danger { background:var(--red-light);    color:#991B1B; }
+.status-pill.ok     { background: #DCFCE7; color: #166534; }
+.status-pill.warn   { background: #FEF9C3; color: #854D0E; }
+.status-pill.danger { background: #FEE2E2; color: #991B1B; }
 
 .progress-wrap { display:flex; align-items:center; gap:8px; justify-content:center; }
 .progress-bar  { width:70px; height:5px; background:var(--border); border-radius:4px; overflow:hidden; }
@@ -572,26 +579,35 @@ td:not(:first-child) { text-align:center; }
    RIGHT PANEL — AI CHAT
 ══════════════════════════════════════════ */
 .rp-header {
-  background: var(--navy);
-  padding: 18px 24px;
-  display: flex; align-items: center; justify-content: space-between;
+  background: #F8FAFC;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-shrink: 0;
 }
 .rp-header-left { display:flex; align-items:center; gap:12px; }
 .rp-avatar {
-  width:38px; height:38px;
-  background:rgba(59,130,246,0.2);
-  border:1px solid rgba(59,130,246,0.3);
-  border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:17px;
+  width: 36px; height: 36px;
+  background: var(--primary-pale);
+  border: 1px solid #BFDBFE;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
 }
-.rp-name { font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14.5px; color:white; }
-.rp-sub  { font-size:12px; color:rgba(255,255,255,0.4); }
+.rp-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700; font-size: 14px;
+  color: var(--dark);
+}
+.rp-sub { font-size: 12px; color: var(--gray-mid); display:flex; align-items:center; gap:5px; }
 .rp-online {
-  width:8px; height:8px; background:#34D399; border-radius:50%;
-  box-shadow:0 0 0 3px rgba(52,211,153,0.2);
-  animation:pulse 2s infinite;
+  width: 7px; height: 7px;
+  background: #10B981; border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(16,185,129,0.2);
+  display: inline-block;
+  animation: pulse 2s infinite;
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
@@ -1001,10 +1017,9 @@ td:not(:first-child) { text-align:center; }
           <div class="rp-avatar">🤖</div>
           <div>
             <div class="rp-name">Asistente IA</div>
-            <div class="rp-sub">Claude · Datos en tiempo real</div>
+            <div class="rp-sub"><span class="rp-online"></span>Datos en tiempo real</div>
           </div>
         </div>
-        <div class="rp-online"></div>
       </div>
 
       <div id="apiKeySection" class="rp-api-section">
@@ -1288,12 +1303,13 @@ function preguntaRapida(btn) {
 
 function renderMarkdown(text) {
   return text
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
-    .replace(/^### (.+)$/gm,'<div style="font-weight:700;font-size:13.5px;margin:10px 0 3px;color:#1E293B;">$1</div>')
-    .replace(/^## (.+)$/gm,'<div style="font-weight:800;font-size:15px;margin:12px 0 5px;color:#1E40AF;">$1</div>')
-    .replace(/^- (.+)$/gm,'<div style="display:flex;gap:7px;margin:3px 0;"><span style="color:#3B82F6;font-weight:700;">•</span><span>$1</span></div>')
-    .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#1E293B;">$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^### (.+)$/gm, '<div style="font-weight:700;font-size:13px;margin:10px 0 3px;color:#64748B;text-transform:uppercase;letter-spacing:0.5px;">$1</div>')
+    .replace(/^## (.+)$/gm, '<div style="font-weight:700;font-size:15px;margin:10px 0 4px;color:#1E293B;">$1</div>')
+    .replace(/^• (.+)$/gm, '<div style="display:flex;gap:8px;margin:5px 0;align-items:flex-start;"><span style="color:#3B82F6;font-weight:900;margin-top:1px;">•</span><span>$1</span></div>')
+    .replace(/^- (.+)$/gm,  '<div style="display:flex;gap:8px;margin:5px 0;align-items:flex-start;"><span style="color:#3B82F6;font-weight:900;margin-top:1px;">•</span><span>$1</span></div>')
+    .replace(/\n\n/g, '<br>').replace(/\n/g, '<br>');
 }
 
 function agregarMensaje(tipo, texto) {
@@ -1370,45 +1386,50 @@ function construirContexto() {
   const totalVentas7=Object.values(ventas7).reduce((s,v)=>s+v,0);
   const totalVentas14=Object.values(ventas14).reduce((s,v)=>s+v,0);
 
-  return `Sos un asistente de gestión de stock y negocios llamado "Asistente Babys".
-Fecha: ${hoyStr}. Total productos: ${stockDataGlobal.length}. Movimientos: ${movDataGlobal.length}.
+  return `Sos el asistente de stock de Veterinaria Babys. Respondés como un encargado de depósito con experiencia: directo, amigable y al punto. Nunca usés formato de informe corporativo.
 
-## REGLAS:
-1. NUNCA inventes datos. Si no tenés el dato, decilo.
-2. Basate ÚNICAMENTE en los datos del contexto.
-3. Si los datos son insuficientes, avisalo.
+REGLAS DE RESPUESTA (OBLIGATORIAS):
+- Máximo 3 viñetas con lo que necesita atención HOY. Si algo está bien, no lo menciones.
+- Una sola tarea en negrita al final: "**Tarea de hoy:** [acción concreta]"
+- Tono: como si le hablaras a un colega, nada de "resumen ejecutivo" ni "insights".
+- Si no hay nada urgente, decilo en 1 oración y sugerí qué mirar.
+- Al final, 2 botones de acción cortos (sin párrafos extra).
 
-## FORMATO DE RESPUESTA:
-**📋 Resumen ejecutivo** (1-2 líneas)
-**💡 Insights** (3-5 puntos con datos reales)
-**⚡ Recomendación accionable** (qué hacer HOY)
-**❓ Preguntas sugeridas** (2-3 preguntas)
+EJEMPLOS DE RESPUESTA CORRECTA:
+"Hay 2 cosas urgentes:
+• Antipulgas Perro: sin stock, estás perdiendo ventas
+• Alimento Cachorro 3kg: te quedan 3 unidades, se acaba esta semana
+**Tarea de hoy:** Llamá al proveedor y pedí urgente esos 2 productos."
 
-## DATOS:
+EJEMPLO INCORRECTO (nunca hagas esto):
+"📋 Resumen ejecutivo: El inventario presenta... 💡 Insights: 1) Los datos muestran... ⚡ Recomendación accionable..."
+
+Fecha: ${hoyStr}. Productos: ${stockDataGlobal.length}. Movimientos: ${movDataGlobal.length}.
+
+DATOS DEL NEGOCIO:
 - OK: ${ok.length} | Reponer: ${reponer.length} | Sin stock: ${sinStock.length}
 - Valor inventario: $${Math.round(valorTotal).toLocaleString("es-AR")}
-- Ventas 7d: ${totalVentas7} uds | 14d: ${totalVentas14} uds
-- Tendencia: ${totalVentas7>totalVentas14?"📈 +"+Math.round((totalVentas7/Math.max(totalVentas14,1)-1)*100)+"%":"📉 "+Math.round((1-totalVentas7/Math.max(totalVentas14,1))*100)+"% menos"}
-- Sin movimiento 14d: ${parados.length}
+- Ventas 7d: ${totalVentas7} uds | 7d anteriores: ${totalVentas14} uds
+- Tendencia: ${totalVentas7>totalVentas14?"📈 subiendo":"📉 bajando"}
+- Sin movimiento 14d: ${parados.length} productos
 
-### STOCK
-${stockDataGlobal.map(p=>{const v7=ventas7[p.nombre]||0,v14=ventas14[p.nombre]||0,pred=predicciones.find(x=>x.nombre===p.nombre),trend=v7>v14?"↑":v7<v14?"↓":"=";return `- ${p.nombre} | stock:${p.stock} | mín:${p.minimo} | precio:$${p.precio} | estado:${p.estado} | v7:${v7} | v14:${v14} | ${trend}${pred?" | agota:~"+pred.dias+"d":""}`;}).join("\n")}
+STOCK DETALLADO:
+${stockDataGlobal.map(p=>{const v7=ventas7[p.nombre]||0,v14=ventas14[p.nombre]||0,pred=predicciones.find(x=>x.nombre===p.nombre);return `- ${p.nombre}: stock ${p.stock} (mín ${p.minimo}) | estado: ${p.estado} | vendidos 7d: ${v7}${pred?" | se agota en ~"+pred.dias+"d":""}`;}).join("\n")}
 
-### VENTAS TOP (7d)
-${Object.entries(ventas7).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([p,v])=>`- ${p}: ${v} uds`).join("\n")||"Sin ventas"}
+VENTAS TOP SEMANA:
+${Object.entries(ventas7).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([p,v])=>`- ${p}: ${v} uds`).join("\n")||"Sin ventas"}
 
-### ALERTAS
-${sinStock.length>0?"🚨 SIN STOCK: "+sinStock.map(p=>p.nombre).join(", "):""}
-${reponer.length>0?"⚠️ REPONER: "+reponer.map(p=>p.nombre).join(", "):""}
+ALERTAS:
+${sinStock.length>0?"SIN STOCK: "+sinStock.map(p=>p.nombre).join(", "):""}
+${reponer.length>0?"REPONER: "+reponer.map(p=>p.nombre+" ("+p.stock+"/"+p.minimo+")").join(", "):""}
 
 ${(()=>{
-  if(!preciosDataGlobal||preciosDataGlobal.length===0) return "### PRECIOS\nSin datos.";
+  if(!preciosDataGlobal||preciosDataGlobal.length===0) return "Sin datos de precios.";
   const porProv={};
   preciosDataGlobal.forEach(p=>{if(!porProv[p.proveedor])porProv[p.proveedor]={total:0,margenes:[]};porProv[p.proveedor].total++;if(p.venta>0)porProv[p.proveedor].margenes.push(p.margen);});
-  const resumen=Object.entries(porProv).map(([prov,d])=>{const mp=d.margenes.length>0?Math.round(d.margenes.reduce((s,v)=>s+(v||0),0)/d.margenes.length):null;return `- ${prov}: ${d.total} productos | margen prom: ${mp!==null?mp+"%":"s/d"}`;}).join("\n");
-  const conMargen=preciosDataGlobal.filter(p=>p.margen!==null);
-  const mg=conMargen.length>0?Math.round(conMargen.reduce((s,p)=>s+(p.margen||0),0)/conMargen.length):0;
-  return `### PRECIOS PROVEEDORES\n- Total: ${preciosDataGlobal.length} productos | ${Object.keys(porProv).length} proveedores | margen global: ${mg}%\n${resumen}`;
+  const mg=preciosDataGlobal.filter(p=>p.margen!==null);
+  const margenG=mg.length>0?Math.round(mg.reduce((s,p)=>s+(p.margen||0),0)/mg.length):0;
+  return `PRECIOS: ${preciosDataGlobal.length} productos | ${Object.keys(porProv).length} proveedores | margen promedio: ${margenG}%`;
 })()}`;
 }
 
