@@ -44,17 +44,17 @@
 
   /* semantic */
   --ok:         #10b981;
-  --ok-bg:      #052e16;
+  --ok-bg:      #022c22;
   --ok-text:    #86efac;
-  --ok-border:  rgba(16,185,129,0.3);
+  --ok-border:  rgba(16,185,129,0.25);
 
   --amber:      #f59e0b;
-  --amber-bg:   #422006;
+  --amber-bg:   #3f1d00;
   --amber-text: #fdba74;
   --amber-bdr:  rgba(245,158,11,0.3);
 
   --red:        #ef4444;
-  --red-bg:     #450a0a;
+  --red-bg:     #3f0000;
   --red-text:   #fca5a5;
   --red-border: rgba(239,68,68,0.3);
 
@@ -234,11 +234,11 @@ body{
 .kpi-emoji{font-size:22px;margin-bottom:10px;display:block;}
 .kpi-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-3);margin-bottom:5px;}
 .kpi-number{font-family:'Plus Jakarta Sans',sans-serif;font-size:40px;font-weight:800;line-height:1;margin-bottom:4px;letter-spacing:-2px;}
-.kpi-card.ok     .kpi-number{color:var(--ok);}
-.kpi-card.warn   .kpi-number{color:var(--amber);}
-.kpi-card.danger .kpi-number{color:var(--red);}
-.kpi-card.value  .kpi-number{color:#a78bfa;font-size:24px;letter-spacing:-1px;}
-.kpi-sub{font-size:12px;color:var(--text-2);font-weight:500;}
+.kpi-card.ok     .kpi-number{color:#ffffff;}
+.kpi-card.warn   .kpi-number{color:#ffffff;}
+.kpi-card.danger .kpi-number{color:#ffffff;}
+.kpi-card.value  .kpi-number{color:#ffffff;font-size:24px;letter-spacing:-1px;}
+.kpi-sub{font-size:12px;color:#a1a1aa;font-weight:500;}
 
 /* ── ALERT BANNER ── */
 .alert-banner{
@@ -438,7 +438,7 @@ td:not(:first-child){text-align:center;}
 .modal{
   background:var(--card);border-radius:18px;width:100%;max-width:540px;max-height:92vh;
   border:1px solid var(--border);
-  box-shadow:0 0 0 1px rgba(255,255,255,0.03),0 40px 80px rgba(0,0,0,0.7),0 0 60px var(--vi-glow);
+  box-shadow:0 0 0 1px #2d2d3d;
   overflow:hidden;display:flex;flex-direction:column;
   animation:slideUp 0.22s var(--ease);
 }
@@ -493,7 +493,7 @@ td:not(:first-child){text-align:center;}
   display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;
   background:var(--card);border:1px solid var(--border);border-radius:9px;
   max-height:180px;overflow-y:auto;z-index:50;
-  box-shadow:0 16px 40px rgba(0,0,0,0.6);
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
 }
 .product-dropdown.open{display:block;}
 .product-option{padding:9px 13px;cursor:pointer;font-size:13.5px;color:var(--text);border-bottom:1px solid var(--border);transition:background var(--t);}
@@ -562,6 +562,23 @@ td:not(:first-child){text-align:center;}
   .content-wrapper{flex-direction:column;}
   .logo-tagline{display:none;}
 }
+
+/* ── GLOBAL INPUT DARK FIX ── */
+input, select, textarea {
+  background-color: #1a1a24 !important;
+  color: #ffffff !important;
+  border: 1px solid #2d2d3d !important;
+  color-scheme: dark;
+}
+input::placeholder, textarea::placeholder { color: #6b7280 !important; }
+input:focus, select:focus, textarea:focus {
+  border-color: #8b5cf6 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(139,92,246,0.15) !important;
+}
+select option { background: #1a1a24; color: #ffffff; }
+input[type="number"] { -moz-appearance: textfield; }
+
 </style>
 </head>
 <body>
@@ -724,9 +741,9 @@ td:not(:first-child){text-align:center;}
                   <input type="text" id="stockSearch"
                     placeholder="Buscar producto o categoría..."
                     oninput="filtrarStock()"
-                    style="padding:7px 12px 7px 32px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;outline:none;color:var(--dark);background:white;width:220px;transition:border-color 0.16s,box-shadow 0.16s;"
-                    onfocus="this.style.borderColor='var(--primary-light)';this.style.boxShadow='0 0 0 3px rgba(59,130,246,0.1)'"
-                    onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+                    style="padding:7px 12px 7px 32px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;outline:none;color:var(--dark);background:#1a1a24;color:#ffffff;width:220px;transition:border-color 0.16s,box-shadow 0.16s;"
+                    onfocus="this.style.borderColor='#8b5cf6';this.style.boxShadow='0 0 0 2px rgba(139,92,246,0.15)'"
+                    onblur="this.style.borderColor='#2d2d3d';this.style.boxShadow='none'">
                 </div>
                 <div class="filter-tabs">
                   <button class="filter-tab active" onclick="filtrar('todos',this)">Todos</button>
@@ -1294,10 +1311,10 @@ function agregarMensaje(tipo, texto) {
     msg.style.cssText="align-self:flex-start;background:#1a1a24;color:#ffffff;padding:14px 16px;border-radius:16px 16px 16px 4px;max-width:98%;font-size:14px;line-height:1.65;border:1px solid #2d2d3d;";
     msg.innerHTML=texto;
   } else if (tipo==="alerta") {
-    msg.style.cssText="align-self:stretch;background:#450a0a;color:#fca5a5;padding:11px 14px;border-radius:9px;font-size:13.5px;font-weight:600;border:1px solid rgba(239,68,68,0.3);line-height:1.55;";
+    msg.style.cssText="align-self:stretch;background:#3f0000;color:#fca5a5;padding:11px 14px;border-radius:9px;font-size:13.5px;font-weight:600;border:1px solid rgba(239,68,68,0.3);line-height:1.55;";
     msg.innerHTML=texto;
   } else if (tipo==="warn") {
-    msg.style.cssText="align-self:stretch;background:#422006;color:#fdba74;padding:11px 14px;border-radius:9px;font-size:13.5px;font-weight:600;border:1px solid rgba(245,158,11,0.3);line-height:1.55;";
+    msg.style.cssText="align-self:stretch;background:#3f1d00;color:#fdba74;padding:11px 14px;border-radius:9px;font-size:13.5px;font-weight:600;border:1px solid rgba(245,158,11,0.3);line-height:1.55;";
     msg.innerHTML=texto;
   } else {
     msg.style.cssText="align-self:center;background:rgba(99,102,241,0.1);color:#a78bfa;padding:7px 13px;border-radius:8px;font-size:12.5px;font-weight:600;text-align:center;border:1px solid rgba(99,102,241,0.25);";
@@ -1461,10 +1478,10 @@ function filtrarPrecios() {
     const tr=document.createElement("tr");
     const ventaCell=p.venta>0
       ?`<span class="precio-num" style="color:var(--text);">$${p.venta.toLocaleString("es-AR")}</span>`
-      :`<button onclick="sugerirPrecio(this,'${p.desc.replace(/'/g,"\\'")}',${p.costo},'${p.proveedor}')" style="background:#422006;color:#fdba74;border:1px solid rgba(245,158,11,0.3);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">💡 Sugerir</button>`;
+      :`<button onclick="sugerirPrecio(this,'${p.desc.replace(/'/g,"\\'")}',${p.costo},'${p.proveedor}')" style="background:#3f1d00;color:#fdba74;border:1px solid rgba(245,158,11,0.3);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">💡 Sugerir</button>`;
     const stockBadge=p.stock==="Agotado"
-      ?`<span style="background:#450a0a;color:#fca5a5;padding:3px 8px;border-radius:5px;font-size:11.5px;font-weight:600;border:1px solid rgba(239,68,68,0.3);">❌ Agotado</span>`
-      :`<span style="background:#052e16;color:#86efac;padding:3px 8px;border-radius:5px;font-size:11.5px;font-weight:600;border:1px solid rgba(16,185,129,0.3);">✅ Disp.</span>`;
+      ?`<span style="background:#3f0000;color:#fca5a5;padding:3px 8px;border-radius:5px;font-size:11.5px;font-weight:600;border:1px solid rgba(239,68,68,0.3);">❌ Agotado</span>`
+      :`<span style="background:#022c22;color:#86efac;padding:3px 8px;border-radius:5px;font-size:11.5px;font-weight:600;border:1px solid rgba(16,185,129,0.3);">✅ Disp.</span>`;
     tr.innerHTML=`
       <td><div class="product-name">${p.desc}</div>${p.codigo?`<div class="product-cat">Cód: ${p.codigo}</div>`:""}</td>
       <td style="text-align:left;"><span style="font-size:12.5px;font-weight:500;color:#9ca3af;">${p.proveedor}</span></td>
