@@ -753,6 +753,157 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
 [data-theme="light"] .mov-badge.salida  { background: #fee2e2 !important; color: #991b1b !important; border-color: #fca5a5 !important; }
 [data-theme="light"] .mov-badge.ajuste  { background: #fef9c3 !important; color: #854d0e !important; border-color: #fde047 !important; }
 
+
+/* ═══════════════════════════════════════════════════
+   LIGHT MODE — fixes completos
+   ═══════════════════════════════════════════════════ */
+
+/* ── Burbuja del bot — fondo blanco, texto oscuro ── */
+[data-theme="light"] #chatMessages > div {
+  color: #1e293b !important;
+}
+
+/* ── Alert banner — fondo rosado con borde rojo ── */
+[data-theme="light"] .alert-banner.danger {
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  border-left: 3px solid #ef4444 !important;
+  color: #991b1b !important;
+}
+[data-theme="light"] .alert-banner.danger .alert-title { color: #7f1d1d !important; }
+[data-theme="light"] .alert-banner.danger .alert-sub   { color: #b91c1c !important; }
+[data-theme="light"] .alert-banner.warn {
+  background: #fffbeb !important;
+  border: 1px solid #fde68a !important;
+  border-left: 3px solid #f59e0b !important;
+  color: #92400e !important;
+}
+
+/* ── Tabla movimientos — nombres visibles ── */
+[data-theme="light"] #movBody td { color: #1e293b !important; }
+[data-theme="light"] #movBody tr:hover { background: #f0f9ff; }
+
+/* ── Tabla stock — texto de tabla visible ── */
+[data-theme="light"] #stockBody td { color: #1e293b !important; }
+[data-theme="light"] #stockBody .product-name { color: #1e293b !important; font-weight: 600; }
+[data-theme="light"] #stockBody .product-cat  { color: #64748b !important; }
+
+/* ── Tabla precios — texto visible ── */
+[data-theme="light"] #preciosBody td { color: #1e293b !important; }
+[data-theme="light"] #preciosBody .product-name { color: #1e293b !important; }
+[data-theme="light"] #preciosBody .product-cat  { color: #94a3b8 !important; }
+
+/* ── Precios sin/con IVA — azul navy ── */
+[data-theme="light"] .precio-num,
+[data-theme="light"] [style*="color:#a78bfa"],
+[data-theme="light"] [style*="color: #a78bfa"] {
+  color: #1e40af !important;
+}
+
+/* ── Inputs/selects en light — borde visible ── */
+[data-theme="light"] .search-input,
+[data-theme="light"] .search-select {
+  background: #ffffff !important;
+  color: #1e293b !important;
+  border: 1.5px solid #cbd5e1 !important;
+}
+[data-theme="light"] .search-input:focus,
+[data-theme="light"] .search-select:focus {
+  border-color: #3b82f6 !important;
+}
+
+/* ── Badge Disp. / Agotado en precios ── */
+[data-theme="light"] #preciosBody [style*="border:1px solid #064e3b"],
+[data-theme="light"] #preciosBody [style*="border: 1px solid #064e3b"] {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  border-color: #86efac !important;
+}
+[data-theme="light"] #preciosBody [style*="border:1px solid #7f1d1d"],
+[data-theme="light"] #preciosBody [style*="border: 1px solid #7f1d1d"] {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+  border-color: #fca5a5 !important;
+}
+
+/* ── Botón Sugerir en light ── */
+[data-theme="light"] #preciosBody button[style*="color:#fdba74"],
+[data-theme="light"] #preciosBody button[style*="color: #fdba74"] {
+  background: #fffbeb !important;
+  color: #92400e !important;
+  border-color: #fcd34d !important;
+}
+
+/* ── Chat bubbles en light ── */
+[data-theme="light"] #chatMessages .msg-bot {
+  background: #f8fafc !important;
+  color: #1e293b !important;
+  border: 1px solid #e2e8f0 !important;
+}
+[data-theme="light"] #chatMessages .msg-ai-chip {
+  background: #eff6ff !important;
+  color: #1e40af !important;
+  border-color: #bfdbfe !important;
+}
+
+/* ── Burbuja sistema (azul chip) ── */
+[data-theme="light"] #chatMessages > div[style*="background:rgba(99,102,241"] {
+  background: #eff6ff !important;
+  color: #1e40af !important;
+  border-color: #bfdbfe !important;
+}
+
+/* ── strong dentro del chat en light ── */
+[data-theme="light"] #chatMessages strong { color: #1e293b !important; }
+
+/* ── Texto mínimo tabla ── */
+[data-theme="light"] #stockBody td[style*="color:#94a3b8"],
+[data-theme="light"] #stockBody td[style*="color:#94A3B8"],
+[data-theme="light"] #stockBody td[style*="color:#71717a"],
+[data-theme="light"] #stockBody td[style*="color:#64748b"] {
+  color: #64748b !important;
+}
+
+/* ── Progreso barra ── */
+[data-theme="light"] .progress-bar  { background: #e2e8f0; }
+[data-theme="light"] .progress-pct  { color: #64748b; }
+
+/* ── Cantidad en movimientos ── */
+[data-theme="light"] #movBody td[style*="font-family"] { color: #1e293b !important; }
+
+/* ── Vigencia y proveedor en precios ── */
+[data-theme="light"] #preciosBody td[style*="color:#94"],
+[data-theme="light"] #preciosBody td[style*="color:#64"],
+[data-theme="light"] #preciosBody span[style*="color:#a1a1aa"],
+[data-theme="light"] #preciosBody span[style*="color:#9ca3af"] {
+  color: #64748b !important;
+}
+
+/* ── sin IVA / con IVA labels ── */
+[data-theme="light"] #preciosBody [style*="color:#94A3B8"],
+[data-theme="light"] #preciosBody [style*="color:#94a3b8"] {
+  color: #64748b !important;
+}
+
+/* ── Tabla header ── */
+[data-theme="light"] thead th { color: #475569 !important; background: #f8fafc !important; }
+
+/* ── Margen pill en light ── */
+[data-theme="light"] .margen-pill.alto  { background: #dcfce7; color: #166534; border-color: #86efac; }
+[data-theme="light"] .margen-pill.medio { background: #fef9c3; color: #854d0e; border-color: #fde047; }
+[data-theme="light"] .margen-pill.bajo  { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+[data-theme="light"] .margen-pill.sin   { background: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+
+/* ── Status pills en tabla stock light ── */
+[data-theme="light"] .status-pill.ok     { background: #dcfce7 !important; color: #166534 !important; border-color: #86efac !important; }
+[data-theme="light"] .status-pill.warn   { background: #fef9c3 !important; color: #854d0e !important; border-color: #fde047 !important; }
+[data-theme="light"] .status-pill.danger { background: #fee2e2 !important; color: #991b1b !important; border-color: #fca5a5 !important; }
+
+/* ── Borde de las cards en light ── */
+[data-theme="light"] .table-card  { border-color: #e2e8f0 !important; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+[data-theme="light"] .kpi-card    { border-color: #e2e8f0 !important; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+[data-theme="light"] .precios-kpi-item { border-color: #e2e8f0 !important; }
+
 </style>
 </head>
 <body>
@@ -1536,7 +1687,8 @@ function agregarMensaje(tipo, texto) {
     msg.style.cssText="align-self:flex-end;background:linear-gradient(135deg,#1d4ed8,#8b5cf6);color:#fff;padding:10px 15px;border-radius:16px 16px 4px 16px;max-width:85%;font-size:14px;font-weight:500;line-height:1.55;";
     msg.textContent=texto;
   } else if (tipo==="ai") {
-    msg.style.cssText="align-self:flex-start;background:#1c1a29;color:#ffffff;padding:14px 16px;border-radius:16px 16px 16px 4px;max-width:98%;font-size:14px;line-height:1.65;border:1px solid #2d2a40;";
+    msg.className = 'msg-bot';
+    msg.style.cssText="align-self:flex-start;background:var(--card);color:var(--text);padding:14px 16px;border-radius:16px 16px 16px 4px;max-width:98%;font-size:14px;line-height:1.65;border:1px solid var(--border);";
     msg.innerHTML=texto;
   } else if (tipo==="alerta") {
     msg.style.cssText="align-self:stretch;background:transparent;color:#fca5a5;border:1px solid #7f1d1d;padding:11px 14px;border-radius:9px;font-size:13.5px;font-weight:600;border:1px solid rgba(239,68,68,0.3);line-height:1.55;";
