@@ -1319,7 +1319,59 @@ ${movDataGlobal.slice(-30).reverse().map(m => `- ${m.fecha} | ${m.tipo} | ${m.pr
 ### ALERTAS ACTIVAS DEL SISTEMA
 ${sinStock.length > 0 ? "🚨 SIN STOCK: " + sinStock.map(p=>p.nombre).join(", ") : ""}
 ${reponer.length > 0 ? "⚠️ REPONER: " + reponer.map(p=>p.nombre+" ("+p.stock+"/"+p.minimo+")").join(", ") : ""}
-${predicciones.filter(p=>p.dias<=5).length > 0 ? "⏳ SE AGOTAN PRONTO: " + predicciones.filter(p=>p.dias<=5).map(p=>p.nombre+" (~"+p.dias+"d)").join(", ") : ""}`;
+${predicciones.filter(p=>p.dias<=5).length > 0 ? "⏳ SE AGOTAN PRONTO: " + predicciones.filter(p=>p.dias<=5).map(p=>p.nombre+" (~"+p.dias+"d)").join(", ") : ""}
+
+${(() => {
+  if (!preciosDataGlobal || preciosDataGlobal.length === 0) return "### PRECIOS PROVEEDORES\nSin datos de precios cargados aún.";
+
+  // Resumen por proveedor
+  const porProveedor = {};
+  preciosDataGlobal.forEach(p => {
+    if (!porProveedor[p.proveedor]) porProveedor[p.proveedor] = { total: 0, conVenta: 0, sinVenta: 0, margenes: [] };
+    porProveedor[p.proveedor].total++;
+    if (p.venta > 0) { porProveedor[p.proveedor].conVenta++; porProveedor[p.proveedor].margenes.push(p.margen); }
+    else porProveedor[p.proveedor].sinVenta++;
+  });
+
+  const resumenProveedores = Object.entries(porProveedor).map(([prov, d]) => {
+    const margenProm = d.margenes.length > 0 ? Math.round(d.margenes.reduce((s,v)=>s+(v||0),0)/d.margenes.length) : null;
+    return `- ${prov}: ${d.total} productos | margen prom: ${margenProm !== null ? margenProm+"%" : "s/d"} | sin precio venta: ${d.sinVenta}`;
+  }).join("\n");
+
+  // Productos sin precio de venta (máx 20)
+  const sinPrecioVenta = preciosDataGlobal.filter(p => !p.venta || p.venta === 0).slice(0, 20);
+  const sinPrecioTxt = sinPrecioVenta.length > 0
+    ? sinPrecioVenta.map(p => `- ${p.desc} (${p.proveedor}) | costo: $${p.costo ? p.costo.toLocaleString("es-AR") : "s/d"}`).join("\n")
+    : "Todos los productos tienen precio de venta cargado.";
+
+  // Productos con margen bajo (máx 15)
+  const margenBajo = preciosDataGlobal.filter(p => p.margen !== null && p.margen < 20).slice(0, 15);
+  const margenBajoTxt = margenBajo.length > 0
+    ? margenBajo.map(p => `- ${p.desc} (${p.proveedor}) | costo: $${p.costo ? p.costo.toLocaleString("es-AR") : "s/d"} | venta: $${p.venta ? p.venta.toLocaleString("es-AR") : "s/d"} | margen: ${p.margen}%`).join("\n")
+    : "No hay productos con margen bajo detectado.";
+
+  // Stats globales
+  const conMargen = preciosDataGlobal.filter(p => p.margen !== null);
+  const margenGlobal = conMargen.length > 0 ? Math.round(conMargen.reduce((s,p)=>s+(p.margen||0),0)/conMargen.length) : 0;
+  const sinVentaTotal = preciosDataGlobal.filter(p => !p.venta || p.venta === 0).length;
+  const agotados = preciosDataGlobal.filter(p => p.stock === "Agotado").length;
+
+  return `### PRECIOS PROVEEDORES
+- Total productos en lista: ${preciosDataGlobal.length}
+- Proveedores activos: ${Object.keys(porProveedor).length}
+- Margen promedio global: ${margenGlobal}%
+- Productos sin precio de venta: ${sinVentaTotal}
+- Productos agotados en lista: ${agotados}
+
+#### RESUMEN POR PROVEEDOR
+${resumenProveedores}
+
+#### PRODUCTOS SIN PRECIO DE VENTA (primeros ${Math.min(sinPrecioVenta.length,20)})
+${sinPrecioTxt}
+
+#### PRODUCTOS CON MARGEN BAJO <20% (primeros ${Math.min(margenBajo.length,15)})
+${margenBajoTxt}`;
+})()}`;
 }
 
 // ── PRECIOS PROVEEDORES ────────────────────────────────────────────────────
