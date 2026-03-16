@@ -3073,6 +3073,7 @@ function renderVentasTab() {
   const totalMedios = Object.values(porMedio).reduce((s,v)=>s+v,0);
 
   const ultimas = [...ventas].reverse().slice(0, 20);
+  window._ultimasVentas = ultimas; // guardar referencia para event delegation
 
   container.innerHTML = `
     <div style="padding:0 0 24px;">
@@ -3199,7 +3200,7 @@ function renderVentasTab() {
                   <td style="text-align:left;color:#94a3b8;font-size:12px;">${v.responsable}</td>
                   <td>
                     <div style="display:flex;gap:6px;align-items:center;">
-                      <button onclick="generarComprobante(${JSON.stringify({num:v.num,fecha:v.fecha,producto:v.producto,categoria:v.categoria,cantidad:Math.abs(v.cantidad),costoUnit:v.costoUnit,precioVenta:v.precioVenta,total:v.total,ganancia:v.ganancia,margen:v.margen,medioPago:v.medioPago,responsable:v.responsable}).replace(/"/g,'&quot;')})"
+                      <button class="btn-recibo" data-idx="${ultimas.indexOf(v)}"
                         style="background:transparent;color:#a78bfa;border:1px solid rgba(139,92,246,0.3);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;">
                         🧾 Recibo
                       </button>
@@ -3219,8 +3220,16 @@ function renderVentasTab() {
   `;
 }
 
-function generarComprobante(dataRaw) {
-  const v = typeof dataRaw === "string" ? JSON.parse(dataRaw) : dataRaw;
+// Event delegation para botones de recibo en tabla de ventas
+document.addEventListener("click", e => {
+  const btn = e.target.closest(".btn-recibo");
+  if (!btn) return;
+  const idx = parseInt(btn.dataset.idx);
+  const v   = window._ultimasVentas?.[idx];
+  if (v) generarComprobante(v);
+});
+
+function generarComprobante(v) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:"mm", format:"a4" });
 
