@@ -3261,11 +3261,24 @@ function generarComprobante(v) {
     border-radius: 16px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.06);
     width: 100%;
-    max-width: 600px;
+    max-width: 620px;
     overflow: hidden;
+    position: relative;
   }
 
-  /* ── TOP HEADER ── */
+  /* Marca de agua */
+  .watermark {
+    position: absolute;
+    font-size: 200px;
+    opacity: 0.025;
+    bottom: 60px;
+    right: 20px;
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+
+  /* ── HEADER ── */
   .receipt-header {
     padding: 28px 32px 24px;
     display: flex;
@@ -3287,11 +3300,8 @@ function generarComprobante(v) {
     font-size: 11.5px;
     color: #6b7280;
     font-weight: 500;
-    letter-spacing: 0.2px;
   }
-  .receipt-num {
-    text-align: right;
-  }
+  .receipt-num { text-align: right; }
   .receipt-num .num {
     font-size: 20px;
     font-weight: 800;
@@ -3304,7 +3314,7 @@ function generarComprobante(v) {
     margin-top: 4px;
   }
 
-  /* ── INFO ROW ── */
+  /* ── INFO ── */
   .info-section {
     padding: 20px 32px;
     display: flex;
@@ -3327,46 +3337,49 @@ function generarComprobante(v) {
     color: #ffffff;
   }
 
-  /* ── PRODUCTS TABLE ── */
+  /* ── TABLE ── */
   .table-section { padding: 24px 32px 0; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
+  table { width: 100%; border-collapse: collapse; }
+
   thead th {
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: #6b7280;
-    padding: 0 0 12px 0;
+    padding: 0 12px 12px 0;
     text-align: left;
     border-bottom: 1px solid #2d2a40;
+    white-space: nowrap;
   }
+  thead th:first-child { padding-left: 0; }
   thead th:not(:first-child) { text-align: right; }
 
   tbody td {
-    padding: 16px 0;
+    padding: 16px 12px 16px 0;
     border-bottom: 1px solid #1c1a29;
     font-size: 13.5px;
     color: #e5e7eb;
     vertical-align: middle;
+    white-space: nowrap;
+  }
+  tbody td:first-child {
+    padding-left: 0;
+    white-space: normal;
+    width: 45%;
   }
   tbody td:not(:first-child) { text-align: right; }
   tbody td:last-child { font-weight: 700; color: #ffffff; }
+
   .product-name { font-weight: 600; color: #ffffff; font-size: 14px; }
-  .product-cat  { font-size: 11.5px; color: #6b7280; margin-top: 3px; }
 
   /* ── TOTALS ── */
   .totals-section {
     padding: 20px 32px;
     border-top: 1px solid #2d2a40;
   }
-  .totals-inner {
-    margin-left: auto;
-    width: 280px;
-  }
+  .totals-inner { margin-left: auto; width: 300px; }
   .totals-row {
     display: flex;
     justify-content: space-between;
@@ -3383,38 +3396,70 @@ function generarComprobante(v) {
     justify-content: space-between;
     align-items: center;
     margin-top: 14px;
-    padding: 16px 20px;
+    padding: 18px 20px;
     background: #1c1a29;
     border: 1px solid #2d2a40;
     border-radius: 12px;
+    position: relative;
+    overflow: hidden;
   }
-  .total-final .label {
+  .total-final::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(167,139,250,0.05) 0%, rgba(45,212,191,0.05) 100%);
+    pointer-events: none;
+  }
+  .total-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: #6b7280;
   }
-  .total-final .amount {
-    font-size: 24px;
+  .total-label .paw { font-size: 16px; }
+  .total-amount {
+    font-size: 28px;
     font-weight: 900;
-    letter-spacing: -1px;
+    letter-spacing: -1.5px;
     background: linear-gradient(135deg, #a78bfa 0%, #2dd4bf 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
+  /* ── BADGE CONFIRMADO ── */
+  .confirmed-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16,185,129,0.1);
+    color: #10b981;
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 99px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-top: 14px;
+  }
+
   /* ── FOOTER ── */
   .receipt-footer {
-    padding: 18px 32px;
+    padding: 20px 32px;
     border-top: 1px solid #2d2a40;
+    background: #0d0b16;
+  }
+  .footer-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #0d0b16;
+    margin-bottom: 10px;
   }
-  .receipt-footer span {
+  .receipt-footer .legal {
     font-size: 11px;
     color: #4b5563;
   }
@@ -3426,9 +3471,16 @@ function generarComprobante(v) {
     border: 1px solid rgba(99,102,241,0.2);
     padding: 4px 10px;
     border-radius: 20px;
+    white-space: nowrap;
+  }
+  .thank-you {
+    font-size: 11.5px;
+    color: #4b5563;
+    line-height: 1.5;
+    margin-top: 2px;
   }
 
-  /* ── BUTTONS ── */
+  /* ── ACTIONS ── */
   .actions {
     display: flex;
     gap: 10px;
@@ -3447,7 +3499,6 @@ function generarComprobante(v) {
     cursor: pointer;
     font-family: 'Inter', sans-serif;
     transition: all 0.2s;
-    letter-spacing: 0.2px;
   }
   .btn-print:hover { background: #5558e8; transform: translateY(-1px); }
   .btn-close {
@@ -3464,139 +3515,125 @@ function generarComprobante(v) {
   }
   .btn-close:hover { border-color: #4b5563; color: #e5e7eb; }
 
-  /* ── PRINT MODE ── */
+  /* ── PRINT ── */
   @media print {
-    body {
-      background: #fff !important;
-      padding: 0 !important;
-      color: #000 !important;
-    }
-    .receipt {
-      background: #fff !important;
-      border: 1px solid #e2e8f0 !important;
-      box-shadow: none !important;
-      max-width: 100% !important;
-    }
-    .receipt-header { border-bottom-color: #e2e8f0 !important; }
-    .brand-name {
-      background: none !important;
-      -webkit-text-fill-color: #1a1a2e !important;
-      color: #1a1a2e !important;
-    }
-    .info-section { background: #f8f8fc !important; border-color: #e2e8f0 !important; }
-    .info-item label { color: #64748b !important; }
-    .info-item span { color: #1e293b !important; }
-    thead th { color: #64748b !important; border-color: #e2e8f0 !important; }
-    tbody td { color: #1e293b !important; border-color: #f1f5f9 !important; }
-    .product-name { color: #1e293b !important; }
-    .product-cat { color: #94a3b8 !important; }
-    .totals-section { border-color: #e2e8f0 !important; }
-    .totals-row { color: #64748b !important; border-color: #f1f5f9 !important; }
-    .totals-row span:last-child { color: #1e293b !important; }
-    .total-final {
-      background: #f1f5f9 !important;
-      border-color: #e2e8f0 !important;
-    }
-    .total-final .label { color: #64748b !important; }
-    .total-final .amount {
-      background: none !important;
-      -webkit-text-fill-color: #4f46e5 !important;
-      color: #4f46e5 !important;
-    }
-    .receipt-footer { background: #f8f8fc !important; border-color: #e2e8f0 !important; }
-    .receipt-footer span { color: #94a3b8 !important; }
-    .badge { display: none !important; }
-    .actions { display: none !important; }
+    body { background:#fff !important; padding:0 !important; color:#000 !important; }
+    .receipt { background:#fff !important; border:1px solid #e2e8f0 !important; box-shadow:none !important; max-width:100% !important; }
+    .receipt-header { border-bottom-color:#e2e8f0 !important; }
+    .brand-name { background:none !important; -webkit-text-fill-color:#4f46e5 !important; }
+    .info-section { background:#f8f8fc !important; border-color:#e2e8f0 !important; }
+    .info-item label { color:#64748b !important; }
+    .info-item span { color:#1e293b !important; }
+    thead th { color:#64748b !important; border-color:#e2e8f0 !important; }
+    tbody td { color:#1e293b !important; border-color:#f1f5f9 !important; }
+    .product-name { color:#1e293b !important; }
+    .totals-section { border-color:#e2e8f0 !important; }
+    .totals-row { color:#64748b !important; border-color:#f1f5f9 !important; }
+    .totals-row span:last-child { color:#1e293b !important; }
+    .total-final { background:#f1f5f9 !important; border-color:#e2e8f0 !important; }
+    .total-final::before { display:none; }
+    .total-amount { background:none !important; -webkit-text-fill-color:#4f46e5 !important; }
+    .receipt-footer { background:#f8f8fc !important; border-color:#e2e8f0 !important; }
+    .legal, .thank-you { color:#94a3b8 !important; }
+    .confirmed-badge { background:rgba(16,185,129,0.08) !important; }
+    .watermark { display:none; }
+    .actions { display:none !important; }
   }
 </style>
 </head>
 <body>
 
-  <div class="receipt">
+<div class="receipt">
 
-    <!-- Header -->
-    <div class="receipt-header">
-      <div>
-        <div class="brand-name">🐾 Veterinaria Babys</div>
-        <div class="brand-sub">Recibo de venta interno</div>
+  <div class="watermark">🐾</div>
+
+  <!-- Header -->
+  <div class="receipt-header">
+    <div>
+      <div class="brand-name">🐾 Veterinaria Babys</div>
+      <div class="brand-sub">Recibo de venta interno</div>
+    </div>
+    <div class="receipt-num">
+      <div class="num">N° ${num}</div>
+      <div class="fecha">${v.fecha || ""}</div>
+    </div>
+  </div>
+
+  <!-- Info -->
+  <div class="info-section">
+    <div class="info-item">
+      <label>Responsable</label>
+      <span>${v.responsable || "—"}</span>
+    </div>
+    <div class="info-item">
+      <label>Medio de pago</label>
+      <span>${v.medioPago || "—"}</span>
+    </div>
+    <div class="info-item">
+      <label>Categoría</label>
+      <span>${v.categoria || "—"}</span>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="table-section">
+    <table>
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cant.</th>
+          <th>Precio unit.</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="product-name">${v.producto || ""}</div></td>
+          <td>${v.cantidad || 1}</td>
+          <td>${fmt(v.precioVenta)}</td>
+          <td>${fmt(v.total)}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Totales -->
+  <div class="totals-section">
+    <div class="totals-inner">
+      <div class="totals-row"><span>Subtotal</span><span>${fmt(v.total)}</span></div>
+      <div class="totals-row"><span>Costo unitario</span><span>${fmt(v.costoUnit)}</span></div>
+      <div class="totals-row"><span>Ganancia</span><span>${fmt(v.ganancia)}</span></div>
+      <div class="totals-row"><span>Margen</span><span>${v.margen || "—"}</span></div>
+      <div class="total-final">
+        <div class="total-label"><span class="paw">🐾</span> Total</div>
+        <div class="total-amount">${fmt(v.total)}</div>
       </div>
-      <div class="receipt-num">
-        <div class="num">N° ${num}</div>
-        <div class="fecha">${v.fecha || ""}</div>
+      <div style="text-align:right;">
+        <div class="confirmed-badge">✅ PAGO CONFIRMADO</div>
       </div>
     </div>
+  </div>
 
-    <!-- Info -->
-    <div class="info-section">
-      <div class="info-item">
-        <label>Responsable</label>
-        <span>${v.responsable || "—"}</span>
-      </div>
-      <div class="info-item">
-        <label>Medio de pago</label>
-        <span>${v.medioPago || "—"}</span>
-      </div>
-      <div class="info-item">
-        <label>Categoría</label>
-        <span>${v.categoria || "—"}</span>
-      </div>
-    </div>
-
-    <!-- Tabla -->
-    <div class="table-section">
-      <table>
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Cant.</th>
-            <th>Precio unit.</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>
-              <div class="product-name">${v.producto || ""}</div>
-            </td>
-            <td>${v.cantidad || 1}</td>
-            <td>${fmt(v.precioVenta)}</td>
-            <td>${fmt(v.total)}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Totales -->
-    <div class="totals-section">
-      <div class="totals-inner">
-        <div class="totals-row"><span>Subtotal</span><span>${fmt(v.total)}</span></div>
-        <div class="totals-row"><span>Costo unitario</span><span>${fmt(v.costoUnit)}</span></div>
-        <div class="totals-row"><span>Ganancia</span><span>${fmt(v.ganancia)}</span></div>
-        <div class="totals-row"><span>Margen</span><span>${v.margen || "—"}</span></div>
-        <div class="total-final">
-          <span class="label">Total</span>
-          <span class="amount">${fmt(v.total)}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="receipt-footer">
-      <span>Comprobante interno — no válido como factura legal</span>
+  <!-- Footer -->
+  <div class="receipt-footer">
+    <div class="footer-top">
+      <span class="legal">Comprobante interno — no válido como factura legal</span>
       <span class="badge">Sistema Veterinaria Babys</span>
     </div>
-
+    <div class="thank-you">🐾 ¡Gracias por confiar en Veterinaria Babys! El cuidado de tu mascota es nuestra prioridad.</div>
   </div>
 
-  <div class="actions">
-    <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
-    <button class="btn-close" onclick="window.close()">Cerrar</button>
-  </div>
+</div>
+
+<div class="actions">
+  <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+  <button class="btn-close" onclick="window.close()">Cerrar</button>
+</div>
 
 </body>
 </html>`;
 
-  const win = window.open("", "_blank", "width=720,height=760");
+  const win = window.open("", "_blank", "width=720,height=820");
   win.document.write(html);
   win.document.close();
 }
