@@ -2462,6 +2462,7 @@ async function enviarMovimiento() {
         formData.append("email_cliente",   (document.getElementById("movEmailCliente")?.value || "").trim());
         const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
         const data = await res.json();
+        console.log("Respuesta venta:", data);
         if (!data.ok) { errores++; console.error("Error venta:", data.msg || data.error); }
       } else {
         // Movimiento normal (FormData)
