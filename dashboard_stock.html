@@ -3292,6 +3292,37 @@ function actualizarTablaPrecios() {
 let relProductoSeleccionado = null;
 let relHistorialItems = [];
 
+async function cancelarRelevamiento(idx, btn) {
+  const item = relHistorialItems[idx];
+  if (!item) return;
+  if (!confirm(`¿Cancelar la carga de "${item.nombre}"?\n\nSe va a eliminar del Stock.`)) return;
+
+  btn.disabled = true;
+  btn.textContent = "...";
+
+  try {
+    const fd = new FormData();
+    fd.append("accion",  "eliminar_stock");
+    fd.append("nombre",  item.nombre);
+
+    const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method:"POST", body:fd });
+    const data = await res.json();
+
+    if (data.ok) {
+      relHistorialItems.splice(idx, 1);
+      actualizarRelHistorial();
+    } else {
+      alert("Error: " + (data.msg || "Error desconocido"));
+      btn.disabled = false;
+      btn.textContent = "🗑 Cancelar";
+    }
+  } catch(e) {
+    alert("Error de conexión.");
+    btn.disabled = false;
+    btn.textContent = "🗑 Cancelar";
+  }
+}
+
 function inicializarRelFiltroProveedores() {
   const sel = document.getElementById("relFiltroProveedor");
   if (!sel || !preciosDataGlobal.length) return;
@@ -3435,13 +3466,20 @@ function actualizarRelHistorial() {
     hist.innerHTML = '<div style="color:var(--text-3);font-size:13px;font-style:italic;">Todavía no relevaste ningún producto.</div>';
     return;
   }
-  hist.innerHTML = relHistorialItems.slice(0,15).map(item => `
+  hist.innerHTML = relHistorialItems.slice(0,15).map((item, idx) => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);">
       <div>
         <div style="font-size:13.5px;font-weight:600;color:var(--text);">${item.nombre}</div>
         <div style="font-size:11.5px;color:var(--text-3);">${item.proveedor}${item.costo>0?" — Costo: $"+item.costo.toLocaleString("es-AR"):""}</div>
       </div>
-      <div style="font-size:14px;font-weight:700;color:#86efac;">${item.cantidad} uds</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-size:14px;font-weight:700;color:#86efac;">${item.cantidad} uds</div>
+        <button onclick="cancelarRelevamiento(${idx}, this)"
+          style="background:transparent;color:#fca5a5;border:1px solid rgba(239,68,68,0.3);
+          padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;">
+          🗑 Cancelar
+        </button>
+      </div>
     </div>`).join("");
 }
 
