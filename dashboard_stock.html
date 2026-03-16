@@ -2172,23 +2172,18 @@ async function enviarMovimiento() {
       const item = carrito[idx];
 
       if (esVenta) {
-        // Enviar como venta (JSON)
+        // Enviar como venta con FormData (igual que movimiento — evita CORS preflight)
         const costoUnit   = parseFloat(document.getElementById(`pv-costo-${idx}`)?.value)  || 0;
         const precioVenta = parseFloat(document.getElementById(`pv-venta-${idx}`)?.value)  || 0;
-        const body = JSON.stringify({
-          accion:          "venta",
-          producto:        item.producto,
-          cantidad:        item.cantidad,
-          costo_unitario:  costoUnit,
-          precio_venta:    precioVenta,
-          responsable,
-          observaciones:   obs
-        });
-        const res  = await fetch(APPS_SCRIPT_STOCK_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body
-        });
+        const formData = new FormData();
+        formData.append("accion",          "venta");
+        formData.append("producto",        item.producto);
+        formData.append("cantidad",        item.cantidad);
+        formData.append("costo_unitario",  costoUnit);
+        formData.append("precio_venta",    precioVenta);
+        formData.append("responsable",     responsable);
+        formData.append("observaciones",   obs);
+        const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
         const data = await res.json();
         if (!data.ok) errores++;
       } else {
