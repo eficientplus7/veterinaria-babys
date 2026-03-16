@@ -2572,9 +2572,9 @@ function actualizarTablaPrecios() {
     return;
   }
   tbody.innerHTML = carrito.map((item, idx) => {
-    const sug = getSuggestedPrices(item.nombre);
+    const sug = getSuggestedPrices(item.producto);
     return `<tr>
-      <td style="padding:4px 6px;font-size:13px;">${item.nombre}</td>
+      <td style="padding:4px 6px;font-size:13px;">${item.producto}</td>
       <td style="text-align:center;padding:4px 6px;">${item.cantidad}</td>
       <td style="padding:3px 4px;">
         <input type="number" id="pv-costo-${idx}"
