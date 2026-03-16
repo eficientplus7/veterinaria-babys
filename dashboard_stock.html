@@ -985,6 +985,13 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
       <span>Ventas</span>
     </button>
 
+    <div class="nav-section-label" style="margin-top:8px;">Herramientas</div>
+
+    <button class="nav-item" onclick="switchTab('relevamiento', this)">
+      <span class="nav-icon">📝</span>
+      <span>Relevamiento</span>
+    </button>
+
   </nav>
 
   <!-- Footer -->
@@ -1271,6 +1278,95 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
           </div>
         </div>
 
+        <!-- TAB: RELEVAMIENTO -->
+        <div id="tab-relevamiento" class="tab-content">
+          <div style="max-width:700px;margin:0 auto;">
+
+            <div class="kpi-card visible" style="border-top-color:#6366f1;margin-bottom:20px;padding:20px 24px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <div>
+                  <div class="kpi-label">Productos relevados esta sesión</div>
+                  <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:36px;font-weight:800;color:#a78bfa;" id="relCount">0</div>
+                </div>
+                <div style="text-align:right;">
+                  <div style="font-size:13px;color:var(--text-2);">Buscá el producto de la lista de proveedores</div>
+                  <div style="font-size:12px;color:var(--text-3);margin-top:4px;">completá la cantidad y guardá</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-card visible" style="padding:24px;margin-bottom:16px;">
+
+              <div style="margin-bottom:16px;">
+                <div class="form-label" style="margin-bottom:8px;">Buscar producto de proveedores</div>
+                <div style="position:relative;">
+                  <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;">🔍</span>
+                  <input type="text" id="relSearch"
+                    placeholder="Escribí el nombre del producto..."
+                    oninput="filtrarRelProductos()"
+                    onfocus="abrirRelDropdown()"
+                    autocomplete="off"
+                    style="width:100%;padding:10px 12px 10px 34px;border:1px solid var(--border);border-radius:8px;
+                    background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
+                  <div id="relDropdown" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;
+                    background:var(--card);border:1px solid var(--border);border-radius:8px;
+                    max-height:220px;overflow-y:auto;z-index:100;
+                    box-shadow:0 8px 24px rgba(0,0,0,0.3);"></div>
+                </div>
+                <div id="relProductoLabel" style="margin-top:8px;font-size:13px;min-height:20px;color:var(--text-3);font-style:italic;">
+                  Ningún producto seleccionado
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                <div>
+                  <div class="form-label" style="margin-bottom:6px;">Cantidad actual <span style="color:#ef4444;">*</span></div>
+                  <input type="number" id="relCantidad" placeholder="Ej: 15" min="0" step="1"
+                    style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
+                    background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
+                </div>
+                <div>
+                  <div class="form-label" style="margin-bottom:6px;">Precio de venta $</div>
+                  <input type="number" id="relPrecio" placeholder="Ej: 9500" min="0"
+                    style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
+                    background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
+                </div>
+                <div>
+                  <div class="form-label" style="margin-bottom:6px;">Stock mínimo</div>
+                  <input type="number" id="relMinimo" placeholder="Ej: 5" min="0" step="1"
+                    style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
+                    background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
+                </div>
+                <div>
+                  <div class="form-label" style="margin-bottom:6px;">Stock máximo</div>
+                  <input type="number" id="relMaximo" placeholder="Ej: 30" min="0" step="1"
+                    style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
+                    background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
+                </div>
+              </div>
+
+              <button id="btnRelGuardar" onclick="guardarRelevamiento()"
+                style="width:100%;padding:13px;background:var(--vi-grad);color:#fff;border:none;
+                border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;
+                font-family:'Inter',sans-serif;transition:all 0.2s;">
+                ✅ Guardar en Stock
+              </button>
+
+            </div>
+
+            <div class="table-card visible">
+              <div class="table-header">
+                <span class="table-title">📋 Relevados en esta sesión</span>
+                <span class="table-count" id="relCountBadge">0 productos</span>
+              </div>
+              <div id="relHistorial" style="padding:14px 16px;color:var(--text-3);font-size:13px;font-style:italic;">
+                Todavía no relevaste ningún producto.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div><!-- /#content -->
     </div><!-- /.main-content -->
 
@@ -1491,11 +1587,12 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
 <script>
 // ── TAB SWITCHER ──────────────────────────────────────────────────────────
 const TAB_META = {
-  dashboard:   { title: 'Dashboard',                sub: 'Resumen general del negocio' },
-  stock:       { title: 'Control de Stock',         sub: 'Vista general del inventario' },
-  precios:     { title: 'Precios Proveedores',      sub: 'Comparador de listas de precios' },
-  movimientos: { title: 'Historial de Movimientos', sub: 'Últimos movimientos registrados' },
-  ventas:      { title: 'Ventas',                   sub: 'Facturación y márgenes' },
+  dashboard:     { title: 'Dashboard',                sub: 'Resumen general del negocio' },
+  stock:         { title: 'Control de Stock',         sub: 'Vista general del inventario' },
+  precios:       { title: 'Precios Proveedores',      sub: 'Comparador de listas de precios' },
+  movimientos:   { title: 'Historial de Movimientos', sub: 'Últimos movimientos registrados' },
+  ventas:        { title: 'Ventas',                   sub: 'Facturación y márgenes' },
+  relevamiento:  { title: 'Relevamiento de Stock',    sub: 'Conteo inicial desde el depósito' },
 };
 
 function switchTab(tab, btn) {
@@ -3162,6 +3259,105 @@ function actualizarTablaPrecios() {
       </td>
     </tr>`;
   }).join("");
+}
+
+// ════════════════════════════════════════════════════════════
+//  RELEVAMIENTO DE STOCK
+// ════════════════════════════════════════════════════════════
+
+let relProductoSeleccionado = null;
+let relHistorialItems = [];
+
+function abrirRelDropdown() { filtrarRelProductos(); }
+
+function filtrarRelProductos() {
+  const q  = (document.getElementById("relSearch")?.value || "").toLowerCase().trim();
+  const dd = document.getElementById("relDropdown");
+  if (!dd) return;
+  const fuente   = preciosDataGlobal.length > 0 ? preciosDataGlobal : [];
+  const filtrados = q === "" ? fuente.slice(0,40) : fuente.filter(p => p.desc.toLowerCase().includes(q)).slice(0,40);
+  if (!filtrados.length) {
+    dd.style.display = "block";
+    dd.innerHTML = `<div style="padding:10px 14px;color:var(--text-3);font-size:13px;">No se encontraron productos</div>`;
+    return;
+  }
+  dd.style.display = "block";
+  dd.innerHTML = filtrados.map(p => {
+    const safe = JSON.stringify({nombre:p.desc,proveedor:p.proveedor,costo:p.conIVA||p.sinIVA||0,venta:p.venta||0});
+    return `<div onclick='elegirRelProducto(${safe.replace(/'/g,"&apos;")})'
+      style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);"
+      onmouseover="this.style.background='var(--card-hover)'"
+      onmouseout="this.style.background='transparent'">
+      <div style="font-size:13.5px;font-weight:600;color:var(--text);">${p.desc}</div>
+      <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">${p.proveedor}${p.conIVA>0?' — Costo: $'+p.conIVA.toLocaleString("es-AR"):''}</div>
+    </div>`;
+  }).join("");
+}
+
+function elegirRelProducto(data) {
+  if (typeof data === "string") data = JSON.parse(data);
+  relProductoSeleccionado = data;
+  document.getElementById("relSearch").value = data.nombre;
+  document.getElementById("relDropdown").style.display = "none";
+  document.getElementById("relProductoLabel").innerHTML =
+    `<strong style="color:var(--text);">${data.nombre}</strong>
+     <span style="color:var(--text-3);font-size:12px;margin-left:6px;">— ${data.proveedor}</span>`;
+  if (data.venta > 0) document.getElementById("relPrecio").value = data.venta;
+  document.getElementById("relCantidad").focus();
+}
+
+async function guardarRelevamiento() {
+  if (!relProductoSeleccionado) { alert("Seleccioná un producto primero."); return; }
+  const cantidad = parseFloat(document.getElementById("relCantidad").value);
+  if (isNaN(cantidad) || cantidad < 0) { alert("Ingresá una cantidad válida."); return; }
+
+  const btn = document.getElementById("btnRelGuardar");
+  btn.disabled = true; btn.textContent = "Guardando...";
+
+  try {
+    const fd = new FormData();
+    fd.append("accion",    "cargar_stock");
+    fd.append("nombre",    relProductoSeleccionado.nombre);
+    fd.append("proveedor", relProductoSeleccionado.proveedor || "");
+    fd.append("cantidad",  cantidad);
+    fd.append("minimo",    parseFloat(document.getElementById("relMinimo").value)  || 0);
+    fd.append("maximo",    parseFloat(document.getElementById("relMaximo").value)  || 0);
+    fd.append("precio",    parseFloat(document.getElementById("relPrecio").value)  || 0);
+
+    const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method:"POST", body:fd });
+    const data = await res.json();
+
+    if (data.ok) {
+      relHistorialItems.unshift({ nombre:relProductoSeleccionado.nombre, cantidad, proveedor:relProductoSeleccionado.proveedor });
+      actualizarRelHistorial();
+      relProductoSeleccionado = null;
+      ["relSearch","relCantidad","relMinimo","relMaximo","relPrecio"].forEach(id => {
+        const el = document.getElementById(id); if(el) el.value = "";
+      });
+      document.getElementById("relProductoLabel").innerHTML =
+        '<span style="color:var(--text-3);font-style:italic;">Ningún producto seleccionado</span>';
+      document.getElementById("relSearch").focus();
+    } else {
+      alert("Error: " + (data.msg || "Error desconocido"));
+    }
+  } catch(e) { alert("Error de conexión."); console.error(e); }
+  finally { btn.disabled = false; btn.textContent = "✅ Guardar en Stock"; }
+}
+
+function actualizarRelHistorial() {
+  const n = relHistorialItems.length;
+  document.getElementById("relCount").textContent      = n;
+  document.getElementById("relCountBadge").textContent = n + " producto" + (n!==1?"s":"");
+  const hist = document.getElementById("relHistorial");
+  if (!n) { hist.innerHTML = '<div style="color:var(--text-3);font-size:13px;font-style:italic;">Todavía no relevaste ningún producto.</div>'; return; }
+  hist.innerHTML = relHistorialItems.slice(0,15).map(item => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-size:13.5px;font-weight:600;color:var(--text);">${item.nombre}</div>
+        <div style="font-size:11.5px;color:var(--text-3);">${item.proveedor}</div>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:#86efac;">${item.cantidad} uds</div>
+    </div>`).join("");
 }
 
 init();
