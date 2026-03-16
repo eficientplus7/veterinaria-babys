@@ -1297,27 +1297,44 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
 
             <div class="table-card visible" style="padding:24px;margin-bottom:16px;">
 
-              <div style="margin-bottom:16px;">
-                <div class="form-label" style="margin-bottom:8px;">Buscar producto de proveedores</div>
-                <div style="position:relative;">
-                  <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;">🔍</span>
-                  <input type="text" id="relSearch"
-                    placeholder="Escribí el nombre del producto..."
-                    oninput="filtrarRelProductos()"
-                    onfocus="abrirRelDropdown()"
-                    autocomplete="off"
-                    style="width:100%;padding:10px 12px 10px 34px;border:1px solid var(--border);border-radius:8px;
-                    background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
-                  <div id="relDropdown" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;
-                    background:var(--card);border:1px solid var(--border);border-radius:8px;
-                    max-height:220px;overflow-y:auto;z-index:100;
-                    box-shadow:0 8px 24px rgba(0,0,0,0.3);"></div>
+              <!-- Filtro proveedor + buscador -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+                <div>
+                  <div class="form-label" style="margin-bottom:6px;">Filtrar por proveedor</div>
+                  <select id="relFiltroProveedor" onchange="filtrarRelProductos()"
+                    style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
+                    background:var(--card);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;outline:none;">
+                    <option value="">Todos los proveedores</option>
+                  </select>
                 </div>
-                <div id="relProductoLabel" style="margin-top:8px;font-size:13px;min-height:20px;color:var(--text-3);font-style:italic;">
-                  Ningún producto seleccionado
+                <div>
+                  <div class="form-label" style="margin-bottom:6px;">Buscar producto</div>
+                  <div style="position:relative;">
+                    <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;">🔍</span>
+                    <input type="text" id="relSearch"
+                      placeholder="Escribí el nombre..."
+                      oninput="filtrarRelProductos()"
+                      onfocus="abrirRelDropdown()"
+                      autocomplete="off"
+                      style="width:100%;padding:9px 12px 9px 34px;border:1px solid var(--border);border-radius:8px;
+                      background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
+                  </div>
                 </div>
               </div>
 
+              <!-- Dropdown -->
+              <div style="position:relative;margin-bottom:4px;">
+                <div id="relDropdown" style="display:none;position:absolute;top:0;left:0;right:0;
+                  background:var(--card);border:1px solid var(--border);border-radius:8px;
+                  max-height:220px;overflow-y:auto;z-index:200;
+                  box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
+              </div>
+
+              <div id="relProductoLabel" style="margin-bottom:14px;font-size:13px;min-height:20px;color:var(--text-3);font-style:italic;">
+                Ningún producto seleccionado
+              </div>
+
+              <!-- Campos -->
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
                 <div>
                   <div class="form-label" style="margin-bottom:6px;">Cantidad actual <span style="color:#ef4444;">*</span></div>
@@ -1326,8 +1343,8 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
                     background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
                 </div>
                 <div>
-                  <div class="form-label" style="margin-bottom:6px;">Precio de venta $</div>
-                  <input type="number" id="relPrecio" placeholder="Ej: 9500" min="0"
+                  <div class="form-label" style="margin-bottom:6px;">Precio costo c/IVA $</div>
+                  <input type="number" id="relPrecio" placeholder="Desde lista de proveedores" min="0"
                     style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
                     background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
                 </div>
@@ -1340,6 +1357,12 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
                 <div>
                   <div class="form-label" style="margin-bottom:6px;">Stock máximo</div>
                   <input type="number" id="relMaximo" placeholder="Ej: 30" min="0" step="1"
+                    style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
+                    background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
+                </div>
+                <div style="grid-column:1/-1;">
+                  <div class="form-label" style="margin-bottom:6px;">Código del producto</div>
+                  <input type="text" id="relCodigo" placeholder="Ej: TRX-1234 (opcional)"
                     style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;
                     background:var(--card);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;outline:none;">
                 </div>
@@ -2087,6 +2110,7 @@ function renderPrecios(rows) {
   const badge=document.getElementById("preciosTabBadge");
   if(badge) badge.textContent=preciosDataGlobal.length.toLocaleString("es-AR");
   filtrarPrecios();
+  inicializarRelFiltroProveedores();
 }
 
 function filtrarPrecios() {
@@ -3268,14 +3292,32 @@ function actualizarTablaPrecios() {
 let relProductoSeleccionado = null;
 let relHistorialItems = [];
 
+function inicializarRelFiltroProveedores() {
+  const sel = document.getElementById("relFiltroProveedor");
+  if (!sel || !preciosDataGlobal.length) return;
+  const provs = [...new Set(preciosDataGlobal.map(p => p.proveedor))].sort();
+  sel.innerHTML = '<option value="">Todos los proveedores</option>';
+  provs.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p; opt.textContent = p;
+    sel.appendChild(opt);
+  });
+}
+
 function abrirRelDropdown() { filtrarRelProductos(); }
 
 function filtrarRelProductos() {
-  const q  = (document.getElementById("relSearch")?.value || "").toLowerCase().trim();
-  const dd = document.getElementById("relDropdown");
+  const q    = (document.getElementById("relSearch")?.value || "").toLowerCase().trim();
+  const prov = document.getElementById("relFiltroProveedor")?.value || "";
+  const dd   = document.getElementById("relDropdown");
   if (!dd) return;
-  const fuente   = preciosDataGlobal.length > 0 ? preciosDataGlobal : [];
-  const filtrados = q === "" ? fuente.slice(0,40) : fuente.filter(p => p.desc.toLowerCase().includes(q)).slice(0,40);
+
+  let fuente = preciosDataGlobal.length > 0 ? preciosDataGlobal : [];
+  if (prov) fuente = fuente.filter(p => p.proveedor === prov);
+  const filtrados = q === ""
+    ? fuente.slice(0, 40)
+    : fuente.filter(p => p.desc.toLowerCase().includes(q) || (p.codigo||"").toLowerCase().includes(q)).slice(0, 40);
+
   if (!filtrados.length) {
     dd.style.display = "block";
     dd.innerHTML = `<div style="padding:10px 14px;color:var(--text-3);font-size:13px;">No se encontraron productos</div>`;
@@ -3283,28 +3325,48 @@ function filtrarRelProductos() {
   }
   dd.style.display = "block";
   dd.innerHTML = filtrados.map(p => {
-    const safe = JSON.stringify({nombre:p.desc,proveedor:p.proveedor,costo:p.conIVA||p.sinIVA||0,venta:p.venta||0});
-    return `<div onclick='elegirRelProducto(${safe.replace(/'/g,"&apos;")})'
+    const obj = { nombre: p.desc, proveedor: p.proveedor, codigo: p.codigo||"", costo: p.conIVA||p.sinIVA||0 };
+    const safe = JSON.stringify(obj).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<div onclick="elegirRelProducto('${safe}')"
       style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);"
       onmouseover="this.style.background='var(--card-hover)'"
       onmouseout="this.style.background='transparent'">
-      <div style="font-size:13.5px;font-weight:600;color:var(--text);">${p.desc}</div>
-      <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">${p.proveedor}${p.conIVA>0?' — Costo: $'+p.conIVA.toLocaleString("es-AR"):''}</div>
+      <div style="font-size:13.5px;font-weight:600;color:var(--text);">${p.desc}${p.codigo?` <span style="font-size:11px;color:var(--text-3);">[${p.codigo}]</span>`:""}</div>
+      <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">${p.proveedor}${p.conIVA>0?" — Costo c/IVA: $"+p.conIVA.toLocaleString("es-AR"):""}</div>
     </div>`;
   }).join("");
 }
 
-function elegirRelProducto(data) {
-  if (typeof data === "string") data = JSON.parse(data);
+function elegirRelProducto(dataStr) {
+  const data = typeof dataStr === "string" ? JSON.parse(dataStr) : dataStr;
   relProductoSeleccionado = data;
-  document.getElementById("relSearch").value = data.nombre;
-  document.getElementById("relDropdown").style.display = "none";
+
+  // Cerrar dropdown y limpiar search
+  const dd = document.getElementById("relDropdown");
+  if (dd) dd.style.display = "none";
+  document.getElementById("relSearch").value = "";
+  document.getElementById("relSearch").blur();
+
+  // Mostrar producto seleccionado
   document.getElementById("relProductoLabel").innerHTML =
-    `<strong style="color:var(--text);">${data.nombre}</strong>
-     <span style="color:var(--text-3);font-size:12px;margin-left:6px;">— ${data.proveedor}</span>`;
-  if (data.venta > 0) document.getElementById("relPrecio").value = data.venta;
+    `<strong style="color:var(--text);font-size:14px;">✅ ${data.nombre}</strong>
+     <span style="color:var(--text-3);font-size:12px;margin-left:8px;">— ${data.proveedor}</span>`;
+
+  // Pre-completar costo con IVA y código
+  if (data.costo > 0) document.getElementById("relPrecio").value = data.costo;
+  if (data.codigo)    document.getElementById("relCodigo").value = data.codigo;
+
   document.getElementById("relCantidad").focus();
 }
+
+// Cerrar dropdown al hacer click afuera
+document.addEventListener("click", e => {
+  const search = document.getElementById("relSearch");
+  const dd     = document.getElementById("relDropdown");
+  if (dd && search && !search.contains(e.target) && !dd.contains(e.target)) {
+    dd.style.display = "none";
+  }
+});
 
 async function guardarRelevamiento() {
   if (!relProductoSeleccionado) { alert("Seleccioná un producto primero."); return; }
@@ -3319,6 +3381,7 @@ async function guardarRelevamiento() {
     fd.append("accion",    "cargar_stock");
     fd.append("nombre",    relProductoSeleccionado.nombre);
     fd.append("proveedor", relProductoSeleccionado.proveedor || "");
+    fd.append("codigo",    relProductoSeleccionado.codigo    || "");
     fd.append("cantidad",  cantidad);
     fd.append("minimo",    parseFloat(document.getElementById("relMinimo").value)  || 0);
     fd.append("maximo",    parseFloat(document.getElementById("relMaximo").value)  || 0);
@@ -3328,10 +3391,17 @@ async function guardarRelevamiento() {
     const data = await res.json();
 
     if (data.ok) {
-      relHistorialItems.unshift({ nombre:relProductoSeleccionado.nombre, cantidad, proveedor:relProductoSeleccionado.proveedor });
+      relHistorialItems.unshift({
+        nombre:    relProductoSeleccionado.nombre,
+        cantidad,
+        proveedor: relProductoSeleccionado.proveedor,
+        costo:     parseFloat(document.getElementById("relPrecio").value) || 0
+      });
       actualizarRelHistorial();
+
+      // Reset
       relProductoSeleccionado = null;
-      ["relSearch","relCantidad","relMinimo","relMaximo","relPrecio"].forEach(id => {
+      ["relCantidad","relMinimo","relMaximo","relPrecio","relCodigo"].forEach(id => {
         const el = document.getElementById(id); if(el) el.value = "";
       });
       document.getElementById("relProductoLabel").innerHTML =
@@ -3349,12 +3419,15 @@ function actualizarRelHistorial() {
   document.getElementById("relCount").textContent      = n;
   document.getElementById("relCountBadge").textContent = n + " producto" + (n!==1?"s":"");
   const hist = document.getElementById("relHistorial");
-  if (!n) { hist.innerHTML = '<div style="color:var(--text-3);font-size:13px;font-style:italic;">Todavía no relevaste ningún producto.</div>'; return; }
+  if (!n) {
+    hist.innerHTML = '<div style="color:var(--text-3);font-size:13px;font-style:italic;">Todavía no relevaste ningún producto.</div>';
+    return;
+  }
   hist.innerHTML = relHistorialItems.slice(0,15).map(item => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);">
       <div>
         <div style="font-size:13.5px;font-weight:600;color:var(--text);">${item.nombre}</div>
-        <div style="font-size:11.5px;color:var(--text-3);">${item.proveedor}</div>
+        <div style="font-size:11.5px;color:var(--text-3);">${item.proveedor}${item.costo>0?" — Costo: $"+item.costo.toLocaleString("es-AR"):""}</div>
       </div>
       <div style="font-size:14px;font-weight:700;color:#86efac;">${item.cantidad} uds</div>
     </div>`).join("");
