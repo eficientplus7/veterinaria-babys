@@ -1914,12 +1914,13 @@ ${(()=>{
   const topProd2 = Object.entries(porProd2).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([p,c])=>`${p} (${c} uds)`).join(", ");
   const tendencia = totalSem2 > 0 ? "con actividad" : "sin ventas esta semana";
 
-  // Margen por producto vendido (promedio ponderado)
+  // Margen por producto vendido (ganancia / costo, igual que la tabla)
   const margenPorProd = {};
   vData.forEach(v => {
-    if (!margenPorProd[v.producto]) margenPorProd[v.producto] = { totalVenta: 0, totalGanancia: 0, uds: 0 };
+    if (!margenPorProd[v.producto]) margenPorProd[v.producto] = { totalVenta: 0, totalGanancia: 0, totalCosto: 0, uds: 0 };
     margenPorProd[v.producto].totalVenta    += v.total;
     margenPorProd[v.producto].totalGanancia += v.ganancia;
+    margenPorProd[v.producto].totalCosto    += (v.total - v.ganancia);
     margenPorProd[v.producto].uds           += v.cantidad;
   });
   const detallePorProd = Object.entries(margenPorProd)
@@ -1928,7 +1929,7 @@ ${(()=>{
       uds: d.uds,
       total: d.totalVenta,
       ganancia: d.totalGanancia,
-      margen: d.totalVenta > 0 ? Math.round((d.totalGanancia / d.totalVenta) * 100) : 0
+      margen: d.totalCosto > 0 ? Math.round((d.totalGanancia / d.totalCosto) * 100) : 0
     }))
     .sort((a, b) => b.margen - a.margen);
   const detalleStr = detallePorProd.map(p =>
