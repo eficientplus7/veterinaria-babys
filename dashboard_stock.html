@@ -580,6 +580,11 @@ input:focus, select:focus, textarea:focus {
 }
 select option { background: #1c1a29; color: #ffffff; }
 input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
 
 /* ── CUSTOM SCROLLBARS ── */
@@ -1395,7 +1400,7 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
                     <th style="text-align:left;padding:4px 6px;font-weight:500;">Producto</th>
                     <th style="padding:4px 6px;font-weight:500;text-align:center;">Cant.</th>
                     <th style="padding:4px 6px;font-weight:500;text-align:center;">Costo u. $</th>
-                    <th style="padding:4px 6px;font-weight:500;text-align:center;color:#f472b6;">Precio venta $ *</th>
+                    <th style="padding:4px 6px;font-weight:500;text-align:center;color:#f472b6;">Total cobrado $ *</th>
                   </tr>
                 </thead>
                 <tbody id="tabla-precios-body">
@@ -2578,7 +2583,7 @@ function actualizarTablaPrecios() {
       </td>
       <td style="padding:3px 4px;">
         <input type="number" id="pv-venta-${idx}"
-          value="${sug.venta || ""}" placeholder="0" step="0.01" min="0"
+          value="${sug.venta ? Math.round(sug.venta * item.cantidad) : ""}" placeholder="0" step="0.01" min="0"
           style="width:88px;padding:5px 7px;border-radius:6px;border:1px solid #f472b6;background:var(--card);color:var(--text);font-size:12.5px;font-family:'Inter',sans-serif;">
       </td>
     </tr>`;
