@@ -3201,7 +3201,11 @@ function renderVentasTab() {
                     <div style="display:flex;gap:6px;align-items:center;">
                       <button class="btn-recibo" data-idx="${ultimas.indexOf(v)}"
                         style="background:transparent;color:#a78bfa;border:1px solid rgba(139,92,246,0.3);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;">
-                        🧾 Recibo
+                        🧾 Interno
+                      </button>
+                      <button class="btn-recibo-cliente" data-idx="${ultimas.indexOf(v)}"
+                        style="background:transparent;color:#2dd4bf;border:1px solid rgba(45,212,191,0.3);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;">
+                        📄 Cliente
                       </button>
                       <button onclick="anularVenta('${v.fecha.replace(/'/g,"\\'")}', '${v.producto.replace(/'/g,"\\'")}', ${Math.abs(v.cantidad)}, this)"
                         style="background:transparent;color:#fca5a5;border:1px solid rgba(239,68,68,0.3);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;">
@@ -3222,10 +3226,18 @@ function renderVentasTab() {
 // Event delegation para botones de recibo en tabla de ventas
 document.addEventListener("click", e => {
   const btn = e.target.closest(".btn-recibo");
-  if (!btn) return;
-  const idx = parseInt(btn.dataset.idx);
-  const v   = window._ultimasVentas?.[idx];
-  if (v) generarComprobante(v);
+  if (btn) {
+    const idx = parseInt(btn.dataset.idx);
+    const v   = window._ultimasVentas?.[idx];
+    if (v) generarComprobante(v);
+    return;
+  }
+  const btnC = e.target.closest(".btn-recibo-cliente");
+  if (btnC) {
+    const idx = parseInt(btnC.dataset.idx);
+    const v   = window._ultimasVentas?.[idx];
+    if (v) generarComprobanteCliente(v);
+  }
 });
 
 function generarComprobante(v) {
@@ -3634,6 +3646,332 @@ function generarComprobante(v) {
 </html>`;
 
   const win = window.open("", "_blank", "width=720,height=820");
+  win.document.write(html);
+  win.document.close();
+}
+
+function generarComprobanteCliente(v) {
+  const fmt = n => "$" + Number(n).toLocaleString("es-AR", {minimumFractionDigits:0, maximumFractionDigits:0});
+  const num = String(v.num || "0").padStart(4,"0");
+
+  const medioIconos = { "Efectivo":"💵", "Tarjeta":"💳", "Mercado Pago":"📱", "Transferencia":"🏦" };
+  const medioIcon = medioIconos[v.medioPago] || "💰";
+
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comprobante de compra — Veterinaria Babys</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #09090b;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .receipt {
+    background: #110f1a;
+    border: 1px solid #2d2a40;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(45,212,191,0.06);
+    width: 100%;
+    max-width: 580px;
+    overflow: hidden;
+    position: relative;
+  }
+  .watermark {
+    position: absolute;
+    font-size: 200px;
+    opacity: 0.025;
+    bottom: 40px;
+    right: 10px;
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+
+  /* Header */
+  .header {
+    padding: 30px 32px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #2d2a40;
+  }
+  .brand {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #a78bfa 0%, #2dd4bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+  }
+  .brand-sub { font-size: 11.5px; color: #6b7280; }
+  .receipt-id { text-align: right; }
+  .receipt-id .num { font-size: 18px; font-weight: 800; color: #ffffff; }
+  .receipt-id .fecha { font-size: 11.5px; color: #6b7280; margin-top: 4px; }
+
+  /* Hero total */
+  .hero {
+    padding: 28px 32px;
+    background: #1c1a29;
+    border-bottom: 1px solid #2d2a40;
+    text-align: center;
+  }
+  .hero-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #6b7280;
+    margin-bottom: 10px;
+  }
+  .hero-amount {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #a78bfa 0%, #2dd4bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .confirmed-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16,185,129,0.1);
+    color: #10b981;
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 99px;
+    padding: 7px 18px;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* Detalle */
+  .detail {
+    padding: 24px 32px;
+    border-bottom: 1px solid #2d2a40;
+  }
+  .detail-title {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #6b7280;
+    margin-bottom: 16px;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #1c1a29;
+    gap: 16px;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row .dk { font-size: 13px; color: #9ca3af; flex-shrink: 0; }
+  .detail-row .dv { font-size: 13px; font-weight: 600; color: #ffffff; text-align: right; }
+  .product-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 14px 16px;
+    background: #1c1a29;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    gap: 16px;
+  }
+  .product-name { font-size: 13.5px; font-weight: 600; color: #ffffff; margin-bottom: 4px; }
+  .product-qty  { font-size: 11.5px; color: #6b7280; }
+  .product-price { font-size: 15px; font-weight: 800; color: #ffffff; flex-shrink: 0; }
+
+  /* Pago */
+  .pago-section {
+    padding: 20px 32px;
+    border-bottom: 1px solid #2d2a40;
+    background: #1c1a29;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pago-icon { font-size: 24px; }
+  .pago-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; margin-bottom: 3px; }
+  .pago-val   { font-size: 14px; font-weight: 600; color: #ffffff; }
+
+  /* Footer */
+  .footer {
+    padding: 20px 32px;
+    background: #0d0b16;
+  }
+  .footer-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .footer-legal { font-size: 11px; color: #4b5563; }
+  .footer-badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: #2dd4bf;
+    background: rgba(45,212,191,0.08);
+    border: 1px solid rgba(45,212,191,0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .thank-you { font-size: 11.5px; color: #4b5563; line-height: 1.5; }
+
+  /* Acciones */
+  .actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 24px;
+    padding-bottom: 8px;
+  }
+  .btn-print {
+    padding: 11px 28px;
+    background: linear-gradient(135deg, #6366f1, #2dd4bf);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-print:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-close {
+    padding: 11px 22px;
+    background: transparent;
+    color: #9ca3af;
+    border: 1px solid #2d2a40;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-close:hover { border-color: #4b5563; color: #e5e7eb; }
+
+  @media print {
+    body { background:#fff !important; padding:0 !important; }
+    .receipt { background:#fff !important; border:1px solid #e2e8f0 !important; box-shadow:none !important; max-width:100% !important; }
+    .brand { background:none !important; -webkit-text-fill-color:#4f46e5 !important; }
+    .hero { background:#f8f8fc !important; border-color:#e2e8f0 !important; }
+    .hero-label { color:#64748b !important; }
+    .hero-amount { background:none !important; -webkit-text-fill-color:#4f46e5 !important; }
+    .detail { border-color:#e2e8f0 !important; }
+    .detail-title { color:#64748b !important; }
+    .detail-row .dk { color:#64748b !important; }
+    .detail-row .dv { color:#1e293b !important; }
+    .product-row { background:#f1f5f9 !important; }
+    .product-name { color:#1e293b !important; }
+    .product-qty { color:#64748b !important; }
+    .product-price { color:#1e293b !important; }
+    .pago-section { background:#f8f8fc !important; border-color:#e2e8f0 !important; }
+    .pago-label { color:#64748b !important; }
+    .pago-val { color:#1e293b !important; }
+    .footer { background:#f8f8fc !important; }
+    .footer-legal, .thank-you { color:#94a3b8 !important; }
+    .receipt-id .num { color:#1e293b !important; }
+    .receipt-id .fecha { color:#64748b !important; }
+    .watermark { display:none; }
+    .actions { display:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="receipt">
+  <div class="watermark">🐾</div>
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="brand">🐾 Veterinaria Babys</div>
+      <div class="brand-sub">Comprobante de compra</div>
+    </div>
+    <div class="receipt-id">
+      <div class="num">N° ${num}</div>
+      <div class="fecha">${v.fecha || ""}</div>
+    </div>
+  </div>
+
+  <!-- Hero Total -->
+  <div class="hero">
+    <div class="hero-label">Total abonado</div>
+    <div class="hero-amount">${fmt(v.total)}</div>
+    <div class="confirmed-badge">✅ PAGO CONFIRMADO</div>
+  </div>
+
+  <!-- Detalle del producto -->
+  <div class="detail">
+    <div class="detail-title">Detalle de la compra</div>
+    <div class="product-row">
+      <div>
+        <div class="product-name">${v.producto || ""}</div>
+        <div class="product-qty">Cantidad: ${v.cantidad || 1} unidad${(v.cantidad||1)>1?"es":""}</div>
+      </div>
+      <div class="product-price">${fmt(v.total)}</div>
+    </div>
+    <div class="detail-row">
+      <span class="dk">Precio unitario</span>
+      <span class="dv">${fmt(v.precioVenta)}</span>
+    </div>
+    <div class="detail-row">
+      <span class="dk">Categoría</span>
+      <span class="dv">${v.categoria || "—"}</span>
+    </div>
+    <div class="detail-row">
+      <span class="dk">Atendido por</span>
+      <span class="dv">${v.responsable || "—"}</span>
+    </div>
+  </div>
+
+  <!-- Medio de pago -->
+  <div class="pago-section">
+    <div class="pago-icon">${medioIcon}</div>
+    <div>
+      <div class="pago-label">Medio de pago</div>
+      <div class="pago-val">${v.medioPago || "—"}</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-main">
+      <span class="footer-legal">Comprobante no válido como factura legal</span>
+      <span class="footer-badge">Veterinaria Babys</span>
+    </div>
+    <div class="thank-you">🐾 ¡Gracias por confiar en Veterinaria Babys! El cuidado de tu mascota es nuestra prioridad.</div>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+  <button class="btn-close" onclick="window.close()">Cerrar</button>
+</div>
+</body>
+</html>`;
+
+  const win = window.open("", "_blank", "width=680,height=820");
   win.document.write(html);
   win.document.close();
 }
