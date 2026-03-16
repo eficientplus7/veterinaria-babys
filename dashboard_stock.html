@@ -2990,27 +2990,6 @@ function renderVentasTab() {
 
       </div>
 
-      <!-- Rentabilidad del mes -->
-      <div class="table-card visible" style="margin-bottom:18px;">
-        <div class="table-header">
-          <span class="table-title">📊 Rentabilidad del mes</span>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--border);">
-          ${[
-            { label:"Facturación",   val: fmt(totalMes),      sub: arrowHtml(pctMes),  color:"#a78bfa" },
-            { label:"Costo total",   val: fmt(totalMes - ganMes), sub:"del período",   color:"#fca5a5" },
-            { label:"Ganancia neta", val: fmt(ganMes),        sub: arrowHtml(pctGan),  color:"#86efac" },
-            { label:"Margen neto",   val: mrgProm+"%",        sub: arrowHtml(pctMrg),  color:"#fdba74" }
-          ].map(k => `
-            <div style="padding:16px 18px;border-right:1px solid var(--border);">
-              <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-3);margin-bottom:6px;">${k.label}</div>
-              <div style="font-size:22px;font-weight:800;color:${k.color};letter-spacing:-0.5px;margin-bottom:4px;">${k.val}</div>
-              <div style="font-size:11px;">${k.sub}</div>
-            </div>
-          `).join("")}
-        </div>
-      </div>
-
       <!-- Tabla últimas ventas -->
       <div class="table-card visible">
         <div class="table-header">
