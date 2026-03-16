@@ -1569,7 +1569,12 @@ async function init() {
     document.getElementById("loading").style.display = "none";
     document.getElementById("content").style.display = "block";
 
-    // Cargar ventas en background para el dashboard
+    // Aplicar tab inicial: Dashboard
+    document.getElementById("topbarTitle").textContent = "Dashboard";
+    document.getElementById("topbarSub").textContent   = "Resumen general del negocio";
+
+    // Render dashboard con lo que ya tenemos (stock), luego actualizar con ventas
+    renderDashboard();
     loadVentas().then(() => renderDashboard());
 
     setTimeout(() => {
@@ -2512,7 +2517,6 @@ let chartVentas = null, chartMedios = null;
 function renderDashboard() {
   const container = document.getElementById("dashboardContainer");
   if (!container) return;
-  if (!stockDataGlobal.length) return; // esperar datos
 
   const fmt    = n => "$" + Number(n).toLocaleString("es-AR", {minimumFractionDigits:0, maximumFractionDigits:0});
   const pad    = n => String(n).padStart(2,"0");
