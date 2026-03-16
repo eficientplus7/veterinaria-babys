@@ -440,7 +440,7 @@ td:not(:first-child){text-align:center;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
 .modal{
-  background:#1c1a29;border-radius:18px;width:100%;max-width:540px;max-height:92vh;
+  background:#1c1a29;border-radius:18px;width:100%;max-width:540px;max-height:88vh;
   border:1px solid var(--border);
   box-shadow:0 0 0 1px #2d2a40;
   overflow:hidden;display:flex;flex-direction:column;
@@ -457,7 +457,7 @@ td:not(:first-child){text-align:center;}
 .modal-close{width:30px;height:30px;background:var(--surface);border:1px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text-2);transition:all var(--t) var(--ease);}
 .modal-close:hover{background:transparent;color:#fca5a5;border-color:#7f1d1d;}
 
-.modal-scroll{overflow-y:auto;flex:1;}
+.modal-scroll{overflow-y:auto;flex:1;max-height:calc(90vh - 140px);}
 .modal-body{padding:18px 22px;display:flex;flex-direction:column;gap:14px;}
 .form-group{display:flex;flex-direction:column;gap:5px;}
 .form-label{font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.8px;}
@@ -1576,12 +1576,12 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
           </div>
 
           <!-- Email cliente (para comprobante) -->
-          <div class="form-group" id="seccion-email-cliente" style="display:none;">
-            <label class="form-label" for="movEmailCliente">
-              Email del cliente <span style="color:var(--gray-mid);font-weight:400;text-transform:none;">(opcional — para enviar comprobante)</span>
+          <div id="seccion-email-cliente" style="display:none;">
+            <label class="form-label" for="movEmailCliente" style="display:flex;justify-content:space-between;">
+              <span>Email del cliente <span style="color:var(--gray-mid);font-weight:400;text-transform:none;">(opcional)</span></span>
             </label>
-            <input type="email" class="form-control" id="movEmailCliente"
-              placeholder="cliente@email.com">
+            <input type="text" class="form-control" id="movEmailCliente"
+              placeholder="cliente@email.com" autocomplete="off">
           </div>
 
           <!-- Observaciones -->
