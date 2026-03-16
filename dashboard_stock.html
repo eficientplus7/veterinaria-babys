@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Veterinaria Babys — Control de Stock</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 /*
   DEEP SPACE & NEON ACCENT — Veterinaria Babys
@@ -956,7 +957,12 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
   <nav class="sidebar-nav">
     <div class="nav-section-label">Principal</div>
 
-    <button class="nav-item active" onclick="switchTab('stock', this)">
+    <button class="nav-item active" onclick="switchTab('dashboard', this)">
+      <span class="nav-icon">📊</span>
+      <span>Dashboard</span>
+    </button>
+
+    <button class="nav-item" onclick="switchTab('stock', this)">
       <span class="nav-icon">📦</span>
       <span>Stock</span>
     </button>
@@ -1075,8 +1081,15 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
 
       <div id="content" style="display:none;">
 
+        <!-- TAB: DASHBOARD -->
+        <div id="tab-dashboard" class="tab-content active">
+          <div id="dashboardContainer">
+            <div class="loading"><div class="spinner"></div><span style="font-weight:600;color:var(--gray-mid);font-size:14px;">Cargando dashboard...</span></div>
+          </div>
+        </div>
+
         <!-- TAB: STOCK -->
-        <div id="tab-stock" class="tab-content active">
+        <div id="tab-stock" class="tab-content">
 
           <!-- KPIs -->
           <div class="kpi-grid">
@@ -1478,21 +1491,23 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
 <script>
 // ── TAB SWITCHER ──────────────────────────────────────────────────────────
 const TAB_META = {
-  stock:       { title: 'Control de Stock',        sub: 'Vista general del inventario' },
-  precios:     { title: 'Precios Proveedores',     sub: 'Comparador de listas de precios' },
+  dashboard:   { title: 'Dashboard',                sub: 'Resumen general del negocio' },
+  stock:       { title: 'Control de Stock',         sub: 'Vista general del inventario' },
+  precios:     { title: 'Precios Proveedores',      sub: 'Comparador de listas de precios' },
   movimientos: { title: 'Historial de Movimientos', sub: 'Últimos movimientos registrados' },
-  ventas:      { title: 'Ventas',                  sub: 'Facturación y márgenes' },
+  ventas:      { title: 'Ventas',                   sub: 'Facturación y márgenes' },
 };
 
 function switchTab(tab, btn) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   const m = TAB_META[tab] || {};
   if (m.title) document.getElementById('topbarTitle').textContent = m.title;
   if (m.sub)   document.getElementById('topbarSub').textContent   = m.sub;
-  if (tab === 'ventas') loadVentas();
+  if (tab === 'ventas')    loadVentas();
+  if (tab === 'dashboard') renderDashboard();
 }
 
 const SHEET_ID         = "1DybrN_TADZV5qkj15IN2Br_NrlW3HA_M7JUyDer2KNc";
@@ -1553,6 +1568,9 @@ async function init() {
 
     document.getElementById("loading").style.display = "none";
     document.getElementById("content").style.display = "block";
+
+    // Cargar ventas en background para el dashboard
+    loadVentas().then(() => renderDashboard());
 
     setTimeout(() => {
       document.querySelectorAll(".kpi-card, .table-card").forEach((el,i) => {
@@ -1863,6 +1881,36 @@ ${Object.entries(ventas7).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([p,v])=>`- ${p}
 ALERTAS:
 ${sinStock.length>0?"SIN STOCK: "+sinStock.map(p=>p.nombre).join(", "):""}
 ${reponer.length>0?"REPONER: "+reponer.map(p=>p.nombre+" ("+p.stock+"/"+p.minimo+")").join(", "):""}
+
+${(()=>{
+  // Datos de ventas reales
+  if (!ventasDataGlobal || ventasDataGlobal.length < 2) return "Sin datos de ventas registrados.";
+  const vRows = ventasDataGlobal.slice(1).filter(r => r[2] && r[2].trim());
+  if (!vRows.length) return "Sin ventas registradas aún.";
+  const vData = vRows.map(r => ({
+    fecha: (r[1]||"").trim(), producto: (r[2]||"").trim(),
+    cantidad: Number(r[4])||0, total: Number(r[7])||0,
+    ganancia: Number(r[8])||0, margen: (r[9]||"").trim(),
+    medioPago: (r[11]||"Efectivo").trim()
+  }));
+  const ahora2 = new Date();
+  const inicioMes2 = new Date(ahora2.getFullYear(), ahora2.getMonth(), 1);
+  const parsF = str => { const p=(str||"").split(" ")[0]; if(p.includes("/")){ const [d,m,y]=p.split("/"); return new Date(+y,+m-1,+d); } return new Date(p); };
+  const vMes2 = vData.filter(v => { try { return parsF(v.fecha) >= inicioMes2; } catch(e) { return false; } });
+  const totalMes2 = vMes2.reduce((s,v)=>s+v.total,0);
+  const ganMes2   = vMes2.reduce((s,v)=>s+v.ganancia,0);
+  const mrgProm2  = vData.length ? Math.round(vData.reduce((s,v)=>s+(parseFloat(v.margen)||0),0)/vData.length) : 0;
+  const porMedio2 = {};
+  vMes2.forEach(v=>{ porMedio2[v.medioPago]=(porMedio2[v.medioPago]||0)+v.total; });
+  const porProd2 = {};
+  vData.forEach(v=>{ porProd2[v.producto]=(porProd2[v.producto]||0)+Math.abs(v.cantidad); });
+  const topProd2 = Object.entries(porProd2).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([p,c])=>`${p} (${c} uds)`).join(", ");
+  return `VENTAS REALES:
+- Este mes: $${Math.round(totalMes2).toLocaleString("es-AR")} | Ganancia: $${Math.round(ganMes2).toLocaleString("es-AR")} | Margen prom: ${mrgProm2}%
+- Total ventas registradas: ${vData.length}
+- Top productos vendidos: ${topProd2||"—"}
+- Medios de pago (mes): ${Object.entries(porMedio2).map(([m,t])=>`${m}: $${Math.round(t).toLocaleString("es-AR")}`).join(", ")||"—"}`;
+})()}
 
 ${(()=>{
   if(!preciosDataGlobal||preciosDataGlobal.length===0) return "Sin datos de precios.";
@@ -2454,6 +2502,286 @@ document.addEventListener('DOMContentLoaded', () => {
 // ════════════════════════════════════════════════════════════
 //  MÓDULO DE VENTAS
 // ════════════════════════════════════════════════════════════
+
+// ════════════════════════════════════════════════════════════
+//  DASHBOARD PRINCIPAL
+// ════════════════════════════════════════════════════════════
+
+let chartVentas = null, chartMedios = null;
+
+function renderDashboard() {
+  const container = document.getElementById("dashboardContainer");
+  if (!container) return;
+  if (!stockDataGlobal.length) return; // esperar datos
+
+  const fmt    = n => "$" + Number(n).toLocaleString("es-AR", {minimumFractionDigits:0, maximumFractionDigits:0});
+  const pad    = n => String(n).padStart(2,"0");
+  const ahora  = new Date();
+  const hoyStr = `${pad(ahora.getDate())}/${pad(ahora.getMonth()+1)}/${ahora.getFullYear()}`;
+
+  const parseFecha = str => {
+    const p = (str||"").split(" ")[0];
+    if (p.includes("/")) { const [d,m,y]=p.split("/"); return new Date(+y,+m-1,+d); }
+    return new Date(p);
+  };
+
+  // ── Stock KPIs ──
+  let numOk=0, numWarn=0, numDanger=0, valorInv=0;
+  stockDataGlobal.forEach(p => {
+    valorInv += p.stock * p.precio;
+    if (p.estado==="Sin stock") numDanger++;
+    else if (p.estado==="Reponer") numWarn++;
+    else numOk++;
+  });
+
+  // ── Ventas ──
+  const vRows = ventasDataGlobal.slice(1).filter(r => r[2]&&r[2].trim());
+  const ventas = vRows.map(r => ({
+    fecha: (r[1]||"").trim(), producto: (r[2]||"").trim(),
+    cantidad: Math.abs(Number(r[4])||0), total: Number(r[7])||0,
+    ganancia: Number(r[8])||0, margen: parseFloat(r[9])||0,
+    medioPago: (r[11]||"Efectivo").trim()
+  }));
+
+  const inicioMes   = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+  const inicioMesAnt= new Date(ahora.getFullYear(), ahora.getMonth()-1, 1);
+  const finMesAnt   = new Date(ahora.getFullYear(), ahora.getMonth(), 0);
+  const inicioSem   = new Date(ahora); inicioSem.setDate(ahora.getDate()-((ahora.getDay()+6)%7)); inicioSem.setHours(0,0,0,0);
+  const inicioSemAnt= new Date(inicioSem); inicioSemAnt.setDate(inicioSemAnt.getDate()-7);
+
+  const inR = (v,d,h) => { try { const f=parseFecha(v.fecha); return f>=d&&f<=h; } catch(e){return false;} };
+
+  const vHoy    = ventas.filter(v => v.fecha.startsWith(hoyStr));
+  const vSem    = ventas.filter(v => inR(v, inicioSem, ahora));
+  const vSemAnt = ventas.filter(v => inR(v, inicioSemAnt, new Date(inicioSem.getTime()-1)));
+  const vMes    = ventas.filter(v => inR(v, inicioMes, ahora));
+  const vMesAnt = ventas.filter(v => inR(v, inicioMesAnt, finMesAnt));
+
+  const sum  = (arr,k) => arr.reduce((s,v)=>s+v[k],0);
+  const pct  = (a,b) => b>0 ? Math.round(((a-b)/b)*100) : null;
+  const arrow= (p,color) => p===null ? '' : `<span style="color:${p>=0?'#86efac':'#fca5a5'};font-size:11px;font-weight:700;">${p>=0?'↑':'↓'}${Math.abs(p)}%</span>`;
+
+  const totalSem  = sum(vSem,'total'),  totalSemAnt = sum(vSemAnt,'total');
+  const totalMes  = sum(vMes,'total'),  totalMesAnt = sum(vMesAnt,'total');
+  const ganMes    = sum(vMes,'ganancia');
+  const mrgProm   = vMes.length ? Math.round(vMes.reduce((s,v)=>s+v.margen,0)/vMes.length) : 0;
+
+  // ── Top productos ──
+  const porProd = {};
+  ventas.forEach(v=>{ porProd[v.producto]=(porProd[v.producto]||0)+v.cantidad; });
+  const topProds = Object.entries(porProd).sort((a,b)=>b[1]-a[1]).slice(0,6);
+
+  // ── Medios de pago (mes) ──
+  const porMedio = {};
+  vMes.forEach(v=>{ porMedio[v.medioPago]=(porMedio[v.medioPago]||0)+v.total; });
+  const medioColores = {"Efectivo":"#86efac","Tarjeta":"#818cf8","Mercado Pago":"#38bdf8","Transferencia":"#fdba74"};
+
+  // ── Ventas últimos 14 días para gráfico ──
+  const diasLabels=[], diasData=[];
+  for (let i=13; i>=0; i--) {
+    const d = new Date(ahora); d.setDate(ahora.getDate()-i);
+    const str = `${pad(d.getDate())}/${pad(d.getMonth()+1)}`;
+    const fullStr = `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`;
+    diasLabels.push(str);
+    diasData.push(ventas.filter(v=>v.fecha.startsWith(fullStr)).reduce((s,v)=>s+v.total,0));
+  }
+
+  // ── Últimas alertas de stock ──
+  const sinStock = stockDataGlobal.filter(p=>p.estado==="Sin stock").slice(0,3);
+  const reponer  = stockDataGlobal.filter(p=>p.estado==="Reponer").slice(0,3);
+
+  container.innerHTML = `
+    <div style="padding-bottom:24px;">
+
+      <!-- KPI row: Stock -->
+      <div style="margin-bottom:8px;font-size:10.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1.2px;">📦 Stock</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+        <div class="kpi-card ok visible" style="border-top-color:#10b981;padding:16px 18px;">
+          <div class="kpi-label">En orden</div>
+          <div class="kpi-number" style="font-size:36px;">${numOk}</div>
+          <div class="kpi-sub">productos OK</div>
+        </div>
+        <div class="kpi-card warn visible" style="border-top-color:#f59e0b;padding:16px 18px;">
+          <div class="kpi-label">Stock bajo</div>
+          <div class="kpi-number" style="font-size:36px;">${numWarn}</div>
+          <div class="kpi-sub">para reponer</div>
+        </div>
+        <div class="kpi-card danger visible" style="border-top-color:#ef4444;padding:16px 18px;">
+          <div class="kpi-label">Sin stock</div>
+          <div class="kpi-number" style="font-size:36px;">${numDanger}</div>
+          <div class="kpi-sub">urgente</div>
+        </div>
+        <div class="kpi-card value visible" style="border-top-color:#6366f1;padding:16px 18px;">
+          <div class="kpi-label">Valor inventario</div>
+          <div class="kpi-number" style="font-size:20px;letter-spacing:-0.5px;">${fmt(valorInv)}</div>
+          <div class="kpi-sub">en stock</div>
+        </div>
+      </div>
+
+      <!-- KPI row: Ventas -->
+      <div style="margin-bottom:8px;font-size:10.5px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1.2px;">💵 Ventas</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+        <div class="kpi-card visible" style="border-top-color:#10b981;padding:16px 18px;">
+          <div class="kpi-label">Hoy</div>
+          <div class="kpi-number" style="font-size:24px;letter-spacing:-0.5px;">${fmt(sum(vHoy,'total'))}</div>
+          <div class="kpi-sub">${vHoy.length} operaciones</div>
+        </div>
+        <div class="kpi-card visible" style="border-top-color:#6366f1;padding:16px 18px;">
+          <div class="kpi-label">Esta semana</div>
+          <div class="kpi-number" style="font-size:24px;letter-spacing:-0.5px;">${fmt(totalSem)}</div>
+          <div class="kpi-sub">${arrow(pct(totalSem,totalSemAnt))} vs sem. ant.</div>
+        </div>
+        <div class="kpi-card visible" style="border-top-color:#f472b6;padding:16px 18px;">
+          <div class="kpi-label">Este mes</div>
+          <div class="kpi-number" style="font-size:24px;letter-spacing:-0.5px;">${fmt(totalMes)}</div>
+          <div class="kpi-sub">${arrow(pct(totalMes,totalMesAnt))} vs mes ant.</div>
+        </div>
+        <div class="kpi-card visible" style="border-top-color:#f59e0b;padding:16px 18px;">
+          <div class="kpi-label">Ganancia mes</div>
+          <div class="kpi-number" style="font-size:24px;letter-spacing:-0.5px;color:#86efac;">${fmt(ganMes)}</div>
+          <div class="kpi-sub">Margen: ${mrgProm}%</div>
+        </div>
+      </div>
+
+      <!-- Gráfico ventas + Top productos -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;">
+
+        <!-- Gráfico línea ventas -->
+        <div class="table-card visible">
+          <div class="table-header">
+            <span class="table-title">📈 Ventas — últimos 14 días</span>
+          </div>
+          <div style="padding:16px 18px;height:220px;">
+            <canvas id="chartVentasLinea"></canvas>
+          </div>
+        </div>
+
+        <!-- Top productos -->
+        <div class="table-card visible">
+          <div class="table-header">
+            <span class="table-title">🏆 Más vendidos</span>
+            <span class="table-count">histórico</span>
+          </div>
+          <div style="padding:12px 16px;display:flex;flex-direction:column;gap:9px;">
+            ${topProds.length ? topProds.map(([nombre,cant],i)=>{
+              const cols=["#a78bfa","#38bdf8","#86efac","#fdba74","#fca5a5","#f472b6"];
+              const pct2=Math.round((cant/topProds[0][1])*100);
+              return `<div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+                  <span style="font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;">${i+1}. ${nombre}</span>
+                  <span style="font-size:12px;color:${cols[i]};font-weight:700;flex-shrink:0;margin-left:4px;">${cant} uds</span>
+                </div>
+                <div style="height:4px;background:var(--border);border-radius:4px;overflow:hidden;">
+                  <div style="height:100%;width:${pct2}%;background:${cols[i]};border-radius:4px;"></div>
+                </div>
+              </div>`;
+            }).join("") : '<span style="color:var(--text-3);font-size:13px;">Sin ventas aún</span>'}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Medios de pago + Alertas -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+        <!-- Medios de pago -->
+        <div class="table-card visible">
+          <div class="table-header">
+            <span class="table-title">💳 Medios de pago</span>
+            <span class="table-count">este mes</span>
+          </div>
+          <div style="padding:14px 16px;display:flex;gap:16px;align-items:center;">
+            <canvas id="chartMediosPago" style="max-width:120px;max-height:120px;flex-shrink:0;"></canvas>
+            <div style="display:flex;flex-direction:column;gap:8px;flex:1;">
+              ${Object.keys(porMedio).length ? Object.entries(porMedio).sort((a,b)=>b[1]-a[1]).map(([m,t])=>{
+                const col=medioColores[m]||"#a78bfa";
+                const pct3=Math.round((t/sum(vMes,'total'))*100);
+                const ico={"Efectivo":"💵","Tarjeta":"💳","Mercado Pago":"📱","Transferencia":"🏦"}[m]||"💰";
+                return `<div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:12.5px;font-weight:600;color:var(--text);">${ico} ${m}</span>
+                  <span style="font-size:12px;color:${col};font-weight:700;">${pct3}% — ${fmt(t)}</span>
+                </div>`;
+              }).join("") : '<span style="color:var(--text-3);font-size:13px;">Sin ventas este mes</span>'}
+            </div>
+          </div>
+        </div>
+
+        <!-- Alertas de stock -->
+        <div class="table-card visible">
+          <div class="table-header">
+            <span class="table-title">🚨 Alertas de stock</span>
+          </div>
+          <div style="padding:12px 16px;display:flex;flex-direction:column;gap:7px;">
+            ${sinStock.map(p=>`
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(239,68,68,0.08);border-radius:8px;border:1px solid rgba(239,68,68,0.2);">
+                <span style="font-size:13px;font-weight:600;color:#fca5a5;">🚨 ${p.nombre}</span>
+                <span style="font-size:11.5px;color:#fca5a5;font-weight:700;">SIN STOCK</span>
+              </div>`).join("")}
+            ${reponer.map(p=>`
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(245,158,11,0.08);border-radius:8px;border:1px solid rgba(245,158,11,0.2);">
+                <span style="font-size:13px;font-weight:600;color:#fdba74;">⚠️ ${p.nombre}</span>
+                <span style="font-size:11.5px;color:#fdba74;font-weight:700;">${p.stock}/${p.minimo} uds</span>
+              </div>`).join("")}
+            ${!sinStock.length && !reponer.length ? '<div style="text-align:center;padding:20px;color:#86efac;font-weight:600;font-size:13px;">✅ Todo el stock en orden</div>' : ''}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
+
+  // Destruir charts anteriores si existen
+  if (chartVentas)  { chartVentas.destroy();  chartVentas  = null; }
+  if (chartMedios)  { chartMedios.destroy();   chartMedios  = null; }
+
+  // Gráfico línea ventas
+  const ctxL = document.getElementById("chartVentasLinea");
+  if (ctxL && typeof Chart !== "undefined") {
+    chartVentas = new Chart(ctxL, {
+      type: "line",
+      data: {
+        labels: diasLabels,
+        datasets: [{
+          label: "Ventas $",
+          data: diasData,
+          borderColor: "#8b5cf6",
+          backgroundColor: "rgba(139,92,246,0.12)",
+          borderWidth: 2.5,
+          pointBackgroundColor: "#8b5cf6",
+          pointRadius: 3,
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: "rgba(255,255,255,0.05)" }, ticks: { color: "#71717a", font: { size: 10 } } },
+          y: { grid: { color: "rgba(255,255,255,0.05)" }, ticks: { color: "#71717a", font: { size: 10 },
+            callback: v => "$" + (v>=1000 ? Math.round(v/1000)+"K" : v) } }
+        }
+      }
+    });
+  }
+
+  // Gráfico donut medios de pago
+  const ctxD = document.getElementById("chartMediosPago");
+  if (ctxD && typeof Chart !== "undefined" && Object.keys(porMedio).length) {
+    const labels = Object.keys(porMedio);
+    const vals   = labels.map(k => porMedio[k]);
+    const cols   = labels.map(k => medioColores[k] || "#a78bfa");
+    chartMedios = new Chart(ctxD, {
+      type: "doughnut",
+      data: { labels, datasets: [{ data: vals, backgroundColor: cols, borderWidth: 0, hoverOffset: 4 }] },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        cutout: "68%"
+      }
+    });
+  }
+}
 
 async function loadVentas() {
   const container = document.getElementById("ventasContainer");
