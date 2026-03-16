@@ -2459,6 +2459,7 @@ async function enviarMovimiento() {
         formData.append("responsable",     responsable);
         formData.append("observaciones",   obs);
         formData.append("medio_pago",      getMedioPago());
+        formData.append("email_cliente",   (document.getElementById("movEmailCliente")?.value || "").trim());
         const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
         const data = await res.json();
         if (!data.ok) { errores++; console.error("Error venta:", data.msg || data.error); }
