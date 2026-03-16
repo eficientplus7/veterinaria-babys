@@ -969,6 +969,11 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
       <span>Movimientos</span>
     </button>
 
+    <button class="nav-item" onclick="switchTab('ventas', this)">
+      <span class="nav-icon">💵</span>
+      <span>Ventas</span>
+    </button>
+
   </nav>
 
   <!-- Footer -->
@@ -1238,6 +1243,16 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
 
         </div>
 
+        <!-- TAB: VENTAS -->
+        <div id="tab-ventas" class="tab-content">
+          <div id="ventasContainer">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:14px;color:var(--text-3);">
+              <div class="spinner"></div>
+              <span style="font-weight:600;font-size:14px;">Cargando ventas...</span>
+            </div>
+          </div>
+        </div>
+
       </div><!-- /#content -->
     </div><!-- /.main-content -->
 
@@ -1367,6 +1382,29 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
             <div id="carritoItems"></div>
           </div>
 
+          <!-- Precios de venta (solo visible cuando tipo = SALIDA) -->
+          <div id="seccion-precios-venta" style="display:none;margin:4px 0 8px;padding:14px;border-radius:10px;border:1px solid var(--border);background:var(--card);">
+            <div style="font-weight:600;margin-bottom:10px;color:var(--text);display:flex;align-items:center;gap:6px;font-size:13.5px;">
+              💰 Precios de venta
+              <span style="font-size:11px;font-weight:400;color:var(--text-3);">— costo sugerido desde lista de proveedores</span>
+            </div>
+            <div style="overflow-x:auto;">
+              <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                <thead>
+                  <tr style="color:var(--text-3);">
+                    <th style="text-align:left;padding:4px 6px;font-weight:500;">Producto</th>
+                    <th style="padding:4px 6px;font-weight:500;text-align:center;">Cant.</th>
+                    <th style="padding:4px 6px;font-weight:500;text-align:center;">Costo u. $</th>
+                    <th style="padding:4px 6px;font-weight:500;text-align:center;color:#f472b6;">Precio venta $ *</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-precios-body">
+                  <tr><td colspan="4" style="color:var(--text-3);padding:6px;font-size:12px;">Agregá productos al carrito</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <!-- Responsable -->
           <div class="form-group">
             <label class="form-label" for="movResponsable">Responsable</label>
@@ -1413,6 +1451,7 @@ const TAB_META = {
   stock:       { title: 'Control de Stock',        sub: 'Vista general del inventario' },
   precios:     { title: 'Precios Proveedores',     sub: 'Comparador de listas de precios' },
   movimientos: { title: 'Historial de Movimientos', sub: 'Últimos movimientos registrados' },
+  ventas:      { title: 'Ventas',                  sub: 'Facturación y márgenes' },
 };
 
 function switchTab(tab, btn) {
@@ -1423,15 +1462,18 @@ function switchTab(tab, btn) {
   const m = TAB_META[tab] || {};
   if (m.title) document.getElementById('topbarTitle').textContent = m.title;
   if (m.sub)   document.getElementById('topbarSub').textContent   = m.sub;
+  if (tab === 'ventas') loadVentas();
 }
 
 const SHEET_ID         = "1DybrN_TADZV5qkj15IN2Br_NrlW3HA_M7JUyDer2KNc";
 const GID_STOCK        = "0";
 const GID_MOV          = "116787606";
+const GID_VENTAS       = "1258829145";
 const SHEET_PRECIOS_ID = "1uA2NarE8XXwfB6tRbT87oEVhrpJbxQghsYfcU5uhQro";
 
 let todosLosProductos = [];
 let preciosDataGlobal = [];
+let ventasDataGlobal  = [];
 
 function csvUrl(gid) {
   return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
@@ -1970,6 +2012,9 @@ function abrirModal() {
   document.getElementById("modalSuccess").classList.remove("show");
   document.getElementById("btnSubmitMov").disabled = false;
   document.getElementById("btnSubmitTxt").textContent = "✅ Guardar movimiento";
+  // Reset sección precios
+  const secPV = document.getElementById("seccion-precios-venta");
+  if (secPV) secPV.style.display = "none";
 
   document.getElementById("modalOverlay").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -1990,6 +2035,7 @@ function seleccionarTipo(tipo, btn) {
   tipoSeleccionado = tipo;
   document.querySelectorAll(".tipo-pill").forEach(p => p.classList.remove("selected"));
   btn.classList.add("selected");
+  actualizarSeccionPrecios();
 }
 
 // ── Buscador de productos ─────────────────────────────────────
@@ -2061,12 +2107,14 @@ function agregarAlCarrito() {
     '<span style="color:#71717a;font-style:italic;">Ningún producto seleccionado</span>';
   cantInput.value = "";
   renderCarrito();
+  actualizarSeccionPrecios();
   document.getElementById("productSearch").focus();
 }
 
 function quitarDelCarrito(idx) {
   carrito.splice(idx, 1);
   renderCarrito();
+  actualizarSeccionPrecios();
 }
 
 function renderCarrito() {
@@ -2097,41 +2145,75 @@ async function enviarMovimiento() {
   const tipo        = tipoSeleccionado;
   const responsable = document.getElementById("movResponsable").value.trim();
   const obs         = document.getElementById("movObs").value.trim();
+  const esVenta     = tipo === "SALIDA";
 
   if (!tipo)             { alert("Seleccioná el tipo de movimiento."); return; }
   if (carrito.length === 0) { alert("Agregá al menos un producto."); return; }
   if (!responsable)      { alert("Seleccioná el responsable."); return; }
+
+  // Validar precio de venta si es SALIDA
+  if (esVenta) {
+    for (let idx = 0; idx < carrito.length; idx++) {
+      const pv = parseFloat(document.getElementById(`pv-venta-${idx}`)?.value) || 0;
+      if (!pv) {
+        alert(`Ingresá el precio de venta para "${carrito[idx].producto}".`);
+        return;
+      }
+    }
+  }
 
   const btn = document.getElementById("btnSubmitMov");
   btn.disabled = true;
   document.getElementById("btnSubmitTxt").textContent = `Guardando ${carrito.length} producto${carrito.length > 1 ? "s" : ""}...`;
 
   try {
-    // Enviar cada producto del carrito como llamada individual al Apps Script
-    // (el AS procesa de a uno — es lo más simple y confiable)
     let errores = 0;
-    for (const item of carrito) {
-      const formData = new FormData();
-      formData.append("accion",        "movimiento");
-      formData.append("producto",      item.producto);
-      formData.append("tipo",          tipo);
-      formData.append("cantidad",      item.cantidad);
-      formData.append("responsable",   responsable);
-      formData.append("observaciones", obs);
+    for (let idx = 0; idx < carrito.length; idx++) {
+      const item = carrito[idx];
 
-      const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
-      const data = await res.json();
-      if (!data.ok) errores++;
+      if (esVenta) {
+        // Enviar como venta (JSON)
+        const costoUnit   = parseFloat(document.getElementById(`pv-costo-${idx}`)?.value)  || 0;
+        const precioVenta = parseFloat(document.getElementById(`pv-venta-${idx}`)?.value)  || 0;
+        const body = JSON.stringify({
+          accion:          "venta",
+          producto:        item.producto,
+          cantidad:        item.cantidad,
+          costo_unitario:  costoUnit,
+          precio_venta:    precioVenta,
+          responsable,
+          observaciones:   obs
+        });
+        const res  = await fetch(APPS_SCRIPT_STOCK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body
+        });
+        const data = await res.json();
+        if (!data.ok) errores++;
+      } else {
+        // Movimiento normal (FormData)
+        const formData = new FormData();
+        formData.append("accion",        "movimiento");
+        formData.append("producto",      item.producto);
+        formData.append("tipo",          tipo);
+        formData.append("cantidad",      item.cantidad);
+        formData.append("responsable",   responsable);
+        formData.append("observaciones", obs);
+        const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
+        const data = await res.json();
+        if (!data.ok) errores++;
+      }
     }
 
     if (errores === 0) {
       document.getElementById("modalForm").style.display = "none";
       const items = carrito.map(i => `${i.cantidad} × ${i.producto}`).join(", ");
       document.getElementById("successMsg").textContent =
-        `${tipo} registrada: ${items}`;
+        esVenta ? `Venta registrada: ${items}` : `${tipo} registrada: ${items}`;
       document.getElementById("modalSuccess").classList.add("show");
       carrito = [];
-      setTimeout(() => { init(); }, 2000);
+      setTimeout(() => { init(); if (esVenta) loadVentas(); }, 2000);
     } else {
       alert(`Se registraron ${carrito.length - errores} de ${carrito.length} productos. Revisá la conexión.`);
       btn.disabled = false;
@@ -2312,6 +2394,201 @@ document.addEventListener('DOMContentLoaded', () => {
   setTheme(currentTheme);
   applyCursor(currentCursor);
 });
+
+// ════════════════════════════════════════════════════════════
+//  MÓDULO DE VENTAS
+// ════════════════════════════════════════════════════════════
+
+async function loadVentas() {
+  const container = document.getElementById("ventasContainer");
+  if (!container) return;
+  container.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:14px;color:var(--text-3);"><div class="spinner"></div><span style="font-weight:600;font-size:14px;">Cargando ventas...</span></div>`;
+  try {
+    const url  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID_VENTAS}&t=${Date.now()}`;
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    ventasDataGlobal = parseCSV(await res.text());
+    renderVentasTab();
+  } catch(e) {
+    container.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-3);">No se pudieron cargar las ventas.<br><small>${e.message}</small></div>`;
+  }
+}
+
+function renderVentasTab() {
+  const container = document.getElementById("ventasContainer");
+  if (!container) return;
+
+  const rows = ventasDataGlobal.slice(1).filter(r => r[2] && r[2].trim());
+  if (!rows.length) {
+    container.innerHTML = `<div style="text-align:center;padding:60px;color:var(--text-3);font-size:14px;">No hay ventas registradas aún.</div>`;
+    return;
+  }
+
+  const ventas = rows.map(r => ({
+    fecha:       (r[1]  || "").trim(),
+    producto:    (r[2]  || "").trim(),
+    categoria:   (r[3]  || "").trim(),
+    cantidad:    Number(r[4]) || 0,
+    costoUnit:   Number(r[5]) || 0,
+    precioVenta: Number(r[6]) || 0,
+    total:       Number(r[7]) || 0,
+    ganancia:    Number(r[8]) || 0,
+    margen:      (r[9]  || "").trim(),
+    responsable: (r[10] || "").trim()
+  }));
+
+  const fmt = n => "$" + Number(n).toLocaleString("es-AR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+  const parseFecha = str => {
+    const p = (str || "").split(" ")[0];
+    if (p.includes("/")) { const [d,m,y] = p.split("/"); return new Date(+y, +m-1, +d); }
+    return new Date(p);
+  };
+
+  const ahora        = new Date();
+  const inicioSemana = new Date(ahora);
+  inicioSemana.setDate(ahora.getDate() - ((ahora.getDay() + 6) % 7));
+  inicioSemana.setHours(0,0,0,0);
+  const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+  const hoyStr    = ahora.toLocaleDateString("es-AR");
+
+  const vHoy    = ventas.filter(v => v.fecha.startsWith(hoyStr));
+  const vSemana = ventas.filter(v => { try { return parseFecha(v.fecha) >= inicioSemana; } catch(e) { return false; } });
+  const vMes    = ventas.filter(v => { try { return parseFecha(v.fecha) >= inicioMes;    } catch(e) { return false; } });
+
+  const sumTotal    = arr => arr.reduce((s, v) => s + v.total, 0);
+  const sumGanancia = arr => arr.reduce((s, v) => s + v.ganancia, 0);
+  const mrgProm = ventas.length
+    ? Math.round(ventas.reduce((s, v) => s + (parseFloat(v.margen) || 0), 0) / ventas.length) + "%"
+    : "—";
+
+  const ultimas = [...ventas].reverse().slice(0, 20);
+
+  container.innerHTML = `
+    <div style="padding:0 0 20px;">
+      <div class="kpi-grid" style="margin-bottom:20px;">
+        <div class="kpi-card ok visible" style="border-top-color:#10b981;">
+          <span class="kpi-emoji">📅</span>
+          <div class="kpi-label">Ventas hoy</div>
+          <div class="kpi-number" style="font-size:26px;letter-spacing:-1px;">${fmt(sumTotal(vHoy))}</div>
+          <div class="kpi-sub">${vHoy.length} operaciones</div>
+        </div>
+        <div class="kpi-card ok visible" style="border-top-color:#6366f1;">
+          <span class="kpi-emoji">📆</span>
+          <div class="kpi-label">Esta semana</div>
+          <div class="kpi-number" style="font-size:26px;letter-spacing:-1px;">${fmt(sumTotal(vSemana))}</div>
+          <div class="kpi-sub">${vSemana.length} operaciones</div>
+        </div>
+        <div class="kpi-card ok visible" style="border-top-color:#f472b6;">
+          <span class="kpi-emoji">🗓️</span>
+          <div class="kpi-label">Este mes</div>
+          <div class="kpi-number" style="font-size:26px;letter-spacing:-1px;">${fmt(sumTotal(vMes))}</div>
+          <div class="kpi-sub">Ganancia: ${fmt(sumGanancia(vMes))}</div>
+        </div>
+        <div class="kpi-card value visible" style="border-top-color:#f59e0b;">
+          <span class="kpi-emoji">📈</span>
+          <div class="kpi-label">Margen promedio</div>
+          <div class="kpi-number" style="font-size:32px;">${mrgProm}</div>
+          <div class="kpi-sub">${ventas.length} ventas totales</div>
+        </div>
+      </div>
+
+      <div class="table-card visible">
+        <div class="table-header">
+          <span class="table-title">💵 Últimas ventas</span>
+          <span class="table-count">${ventas.length} registros</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th style="text-align:left;">Fecha</th>
+                <th style="text-align:left;">Producto</th>
+                <th>Cant.</th>
+                <th>Costo u.</th>
+                <th>Precio v.</th>
+                <th>Total</th>
+                <th>Ganancia</th>
+                <th>Margen</th>
+                <th style="text-align:left;">Responsable</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ultimas.map(v => `
+                <tr>
+                  <td style="color:#94a3b8;font-size:12px;white-space:nowrap;">${v.fecha}</td>
+                  <td style="text-align:left;"><div class="product-name">${v.producto}</div><div class="product-cat">${v.categoria}</div></td>
+                  <td>${v.cantidad}</td>
+                  <td style="color:#a1a1aa;">${fmt(v.costoUnit)}</td>
+                  <td style="font-weight:700;">${fmt(v.precioVenta)}</td>
+                  <td style="font-weight:800;color:#a78bfa;">${fmt(v.total)}</td>
+                  <td style="color:${v.ganancia >= 0 ? '#86efac' : '#fca5a5'};font-weight:700;">${fmt(v.ganancia)}</td>
+                  <td><span class="margen-pill ${parseFloat(v.margen)>=40?'alto':parseFloat(v.margen)>=20?'medio':'bajo'}">${v.margen||'—'}</span></td>
+                  <td style="text-align:left;color:#94a3b8;font-size:12px;">${v.responsable}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ── Precio sugerido desde preciosDataGlobal ────────────────────
+function getSuggestedPrices(nombreProducto) {
+  if (!preciosDataGlobal || preciosDataGlobal.length === 0) return { costo: 0, venta: 0 };
+  const nombre = nombreProducto.toLowerCase().trim();
+  let mejorMatch = null, mejorScore = 0;
+  preciosDataGlobal.forEach(p => {
+    const desc = (p.desc || "").toLowerCase().trim();
+    if (!desc) return;
+    let score = 0;
+    if (desc === nombre)                                      score = 100;
+    else if (desc.includes(nombre) || nombre.includes(desc)) score = 60;
+    else {
+      const palabras = nombre.split(" ").filter(w => w.length > 3);
+      score = palabras.filter(w => desc.includes(w)).length * 15;
+    }
+    if (score > mejorScore) { mejorScore = score; mejorMatch = p; }
+  });
+  if (!mejorMatch || mejorScore === 0) return { costo: 0, venta: 0 };
+  return { costo: mejorMatch.conIVA || 0, venta: mejorMatch.venta || 0 };
+}
+
+// ── Sección de precios en el modal ─────────────────────────────
+function actualizarSeccionPrecios() {
+  const seccion = document.getElementById("seccion-precios-venta");
+  if (!seccion) return;
+  seccion.style.display = tipoSeleccionado === "SALIDA" ? "block" : "none";
+  if (tipoSeleccionado === "SALIDA") actualizarTablaPrecios();
+}
+
+function actualizarTablaPrecios() {
+  const tbody = document.getElementById("tabla-precios-body");
+  if (!tbody) return;
+  if (!carrito.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="color:var(--text-3);padding:6px;font-size:12px;">Agregá productos al carrito</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = carrito.map((item, idx) => {
+    const sug = getSuggestedPrices(item.nombre);
+    return `<tr>
+      <td style="padding:4px 6px;font-size:13px;">${item.nombre}</td>
+      <td style="text-align:center;padding:4px 6px;">${item.cantidad}</td>
+      <td style="padding:3px 4px;">
+        <input type="number" id="pv-costo-${idx}"
+          value="${sug.costo || ""}" placeholder="0" step="0.01" min="0"
+          style="width:88px;padding:5px 7px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12.5px;font-family:'Inter',sans-serif;">
+      </td>
+      <td style="padding:3px 4px;">
+        <input type="number" id="pv-venta-${idx}"
+          value="${sug.venta || ""}" placeholder="0" step="0.01" min="0"
+          style="width:88px;padding:5px 7px;border-radius:6px;border:1px solid #f472b6;background:var(--card);color:var(--text);font-size:12.5px;font-family:'Inter',sans-serif;">
+      </td>
+    </tr>`;
+  }).join("");
+}
 
 init();
 </script>
