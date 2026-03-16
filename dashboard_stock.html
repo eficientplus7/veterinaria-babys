@@ -2458,8 +2458,17 @@ async function enviarMovimiento() {
         formData.append("precio_venta",    precioVenta);
         formData.append("responsable",     responsable);
         formData.append("observaciones",   obs);
-        formData.append("medio_pago",      getMedioPago());
-        formData.append("email_cliente",   (document.getElementById("movEmailCliente")?.value || "").trim());
+        formData.append("medio_pago",      medioPago);
+        // Solo manda email en el último producto, con la lista completa
+        if (esUltimo && emailCliente) {
+          formData.append("email_cliente",   emailCliente);
+          const todosProductos = carrito.map((it, i) => ({
+            producto: it.producto,
+            cantidad: it.cantidad,
+            precio:   parseFloat(document.getElementById(`pv-venta-${i}`)?.value) || 0
+          }));
+          formData.append("todos_productos", JSON.stringify(todosProductos));
+        }
         const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
         const data = await res.json();
         console.log("Respuesta venta:", data);
@@ -3167,11 +3176,11 @@ function renderVentasTab() {
           <span class="table-title">💵 Últimas ventas</span>
           <span class="table-count">${ventas.length} registros</span>
         </div>
-        <div style="overflow-x:auto;">
-          <table>
+        <div style="overflow-x:auto;overflow-y:visible;position:relative;">
+          <table style="min-width:900px;">
             <thead>
               <tr>
-                <th style="text-align:left;">Fecha</th>
+                <th style="text-align:left;white-space:nowrap;">Fecha</th>
                 <th style="text-align:left;">Producto</th>
                 <th>Cant.</th>
                 <th>Costo u.</th>
@@ -3181,7 +3190,7 @@ function renderVentasTab() {
                 <th>Margen</th>
                 <th>Pago</th>
                 <th style="text-align:left;">Responsable</th>
-                <th></th>
+                <th style="white-space:nowrap;"></th>
               </tr>
             </thead>
             <tbody>
@@ -3190,7 +3199,7 @@ function renderVentasTab() {
                 const mIco = medioIconos[v.medioPago]  || "💰";
                 return `<tr>
                   <td style="color:#94a3b8;font-size:12px;white-space:nowrap;">${v.fecha}</td>
-                  <td style="text-align:left;"><div class="product-name">${v.producto}</div><div class="product-cat">${v.categoria}</div></td>
+                  <td style="text-align:left;max-width:180px;"><div class="product-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;">${v.producto}</div><div class="product-cat">${v.categoria}</div></td>
                   <td>${Math.abs(v.cantidad)}</td>
                   <td style="color:#a1a1aa;">${fmt(v.costoUnit)}</td>
                   <td style="font-weight:700;">${fmt(v.precioVenta)}</td>
@@ -3198,7 +3207,7 @@ function renderVentasTab() {
                   <td style="color:${v.ganancia>=0?'#86efac':'#fca5a5'};font-weight:700;">${fmt(v.ganancia)}</td>
                   <td><span class="margen-pill ${parseFloat(v.margen)>=40?'alto':parseFloat(v.margen)>=20?'medio':'bajo'}">${v.margen||'—'}</span></td>
                   <td style="white-space:nowrap;font-size:12px;color:${mCol};font-weight:600;">${mIco} ${v.medioPago}</td>
-                  <td style="text-align:left;color:#94a3b8;font-size:12px;">${v.responsable}</td>
+                  <td style="white-space:nowrap;color:#94a3b8;font-size:12px;">${v.responsable}</td>
                   <td>
                     <div style="display:flex;gap:6px;align-items:center;">
                       <button class="btn-recibo" data-idx="${ultimas.indexOf(v)}"
