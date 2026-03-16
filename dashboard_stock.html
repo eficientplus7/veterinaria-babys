@@ -2069,7 +2069,7 @@ async function enviarMensaje() {
   btnEnviar.disabled=true; btnEnviar.textContent="...";
   const loadingMsg=agregarMensaje("ai",'<div style="display:flex;align-items:center;gap:7px;opacity:0.6;"><div style="width:7px;height:7px;background:#3B82F6;border-radius:50%;animation:spin 1s linear infinite;"></div>Analizando datos...</div>');
   try {
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1024,system:construirContexto(),messages:chatHistory.slice(-6)})});
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1024,system:construirContexto(),messages:chatHistory.slice(-6)})});
     const data=await res.json();
     if(data.error){loadingMsg.innerHTML="❌ "+data.error.message;chatHistory.pop();}
     else{const r=data.content[0].text;loadingMsg.innerHTML=renderMarkdown(r);chatHistory.push({role:"assistant",content:r});if(chatHistory.length>12)chatHistory=chatHistory.slice(-12);}
