@@ -1410,7 +1410,32 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
             </div>
           </div>
 
-          <!-- Responsable -->
+          <!-- Medio de pago (solo visible cuando tipo = SALIDA) -->
+          <div id="seccion-medio-pago" style="display:none;margin:0 0 8px;">
+            <div class="form-label">Medio de pago</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;" id="medioPagoGrid">
+              <button type="button" class="medio-pill active" data-medio="Efectivo"
+                onclick="seleccionarMedio(this)"
+                style="padding:9px 6px;border-radius:8px;border:1px solid #6366f1;background:rgba(99,102,241,0.12);color:#a78bfa;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;">
+                💵 Efectivo
+              </button>
+              <button type="button" class="medio-pill" data-medio="Tarjeta"
+                onclick="seleccionarMedio(this)"
+                style="padding:9px 6px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;">
+                💳 Tarjeta
+              </button>
+              <button type="button" class="medio-pill" data-medio="Mercado Pago"
+                onclick="seleccionarMedio(this)"
+                style="padding:9px 6px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;">
+                📱 Mercado Pago
+              </button>
+              <button type="button" class="medio-pill" data-medio="Transferencia"
+                onclick="seleccionarMedio(this)"
+                style="padding:9px 6px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;">
+                🏦 Transf.
+              </button>
+            </div>
+          </div>
           <div class="form-group">
             <label class="form-label" for="movResponsable">Responsable</label>
             <select class="form-control" id="movResponsable">
@@ -2020,6 +2045,18 @@ function abrirModal() {
   // Reset sección precios
   const secPV = document.getElementById("seccion-precios-venta");
   if (secPV) secPV.style.display = "none";
+  const secMP = document.getElementById("seccion-medio-pago");
+  if (secMP) secMP.style.display = "none";
+  // Reset medio de pago a Efectivo
+  document.querySelectorAll(".medio-pill").forEach((b, i) => {
+    if (i === 0) {
+      b.style.borderColor = "#6366f1"; b.style.background = "rgba(99,102,241,0.12)"; b.style.color = "#a78bfa";
+      b.classList.add("active");
+    } else {
+      b.style.borderColor = "var(--border)"; b.style.background = "transparent"; b.style.color = "var(--text-2)";
+      b.classList.remove("active");
+    }
+  });
 
   document.getElementById("modalOverlay").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -2036,7 +2073,23 @@ function cerrarModalSiAfuera(e) {
   if (e.target === document.getElementById("modalOverlay")) cerrarModal();
 }
 
-function seleccionarTipo(tipo, btn) {
+function seleccionarMedio(btn) {
+  document.querySelectorAll(".medio-pill").forEach(b => {
+    b.style.borderColor = "var(--border)";
+    b.style.background  = "transparent";
+    b.style.color       = "var(--text-2)";
+    b.classList.remove("active");
+  });
+  btn.style.borderColor = "#6366f1";
+  btn.style.background  = "rgba(99,102,241,0.12)";
+  btn.style.color       = "#a78bfa";
+  btn.classList.add("active");
+}
+
+function getMedioPago() {
+  const active = document.querySelector(".medio-pill.active");
+  return active ? active.dataset.medio : "Efectivo";
+}
   tipoSeleccionado = tipo;
   document.querySelectorAll(".tipo-pill").forEach(p => p.classList.remove("selected"));
   btn.classList.add("selected");
@@ -2188,6 +2241,7 @@ async function enviarMovimiento() {
         formData.append("precio_venta",    precioVenta);
         formData.append("responsable",     responsable);
         formData.append("observaciones",   obs);
+        formData.append("medio_pago",      getMedioPago());
         const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
         const data = await res.json();
         if (!data.ok) errores++;
@@ -2425,20 +2479,22 @@ function renderVentasTab() {
   }
 
   const ventas = rows.map(r => ({
-    num:         Number(r[0]) || 0,
+    num:         Number(r[0])  || 0,
     fecha:       (r[1]  || "").trim(),
     producto:    (r[2]  || "").trim(),
     categoria:   (r[3]  || "").trim(),
-    cantidad:    Number(r[4]) || 0,
-    costoUnit:   Number(r[5]) || 0,
-    precioVenta: Number(r[6]) || 0,
-    total:       Number(r[7]) || 0,
-    ganancia:    Number(r[8]) || 0,
+    cantidad:    Number(r[4])  || 0,
+    costoUnit:   Number(r[5])  || 0,
+    precioVenta: Number(r[6])  || 0,
+    total:       Number(r[7])  || 0,
+    ganancia:    Number(r[8])  || 0,
     margen:      (r[9]  || "").trim(),
-    responsable: (r[10] || "").trim()
+    responsable: (r[10] || "").trim(),
+    medioPago:   (r[11] || "Efectivo").trim()
   }));
 
-  const fmt = n => "$" + Number(n).toLocaleString("es-AR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const fmt    = n  => "$" + Number(n).toLocaleString("es-AR", {minimumFractionDigits:0, maximumFractionDigits:0});
+  const fmtPct = n  => (n >= 0 ? "+" : "") + n + "%";
 
   const parseFecha = str => {
     const p = (str || "").split(" ")[0];
@@ -2447,55 +2503,181 @@ function renderVentasTab() {
   };
 
   const ahora        = new Date();
-  const inicioSemana = new Date(ahora);
-  inicioSemana.setDate(ahora.getDate() - ((ahora.getDay() + 6) % 7));
-  inicioSemana.setHours(0,0,0,0);
-  const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
-  // Normalizar fecha de hoy a dd/MM/yyyy con ceros para comparar con el sheet
-  const pad = n => String(n).padStart(2, "0");
-  const hoyStr = `${pad(ahora.getDate())}/${pad(ahora.getMonth()+1)}/${ahora.getFullYear()}`;
+  const pad          = n => String(n).padStart(2,"0");
+  const hoyStr       = `${pad(ahora.getDate())}/${pad(ahora.getMonth()+1)}/${ahora.getFullYear()}`;
+  const inicioSemana = new Date(ahora); inicioSemana.setDate(ahora.getDate()-((ahora.getDay()+6)%7)); inicioSemana.setHours(0,0,0,0);
+  const inicioMes    = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+  const inicioSemAnt = new Date(inicioSemana); inicioSemAnt.setDate(inicioSemAnt.getDate()-7);
+  const inicioMesAnt = new Date(ahora.getFullYear(), ahora.getMonth()-1, 1);
+  const finMesAnt    = new Date(ahora.getFullYear(), ahora.getMonth(), 0);
 
-  const vHoy    = ventas.filter(v => v.fecha.startsWith(hoyStr));
-  const vSemana = ventas.filter(v => { try { return parseFecha(v.fecha) >= inicioSemana; } catch(e) { return false; } });
-  const vMes    = ventas.filter(v => { try { return parseFecha(v.fecha) >= inicioMes;    } catch(e) { return false; } });
+  const inRange = (v, desde, hasta) => { try { const d=parseFecha(v.fecha); return d>=desde&&d<=hasta; } catch(e){return false;} };
 
-  const sumTotal    = arr => arr.reduce((s, v) => s + v.total, 0);
-  const sumGanancia = arr => arr.reduce((s, v) => s + v.ganancia, 0);
+  const vHoy     = ventas.filter(v => v.fecha.startsWith(hoyStr));
+  const vSemana  = ventas.filter(v => inRange(v, inicioSemana, ahora));
+  const vSemAnt  = ventas.filter(v => inRange(v, inicioSemAnt, new Date(inicioSemana.getTime()-1)));
+  const vMes     = ventas.filter(v => inRange(v, inicioMes, ahora));
+  const vMesAnt  = ventas.filter(v => inRange(v, inicioMesAnt, finMesAnt));
+
+  const sumTotal    = arr => arr.reduce((s,v) => s+v.total, 0);
+  const sumGanancia = arr => arr.reduce((s,v) => s+v.ganancia, 0);
+  const pctCambio   = (actual, anterior) => anterior > 0 ? Math.round(((actual-anterior)/anterior)*100) : null;
+
+  const totalSem    = sumTotal(vSemana),  totalSemAnt = sumTotal(vSemAnt);
+  const totalMes    = sumTotal(vMes),     totalMesAnt = sumTotal(vMesAnt);
+  const ganMes      = sumGanancia(vMes),  ganMesAnt   = sumGanancia(vMesAnt);
+  const pctSem      = pctCambio(totalSem, totalSemAnt);
+  const pctMes      = pctCambio(totalMes, totalMesAnt);
+  const pctGan      = pctCambio(ganMes,   ganMesAnt);
+
   const mrgProm = ventas.length
-    ? Math.round(ventas.reduce((s, v) => s + (parseFloat(v.margen) || 0), 0) / ventas.length) + "%"
-    : "—";
+    ? Math.round(ventas.reduce((s,v) => s+(parseFloat(v.margen)||0), 0) / ventas.length)
+    : 0;
+  const mrgPromAnt = vMesAnt.length
+    ? Math.round(vMesAnt.reduce((s,v) => s+(parseFloat(v.margen)||0), 0) / vMesAnt.length)
+    : null;
+  const pctMrg = mrgPromAnt !== null ? pctCambio(mrgProm, mrgPromAnt) : null;
+
+  const arrowHtml = (pct, invertir=false) => {
+    if (pct === null) return `<span style="color:var(--text-3);font-size:11px;">vs mes ant.</span>`;
+    const positivo = invertir ? pct < 0 : pct >= 0;
+    const color    = positivo ? "#86efac" : "#fca5a5";
+    const arrow    = pct >= 0 ? "↑" : "↓";
+    return `<span style="color:${color};font-size:12px;font-weight:700;">${arrow} ${Math.abs(pct)}%</span> <span style="color:var(--text-3);font-size:11px;">vs mes ant.</span>`;
+  };
+
+  // Top productos (por cantidad vendida)
+  const porProducto = {};
+  ventas.forEach(v => {
+    if (!porProducto[v.producto]) porProducto[v.producto] = { cant: 0, total: 0, ganancia: 0 };
+    porProducto[v.producto].cant     += Math.abs(v.cantidad);
+    porProducto[v.producto].total    += v.total;
+    porProducto[v.producto].ganancia += v.ganancia;
+  });
+  const topProductos = Object.entries(porProducto)
+    .sort((a,b) => b[1].cant - a[1].cant).slice(0, 5);
+  const maxCant = topProductos.length ? topProductos[0][1].cant : 1;
+
+  // Desglose por medio de pago (este mes)
+  const porMedio = {};
+  vMes.forEach(v => {
+    const m = v.medioPago || "Efectivo";
+    if (!porMedio[m]) porMedio[m] = 0;
+    porMedio[m] += v.total;
+  });
+  const medioIconos = { "Efectivo":"💵", "Tarjeta":"💳", "Mercado Pago":"📱", "Transferencia":"🏦" };
+  const medioColores = { "Efectivo":"#86efac", "Tarjeta":"#818cf8", "Mercado Pago":"#38bdf8", "Transferencia":"#fdba74" };
+  const totalMedios = Object.values(porMedio).reduce((s,v)=>s+v,0);
 
   const ultimas = [...ventas].reverse().slice(0, 20);
 
   container.innerHTML = `
-    <div style="padding:0 0 20px;">
+    <div style="padding:0 0 24px;">
+
+      <!-- KPIs con comparación -->
       <div class="kpi-grid" style="margin-bottom:20px;">
         <div class="kpi-card ok visible" style="border-top-color:#10b981;">
           <span class="kpi-emoji">📅</span>
           <div class="kpi-label">Ventas hoy</div>
-          <div class="kpi-number" style="font-size:26px;letter-spacing:-1px;">${fmt(sumTotal(vHoy))}</div>
+          <div class="kpi-number" style="font-size:24px;letter-spacing:-1px;">${fmt(sumTotal(vHoy))}</div>
           <div class="kpi-sub">${vHoy.length} operaciones</div>
         </div>
         <div class="kpi-card ok visible" style="border-top-color:#6366f1;">
           <span class="kpi-emoji">📆</span>
           <div class="kpi-label">Esta semana</div>
-          <div class="kpi-number" style="font-size:26px;letter-spacing:-1px;">${fmt(sumTotal(vSemana))}</div>
-          <div class="kpi-sub">${vSemana.length} operaciones</div>
+          <div class="kpi-number" style="font-size:24px;letter-spacing:-1px;">${fmt(totalSem)}</div>
+          <div class="kpi-sub">${pctSem!==null ? `<span style="color:${pctSem>=0?'#86efac':'#fca5a5'};font-weight:700;">${pctSem>=0?"↑":"↓"} ${Math.abs(pctSem)}%</span> vs sem. ant.` : vSemana.length+" ops"}</div>
         </div>
         <div class="kpi-card ok visible" style="border-top-color:#f472b6;">
           <span class="kpi-emoji">🗓️</span>
           <div class="kpi-label">Este mes</div>
-          <div class="kpi-number" style="font-size:26px;letter-spacing:-1px;">${fmt(sumTotal(vMes))}</div>
-          <div class="kpi-sub">Ganancia: ${fmt(sumGanancia(vMes))}</div>
+          <div class="kpi-number" style="font-size:24px;letter-spacing:-1px;">${fmt(totalMes)}</div>
+          <div class="kpi-sub">${arrowHtml(pctMes)}</div>
         </div>
         <div class="kpi-card value visible" style="border-top-color:#f59e0b;">
           <span class="kpi-emoji">📈</span>
           <div class="kpi-label">Margen promedio</div>
-          <div class="kpi-number" style="font-size:32px;">${mrgProm}</div>
-          <div class="kpi-sub">${ventas.length} ventas totales</div>
+          <div class="kpi-number" style="font-size:30px;">${mrgProm}%</div>
+          <div class="kpi-sub">${arrowHtml(pctMrg)}</div>
         </div>
       </div>
 
+      <!-- Fila: Top Productos + Medio de Pago -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;">
+
+        <!-- Top Productos -->
+        <div class="table-card visible">
+          <div class="table-header">
+            <span class="table-title">🏆 Productos más vendidos</span>
+            <span class="table-count">histórico</span>
+          </div>
+          <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;">
+            ${topProductos.map(([nombre, d], i) => {
+              const pct = Math.round((d.cant / maxCant) * 100);
+              const colores = ["#a78bfa","#38bdf8","#86efac","#fdba74","#fca5a5"];
+              return `<div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:13px;font-weight:600;color:var(--text);">${i+1}. ${nombre}</span>
+                  <span style="font-size:12px;color:${colores[i]};font-weight:700;">${d.cant} uds — ${fmt(d.total)}</span>
+                </div>
+                <div style="height:5px;background:var(--border);border-radius:4px;overflow:hidden;">
+                  <div style="height:100%;width:${pct}%;background:${colores[i]};border-radius:4px;transition:width 0.6s ease;"></div>
+                </div>
+              </div>`;
+            }).join("")}
+            ${topProductos.length === 0 ? '<span style="color:var(--text-3);font-size:13px;">Sin datos</span>' : ''}
+          </div>
+        </div>
+
+        <!-- Medio de Pago -->
+        <div class="table-card visible">
+          <div class="table-header">
+            <span class="table-title">💳 Medios de pago</span>
+            <span class="table-count">este mes</span>
+          </div>
+          <div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px;">
+            ${Object.entries(porMedio).sort((a,b)=>b[1]-a[1]).map(([medio, total]) => {
+              const pct = totalMedios > 0 ? Math.round((total/totalMedios)*100) : 0;
+              const col = medioColores[medio] || "#a78bfa";
+              const ico = medioIconos[medio]  || "💰";
+              return `<div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:13px;font-weight:600;color:var(--text);">${ico} ${medio}</span>
+                  <span style="font-size:12px;color:${col};font-weight:700;">${pct}% — ${fmt(total)}</span>
+                </div>
+                <div style="height:5px;background:var(--border);border-radius:4px;overflow:hidden;">
+                  <div style="height:100%;width:${pct}%;background:${col};border-radius:4px;transition:width 0.6s ease;"></div>
+                </div>
+              </div>`;
+            }).join("")}
+            ${Object.keys(porMedio).length === 0 ? '<span style="color:var(--text-3);font-size:13px;">Sin ventas este mes</span>' : ''}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Rentabilidad del mes -->
+      <div class="table-card visible" style="margin-bottom:18px;">
+        <div class="table-header">
+          <span class="table-title">📊 Rentabilidad del mes</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--border);">
+          ${[
+            { label:"Facturación",   val: fmt(totalMes),      sub: arrowHtml(pctMes),  color:"#a78bfa" },
+            { label:"Costo total",   val: fmt(totalMes - ganMes), sub:"del período",   color:"#fca5a5" },
+            { label:"Ganancia neta", val: fmt(ganMes),        sub: arrowHtml(pctGan),  color:"#86efac" },
+            { label:"Margen neto",   val: mrgProm+"%",        sub: arrowHtml(pctMrg),  color:"#fdba74" }
+          ].map(k => `
+            <div style="padding:16px 18px;border-right:1px solid var(--border);">
+              <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text-3);margin-bottom:6px;">${k.label}</div>
+              <div style="font-size:22px;font-weight:800;color:${k.color};letter-spacing:-0.5px;margin-bottom:4px;">${k.val}</div>
+              <div style="font-size:11px;">${k.sub}</div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <!-- Tabla últimas ventas -->
       <div class="table-card visible">
         <div class="table-header">
           <span class="table-title">💵 Últimas ventas</span>
@@ -2513,21 +2695,25 @@ function renderVentasTab() {
                 <th>Total</th>
                 <th>Ganancia</th>
                 <th>Margen</th>
+                <th>Pago</th>
                 <th style="text-align:left;">Responsable</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              ${ultimas.map(v => `
-                <tr>
+              ${ultimas.map(v => {
+                const mCol = medioColores[v.medioPago] || "#a78bfa";
+                const mIco = medioIconos[v.medioPago]  || "💰";
+                return `<tr>
                   <td style="color:#94a3b8;font-size:12px;white-space:nowrap;">${v.fecha}</td>
                   <td style="text-align:left;"><div class="product-name">${v.producto}</div><div class="product-cat">${v.categoria}</div></td>
-                  <td>${v.cantidad}</td>
+                  <td>${Math.abs(v.cantidad)}</td>
                   <td style="color:#a1a1aa;">${fmt(v.costoUnit)}</td>
                   <td style="font-weight:700;">${fmt(v.precioVenta)}</td>
                   <td style="font-weight:800;color:#a78bfa;">${fmt(v.total)}</td>
-                  <td style="color:${v.ganancia >= 0 ? '#86efac' : '#fca5a5'};font-weight:700;">${fmt(v.ganancia)}</td>
+                  <td style="color:${v.ganancia>=0?'#86efac':'#fca5a5'};font-weight:700;">${fmt(v.ganancia)}</td>
                   <td><span class="margen-pill ${parseFloat(v.margen)>=40?'alto':parseFloat(v.margen)>=20?'medio':'bajo'}">${v.margen||'—'}</span></td>
+                  <td style="white-space:nowrap;font-size:12px;color:${mCol};font-weight:600;">${mIco} ${v.medioPago}</td>
                   <td style="text-align:left;color:#94a3b8;font-size:12px;">${v.responsable}</td>
                   <td>
                     <button onclick="anularVenta('${v.fecha.replace(/'/g,"\\'")}', '${v.producto.replace(/'/g,"\\'")}', ${Math.abs(v.cantidad)}, this)"
@@ -2535,8 +2721,8 @@ function renderVentasTab() {
                       🗑 Anular
                     </button>
                   </td>
-                </tr>
-              `).join("")}
+                </tr>`;
+              }).join("")}
             </tbody>
           </table>
         </div>
@@ -2601,9 +2787,12 @@ function getSuggestedPrices(nombreProducto) {
 // ── Sección de precios en el modal ─────────────────────────────
 function actualizarSeccionPrecios() {
   const seccion = document.getElementById("seccion-precios-venta");
+  const secMP   = document.getElementById("seccion-medio-pago");
   if (!seccion) return;
-  seccion.style.display = tipoSeleccionado === "SALIDA" ? "block" : "none";
-  if (tipoSeleccionado === "SALIDA") actualizarTablaPrecios();
+  const esSalida = tipoSeleccionado === "SALIDA";
+  seccion.style.display = esSalida ? "block" : "none";
+  if (secMP) secMP.style.display = esSalida ? "block" : "none";
+  if (esSalida) actualizarTablaPrecios();
 }
 
 function actualizarTablaPrecios() {
