@@ -2530,7 +2530,7 @@ function renderVentasTab() {
                   <td><span class="margen-pill ${parseFloat(v.margen)>=40?'alto':parseFloat(v.margen)>=20?'medio':'bajo'}">${v.margen||'—'}</span></td>
                   <td style="text-align:left;color:#94a3b8;font-size:12px;">${v.responsable}</td>
                   <td>
-                    <button onclick="anularVenta(${v.num}, '${v.producto.replace(/'/g,"\\'")}', ${v.cantidad})"
+                    <button onclick="anularVenta('${v.fecha.replace(/'/g,"\\'")}', '${v.producto.replace(/'/g,"\\'")}', ${Math.abs(v.cantidad)}, this)"
                       style="background:transparent;color:#fca5a5;border:1px solid rgba(239,68,68,0.3);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;">
                       🗑 Anular
                     </button>
@@ -2545,23 +2545,24 @@ function renderVentasTab() {
   `;
 }
 
-async function anularVenta(numVenta, producto, cantidad) {
-  if (!confirm(`¿Anular la venta de "${producto}" (×${Math.abs(cantidad)})?\n\nEsto va a:\n• Borrar la venta del registro\n• Restaurar el stock\n• Eliminar el movimiento asociado`)) return;
+async function anularVenta(fecha, producto, cantidad, btn) {
+  if (!confirm(`¿Anular la venta de "${producto}" (×${cantidad})?\n\nEsto va a:\n• Borrar la venta del registro\n• Restaurar el stock\n• Eliminar el movimiento asociado`)) return;
 
-  const btn = event.target;
   btn.disabled = true;
   btn.textContent = "...";
 
   try {
     const formData = new FormData();
-    formData.append("accion",      "anular_venta");
-    formData.append("num_venta",   numVenta);
+    formData.append("accion",    "anular_venta");
+    formData.append("fecha",     fecha);
+    formData.append("producto",  producto);
+    formData.append("cantidad",  cantidad);
 
     const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
     const data = await res.json();
 
     if (data.ok) {
-      btn.closest("tr").style.opacity = "0.3";
+      btn.closest("tr").style.opacity    = "0.3";
       btn.closest("tr").style.transition = "opacity 0.4s";
       setTimeout(() => { loadVentas(); init(); }, 600);
     } else {
