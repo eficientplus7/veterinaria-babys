@@ -1399,7 +1399,7 @@ button, a, [onclick], select, input, .nav-item, .filter-tab, .rp-chip, .tipo-pil
                   <tr style="color:var(--text-3);">
                     <th style="text-align:left;padding:4px 6px;font-weight:500;">Producto</th>
                     <th style="padding:4px 6px;font-weight:500;text-align:center;">Cant.</th>
-                    <th style="padding:4px 6px;font-weight:500;text-align:center;">Costo u. $</th>
+                <th style="padding:4px 6px;font-weight:500;text-align:center;">Costo u. $</th>
                     <th style="padding:4px 6px;font-weight:500;text-align:center;color:#f472b6;">Total cobrado $ *</th>
                   </tr>
                 </thead>
@@ -2425,6 +2425,7 @@ function renderVentasTab() {
   }
 
   const ventas = rows.map(r => ({
+    num:         Number(r[0]) || 0,
     fecha:       (r[1]  || "").trim(),
     producto:    (r[2]  || "").trim(),
     categoria:   (r[3]  || "").trim(),
@@ -2450,7 +2451,9 @@ function renderVentasTab() {
   inicioSemana.setDate(ahora.getDate() - ((ahora.getDay() + 6) % 7));
   inicioSemana.setHours(0,0,0,0);
   const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
-  const hoyStr    = ahora.toLocaleDateString("es-AR");
+  // Normalizar fecha de hoy a dd/MM/yyyy con ceros para comparar con el sheet
+  const pad = n => String(n).padStart(2, "0");
+  const hoyStr = `${pad(ahora.getDate())}/${pad(ahora.getMonth()+1)}/${ahora.getFullYear()}`;
 
   const vHoy    = ventas.filter(v => v.fecha.startsWith(hoyStr));
   const vSemana = ventas.filter(v => { try { return parseFecha(v.fecha) >= inicioSemana; } catch(e) { return false; } });
@@ -2511,6 +2514,7 @@ function renderVentasTab() {
                 <th>Ganancia</th>
                 <th>Margen</th>
                 <th style="text-align:left;">Responsable</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -2525,6 +2529,12 @@ function renderVentasTab() {
                   <td style="color:${v.ganancia >= 0 ? '#86efac' : '#fca5a5'};font-weight:700;">${fmt(v.ganancia)}</td>
                   <td><span class="margen-pill ${parseFloat(v.margen)>=40?'alto':parseFloat(v.margen)>=20?'medio':'bajo'}">${v.margen||'—'}</span></td>
                   <td style="text-align:left;color:#94a3b8;font-size:12px;">${v.responsable}</td>
+                  <td>
+                    <button onclick="anularVenta(${v.num}, '${v.producto.replace(/'/g,"\\'")}', ${v.cantidad})"
+                      style="background:transparent;color:#fca5a5;border:1px solid rgba(239,68,68,0.3);padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;white-space:nowrap;">
+                      🗑 Anular
+                    </button>
+                  </td>
                 </tr>
               `).join("")}
             </tbody>
@@ -2533,6 +2543,37 @@ function renderVentasTab() {
       </div>
     </div>
   `;
+}
+
+async function anularVenta(numVenta, producto, cantidad) {
+  if (!confirm(`¿Anular la venta de "${producto}" (×${Math.abs(cantidad)})?\n\nEsto va a:\n• Borrar la venta del registro\n• Restaurar el stock\n• Eliminar el movimiento asociado`)) return;
+
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = "...";
+
+  try {
+    const formData = new FormData();
+    formData.append("accion",      "anular_venta");
+    formData.append("num_venta",   numVenta);
+
+    const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
+    const data = await res.json();
+
+    if (data.ok) {
+      btn.closest("tr").style.opacity = "0.3";
+      btn.closest("tr").style.transition = "opacity 0.4s";
+      setTimeout(() => { loadVentas(); init(); }, 600);
+    } else {
+      alert("Error: " + (data.msg || data.error));
+      btn.disabled = false;
+      btn.textContent = "🗑 Anular";
+    }
+  } catch(e) {
+    alert("Error de conexión.");
+    btn.disabled = false;
+    btn.textContent = "🗑 Anular";
+  }
 }
 
 // ── Precio sugerido desde preciosDataGlobal ────────────────────
