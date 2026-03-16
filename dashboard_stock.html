@@ -2461,7 +2461,7 @@ async function enviarMovimiento() {
         formData.append("medio_pago",      getMedioPago());
         const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
         const data = await res.json();
-        if (!data.ok) errores++;
+        if (!data.ok) { errores++; console.error("Error venta:", data.msg || data.error); }
       } else {
         // Movimiento normal (FormData)
         const formData = new FormData();
@@ -2473,7 +2473,7 @@ async function enviarMovimiento() {
         formData.append("observaciones", obs);
         const res  = await fetch(APPS_SCRIPT_STOCK_URL, { method: "POST", body: formData });
         const data = await res.json();
-        if (!data.ok) errores++;
+        if (!data.ok) { errores++; console.error("Error movimiento:", data.msg || data.error); }
       }
     }
 
@@ -2486,7 +2486,7 @@ async function enviarMovimiento() {
       carrito = [];
       setTimeout(() => { init(); if (esVenta) loadVentas(); }, 2000);
     } else {
-      alert(`Se registraron ${carrito.length - errores} de ${carrito.length} productos. Revisá la conexión.`);
+      alert(`Se registraron ${carrito.length - errores} de ${carrito.length} productos. Abrí la consola del navegador (F12) para ver el error exacto.`);
       btn.disabled = false;
       document.getElementById("btnSubmitTxt").textContent = "✅ Guardar movimiento";
     }
