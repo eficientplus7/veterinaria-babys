@@ -1913,13 +1913,37 @@ ${(()=>{
   vData.forEach(v=>{ porProd2[v.producto]=(porProd2[v.producto]||0)+v.cantidad; });
   const topProd2 = Object.entries(porProd2).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([p,c])=>`${p} (${c} uds)`).join(", ");
   const tendencia = totalSem2 > 0 ? "con actividad" : "sin ventas esta semana";
+
+  // Margen por producto vendido (promedio ponderado)
+  const margenPorProd = {};
+  vData.forEach(v => {
+    if (!margenPorProd[v.producto]) margenPorProd[v.producto] = { totalVenta: 0, totalGanancia: 0, uds: 0 };
+    margenPorProd[v.producto].totalVenta    += v.total;
+    margenPorProd[v.producto].totalGanancia += v.ganancia;
+    margenPorProd[v.producto].uds           += v.cantidad;
+  });
+  const detallePorProd = Object.entries(margenPorProd)
+    .map(([p, d]) => ({
+      nombre: p,
+      uds: d.uds,
+      total: d.totalVenta,
+      ganancia: d.totalGanancia,
+      margen: d.totalVenta > 0 ? Math.round((d.totalGanancia / d.totalVenta) * 100) : 0
+    }))
+    .sort((a, b) => b.margen - a.margen);
+  const detalleStr = detallePorProd.map(p =>
+    `  • ${p.nombre}: ${p.uds} uds | total $${Math.round(p.total).toLocaleString("es-AR")} | ganancia $${Math.round(p.ganancia).toLocaleString("es-AR")} | margen ${p.margen}%`
+  ).join("\n");
   return `VENTAS (fuente: registro de ventas del sistema):
 - Hoy: $${Math.round(totalHoy2).toLocaleString("es-AR")} (${vHoy2.length} ops)
 - Esta semana: $${Math.round(totalSem2).toLocaleString("es-AR")} (${vSem2.length} ops) — ${tendencia}
 - Este mes: $${Math.round(totalMes2).toLocaleString("es-AR")} | Ganancia: $${Math.round(ganMes2).toLocaleString("es-AR")} | Margen prom: ${mrgProm2}%
 - Total ventas registradas: ${vData.length}
 - Productos más vendidos (histórico): ${topProd2||"—"}
-- Medios de pago este mes: ${Object.entries(porMedio2).map(([m,t])=>`${m}: $${Math.round(t).toLocaleString("es-AR")}`).join(", ")||"—"}`;
+- Medios de pago este mes: ${Object.entries(porMedio2).map(([m,t])=>`${m}: $${Math.round(t).toLocaleString("es-AR")}`).join(", ")||"—"}
+
+DETALLE POR PRODUCTO VENDIDO (margen individual, ordenado de mayor a menor margen):
+${detalleStr||"—"}`;
 })()}
 
 ${(()=>{
