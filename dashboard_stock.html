@@ -2090,6 +2090,8 @@ function getMedioPago() {
   const active = document.querySelector(".medio-pill.active");
   return active ? active.dataset.medio : "Efectivo";
 }
+
+function seleccionarTipo(tipo, btn) {
   tipoSeleccionado = tipo;
   document.querySelectorAll(".tipo-pill").forEach(p => p.classList.remove("selected"));
   btn.classList.add("selected");
