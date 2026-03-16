@@ -1740,7 +1740,7 @@ function renderStock(rows) {
 
   for (let i=dataStart; i<rows.length; i++) {
     const row=rows[i], nombre=(row[1]||"").trim(), cat=(row[2]||"").trim();
-    const pNum = v => parseFloat(String(v).replace(/\$/g,"").replace(/\./g,"").replace(/,/g,".").trim())||0;
+    const pNum = v => parseFloat(String(v).replace(/[$.,\s]/g,""))||0;
     const stock=pNum(row[4]), minimo=pNum(row[5]);
     const maximo=pNum(row[6]), precio=pNum(row[7]);
     if (!nombre) continue;
@@ -1775,7 +1775,7 @@ function renderStock(rows) {
   for (let i=dataStart; i<rows.length; i++) {
     const row=rows[i], nombre=(row[1]||"").trim();
     if (!nombre) continue;
-    const pNum2 = v => parseFloat(String(v).replace(/\$/g,"").replace(/\./g,"").replace(/,/g,".").trim())||0;
+    const pNum2 = v => parseFloat(String(v).replace(/[$.,\s]/g,""))||0;
     const stock=pNum2(row[4]), minimo=pNum2(row[5]);
     const maximo=pNum2(row[6]), precio=pNum2(row[7]);
     stockDataGlobal.push({nombre,categoria:(row[2]||"").trim(),stock,minimo,maximo,precio,
