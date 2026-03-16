@@ -2682,8 +2682,14 @@ function renderDashboard() {
 
   // ── Stock KPIs ──
   let numOk=0, numWarn=0, numDanger=0, valorInv=0;
+  // Índice de precios por descripción para fallback
+  const preciosIdx = {};
+  preciosDataGlobal.forEach(p => { if (!preciosIdx[p.desc.toLowerCase()]) preciosIdx[p.desc.toLowerCase()] = p.conIVA||p.sinIVA||0; });
+
   stockDataGlobal.forEach(p => {
-    valorInv += p.stock * p.precio;
+    // Si precio es 0, buscar en lista de proveedores
+    const precioReal = p.precio > 0 ? p.precio : (preciosIdx[p.nombre.toLowerCase()] || 0);
+    valorInv += p.stock * precioReal;
     if (p.estado==="Sin stock") numDanger++;
     else if (p.estado==="Reponer") numWarn++;
     else numOk++;
