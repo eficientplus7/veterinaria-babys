@@ -3324,10 +3324,8 @@ function filtrarRelProductos() {
     return;
   }
   dd.style.display = "block";
-  dd.innerHTML = filtrados.map(p => {
-    const obj = { nombre: p.desc, proveedor: p.proveedor, codigo: p.codigo||"", costo: p.conIVA||p.sinIVA||0 };
-    const safe = JSON.stringify(obj).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    return `<div onclick="elegirRelProducto('${safe}')"
+  dd.innerHTML = filtrados.map((p, i) => {
+    return `<div class="rel-item" data-idx="${i}"
       style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);"
       onmouseover="this.style.background='var(--card-hover)'"
       onmouseout="this.style.background='transparent'">
@@ -3335,15 +3333,17 @@ function filtrarRelProductos() {
       <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">${p.proveedor}${p.conIVA>0?" — Costo c/IVA: $"+p.conIVA.toLocaleString("es-AR"):""}</div>
     </div>`;
   }).join("");
+
+  // Guardar referencia a los resultados filtrados para el click
+  dd._filtrados = filtrados;
 }
 
-function elegirRelProducto(dataStr) {
-  const data = typeof dataStr === "string" ? JSON.parse(dataStr) : dataStr;
+function elegirRelProducto(data) {
   relProductoSeleccionado = data;
 
   // Cerrar dropdown y limpiar search
   const dd = document.getElementById("relDropdown");
-  if (dd) dd.style.display = "none";
+  if (dd) { dd.style.display = "none"; dd._filtrados = null; }
   document.getElementById("relSearch").value = "";
   document.getElementById("relSearch").blur();
 
@@ -3359,11 +3359,23 @@ function elegirRelProducto(dataStr) {
   document.getElementById("relCantidad").focus();
 }
 
-// Cerrar dropdown al hacer click afuera
+// Cerrar dropdown al hacer click afuera + event delegation para selección
 document.addEventListener("click", e => {
   const search = document.getElementById("relSearch");
   const dd     = document.getElementById("relDropdown");
-  if (dd && search && !search.contains(e.target) && !dd.contains(e.target)) {
+  if (!dd) return;
+
+  // Click en un item del dropdown
+  const item = e.target.closest(".rel-item");
+  if (item && dd.contains(item)) {
+    const idx = parseInt(item.dataset.idx);
+    const p   = dd._filtrados?.[idx];
+    if (p) elegirRelProducto({ nombre: p.desc, proveedor: p.proveedor, codigo: p.codigo||"", costo: p.conIVA||p.sinIVA||0 });
+    return;
+  }
+
+  // Click afuera → cerrar
+  if (search && !search.contains(e.target) && !dd.contains(e.target)) {
     dd.style.display = "none";
   }
 });
