@@ -3236,48 +3236,298 @@ function generarComprobante(v) {
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Recibo N° ${num}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recibo N° ${num} — Veterinaria Babys</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family: Arial, sans-serif; font-size: 13px; color: #1e1e2e; background: #fff; padding: 32px; }
-  .header { background: #13111c; color: #fff; padding: 24px 28px; border-radius: 10px 10px 0 0; display:flex; justify-content:space-between; align-items:flex-start; }
-  .header-left h1 { font-size: 22px; font-weight: 800; color: #a78bfa; margin-bottom: 4px; }
-  .header-left p { font-size: 11px; color: #a1a1aa; }
-  .header-right { text-align:right; }
-  .header-right .num { font-size: 18px; font-weight: 800; color: #fff; }
-  .header-right .fecha { font-size: 11px; color: #a1a1aa; margin-top: 4px; }
-  .body { border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 10px 10px; padding: 24px 28px; }
-  .info-row { display:flex; gap: 32px; margin-bottom: 20px; padding: 14px 16px; background: #f8f8fc; border-radius: 8px; }
-  .info-item label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; display:block; margin-bottom:4px; }
-  .info-item span { font-size: 14px; font-weight: 600; color: #1e1e2e; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-  thead th { background: #2d2a40; color: #fff; padding: 10px 12px; text-align:left; font-size: 11px; text-transform:uppercase; letter-spacing:0.5px; }
-  thead th:not(:first-child) { text-align:right; }
-  tbody td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-  tbody td:not(:first-child) { text-align:right; }
-  .totales { margin-left: auto; width: 260px; }
-  .totales-row { display:flex; justify-content:space-between; padding: 6px 0; font-size: 13px; color: #64748b; border-bottom: 1px solid #e2e8f0; }
-  .totales-row.total { background: #6366f1; color: #fff; padding: 12px 14px; border-radius: 8px; margin-top: 10px; font-size: 16px; font-weight: 800; border-bottom:none; }
-  .footer { margin-top: 28px; padding-top: 14px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; display:flex; justify-content:space-between; }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #09090b;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .receipt {
+    background: #110f1a;
+    border: 1px solid #2d2a40;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.06);
+    width: 100%;
+    max-width: 600px;
+    overflow: hidden;
+  }
+
+  /* ── TOP HEADER ── */
+  .receipt-header {
+    padding: 28px 32px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #2d2a40;
+  }
+  .brand-name {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #a78bfa 0%, #2dd4bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+  }
+  .brand-sub {
+    font-size: 11.5px;
+    color: #6b7280;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+  .receipt-num {
+    text-align: right;
+  }
+  .receipt-num .num {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+  }
+  .receipt-num .fecha {
+    font-size: 11.5px;
+    color: #6b7280;
+    margin-top: 4px;
+  }
+
+  /* ── INFO ROW ── */
+  .info-section {
+    padding: 20px 32px;
+    display: flex;
+    gap: 40px;
+    border-bottom: 1px solid #2d2a40;
+    background: #1c1a29;
+  }
+  .info-item label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #6b7280;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .info-item span {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  /* ── PRODUCTS TABLE ── */
+  .table-section { padding: 24px 32px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6b7280;
+    padding: 0 0 12px 0;
+    text-align: left;
+    border-bottom: 1px solid #2d2a40;
+  }
+  thead th:not(:first-child) { text-align: right; }
+
+  tbody td {
+    padding: 16px 0;
+    border-bottom: 1px solid #1c1a29;
+    font-size: 13.5px;
+    color: #e5e7eb;
+    vertical-align: middle;
+  }
+  tbody td:not(:first-child) { text-align: right; }
+  tbody td:last-child { font-weight: 700; color: #ffffff; }
+  .product-name { font-weight: 600; color: #ffffff; font-size: 14px; }
+  .product-cat  { font-size: 11.5px; color: #6b7280; margin-top: 3px; }
+
+  /* ── TOTALS ── */
+  .totals-section {
+    padding: 20px 32px;
+    border-top: 1px solid #2d2a40;
+  }
+  .totals-inner {
+    margin-left: auto;
+    width: 280px;
+  }
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    font-size: 13px;
+    color: #9ca3af;
+    border-bottom: 1px solid #1c1a29;
+  }
+  .totals-row:last-of-type { border-bottom: none; }
+  .totals-row span:last-child { color: #e5e7eb; font-weight: 500; }
+
+  .total-final {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding: 16px 20px;
+    background: #1c1a29;
+    border: 1px solid #2d2a40;
+    border-radius: 12px;
+  }
+  .total-final .label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6b7280;
+  }
+  .total-final .amount {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #a78bfa 0%, #2dd4bf 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── FOOTER ── */
+  .receipt-footer {
+    padding: 18px 32px;
+    border-top: 1px solid #2d2a40;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0d0b16;
+  }
+  .receipt-footer span {
+    font-size: 11px;
+    color: #4b5563;
+  }
+  .receipt-footer .badge {
+    font-size: 10px;
+    font-weight: 600;
+    color: #6366f1;
+    background: rgba(99,102,241,0.08);
+    border: 1px solid rgba(99,102,241,0.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── BUTTONS ── */
+  .actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 24px;
+    padding-bottom: 8px;
+  }
+  .btn-print {
+    padding: 11px 28px;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    letter-spacing: 0.2px;
+  }
+  .btn-print:hover { background: #5558e8; transform: translateY(-1px); }
+  .btn-close {
+    padding: 11px 22px;
+    background: transparent;
+    color: #9ca3af;
+    border: 1px solid #2d2a40;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-close:hover { border-color: #4b5563; color: #e5e7eb; }
+
+  /* ── PRINT MODE ── */
   @media print {
-    body { padding: 0; }
-    button { display: none !important; }
+    body {
+      background: #fff !important;
+      padding: 0 !important;
+      color: #000 !important;
+    }
+    .receipt {
+      background: #fff !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: none !important;
+      max-width: 100% !important;
+    }
+    .receipt-header { border-bottom-color: #e2e8f0 !important; }
+    .brand-name {
+      background: none !important;
+      -webkit-text-fill-color: #1a1a2e !important;
+      color: #1a1a2e !important;
+    }
+    .info-section { background: #f8f8fc !important; border-color: #e2e8f0 !important; }
+    .info-item label { color: #64748b !important; }
+    .info-item span { color: #1e293b !important; }
+    thead th { color: #64748b !important; border-color: #e2e8f0 !important; }
+    tbody td { color: #1e293b !important; border-color: #f1f5f9 !important; }
+    .product-name { color: #1e293b !important; }
+    .product-cat { color: #94a3b8 !important; }
+    .totals-section { border-color: #e2e8f0 !important; }
+    .totals-row { color: #64748b !important; border-color: #f1f5f9 !important; }
+    .totals-row span:last-child { color: #1e293b !important; }
+    .total-final {
+      background: #f1f5f9 !important;
+      border-color: #e2e8f0 !important;
+    }
+    .total-final .label { color: #64748b !important; }
+    .total-final .amount {
+      background: none !important;
+      -webkit-text-fill-color: #4f46e5 !important;
+      color: #4f46e5 !important;
+    }
+    .receipt-footer { background: #f8f8fc !important; border-color: #e2e8f0 !important; }
+    .receipt-footer span { color: #94a3b8 !important; }
+    .badge { display: none !important; }
+    .actions { display: none !important; }
   }
 </style>
 </head>
 <body>
-  <div class="header">
-    <div class="header-left">
-      <h1>🐾 Veterinaria Babys</h1>
-      <p>Recibo de venta interno</p>
+
+  <div class="receipt">
+
+    <!-- Header -->
+    <div class="receipt-header">
+      <div>
+        <div class="brand-name">🐾 Veterinaria Babys</div>
+        <div class="brand-sub">Recibo de venta interno</div>
+      </div>
+      <div class="receipt-num">
+        <div class="num">N° ${num}</div>
+        <div class="fecha">${v.fecha || ""}</div>
+      </div>
     </div>
-    <div class="header-right">
-      <div class="num">N° ${num}</div>
-      <div class="fecha">${v.fecha || ""}</div>
-    </div>
-  </div>
-  <div class="body">
-    <div class="info-row">
+
+    <!-- Info -->
+    <div class="info-section">
       <div class="info-item">
         <label>Responsable</label>
         <span>${v.responsable || "—"}</span>
@@ -3286,51 +3536,67 @@ function generarComprobante(v) {
         <label>Medio de pago</label>
         <span>${v.medioPago || "—"}</span>
       </div>
+      <div class="info-item">
+        <label>Categoría</label>
+        <span>${v.categoria || "—"}</span>
+      </div>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Categoría</th>
-          <th>Cant.</th>
-          <th>Precio unit.</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>${v.producto || ""}</strong></td>
-          <td>${v.categoria || ""}</td>
-          <td>${v.cantidad || 1}</td>
-          <td>${fmt(v.precioVenta)}</td>
-          <td><strong>${fmt(v.total)}</strong></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="totales">
-      <div class="totales-row"><span>Subtotal</span><span>${fmt(v.total)}</span></div>
-      <div class="totales-row"><span>Costo unitario</span><span>${fmt(v.costoUnit)}</span></div>
-      <div class="totales-row"><span>Ganancia</span><span>${fmt(v.ganancia)}</span></div>
-      <div class="totales-row"><span>Margen</span><span>${v.margen || "—"}</span></div>
-      <div class="totales-row total"><span>TOTAL</span><span>${fmt(v.total)}</span></div>
+    <!-- Tabla -->
+    <div class="table-section">
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>Precio unit.</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="product-name">${v.producto || ""}</div>
+            </td>
+            <td>${v.cantidad || 1}</td>
+            <td>${fmt(v.precioVenta)}</td>
+            <td>${fmt(v.total)}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="footer">
-      <span>Este documento es un comprobante interno de venta.</span>
-      <span>Veterinaria Babys — Sistema de gestión</span>
+    <!-- Totales -->
+    <div class="totals-section">
+      <div class="totals-inner">
+        <div class="totals-row"><span>Subtotal</span><span>${fmt(v.total)}</span></div>
+        <div class="totals-row"><span>Costo unitario</span><span>${fmt(v.costoUnit)}</span></div>
+        <div class="totals-row"><span>Ganancia</span><span>${fmt(v.ganancia)}</span></div>
+        <div class="totals-row"><span>Margen</span><span>${v.margen || "—"}</span></div>
+        <div class="total-final">
+          <span class="label">Total</span>
+          <span class="amount">${fmt(v.total)}</span>
+        </div>
+      </div>
     </div>
+
+    <!-- Footer -->
+    <div class="receipt-footer">
+      <span>Comprobante interno — no válido como factura legal</span>
+      <span class="badge">Sistema Veterinaria Babys</span>
+    </div>
+
   </div>
 
-  <div style="text-align:center;margin-top:24px;">
-    <button onclick="window.print()" style="padding:10px 28px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">🖨️ Imprimir / Guardar PDF</button>
-    <button onclick="window.close()" style="padding:10px 20px;background:#e2e8f0;color:#475569;border:none;border-radius:8px;font-size:14px;cursor:pointer;margin-left:10px;">Cerrar</button>
+  <div class="actions">
+    <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    <button class="btn-close" onclick="window.close()">Cerrar</button>
   </div>
+
 </body>
 </html>`;
 
-  const win = window.open("", "_blank", "width=800,height=700");
+  const win = window.open("", "_blank", "width=720,height=760");
   win.document.write(html);
   win.document.close();
 }
